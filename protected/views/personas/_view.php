@@ -5,7 +5,7 @@
 
 <div class="view">
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('idtbl_Personas')); ?>:</b>
+      	<b><?php echo CHtml::encode($data->getAttributeLabel('idtbl_Personas')); ?>:</b>
 	<?php echo CHtml::link(CHtml::encode($data->idtbl_Personas), array('view', 'id'=>$data->idtbl_Personas)); ?>
 	<br />
 
@@ -33,11 +33,11 @@
 	<?php echo CHtml::encode($data->banco); ?>
 	<br />
 
-	<?php /*
+	
 	<b><?php echo CHtml::encode($data->getAttributeLabel('cuentacliente')); ?>:</b>
 	<?php echo CHtml::encode($data->cuentacliente); ?>
 	<br />
 
-	*/ ?>
+	 
 
 </div>
