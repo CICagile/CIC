@@ -8,8 +8,8 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'List Personas', 'url'=>array('index')),
-	array('label'=>'Manage Personas', 'url'=>array('admin')),
+	array('label'=>'Listar Personas', 'url'=>array('index')),
+	array('label'=>'Búsqueda Personas', 'url'=>array('admin')),
 );
 ?>
 

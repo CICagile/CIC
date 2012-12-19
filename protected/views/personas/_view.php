@@ -5,36 +5,32 @@
 
 <div class="view">
 
-      	<b><?php echo CHtml::encode($data->getAttributeLabel('idtbl_Personas')); ?>:</b>
-	<?php echo CHtml::link(CHtml::encode($data->idtbl_Personas), array('view', 'id'=>$data->idtbl_Personas)); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('nombre')); ?>:</b>
+      	<b><?php echo CHtml::encode($data->getAttributeLabel('Nombre')); ?>:</b>
 	<?php echo CHtml::encode($data->nombre); ?>
 	<br />
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('apellido1')); ?>:</b>
+	<b><?php echo CHtml::encode($data->getAttributeLabel('Apellido1')); ?>:</b>
 	<?php echo CHtml::encode($data->apellido1); ?>
 	<br />
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('apellido2')); ?>:</b>
+	<b><?php echo CHtml::encode($data->getAttributeLabel('Apellido2')); ?>:</b>
 	<?php echo CHtml::encode($data->apellido2); ?>
 	<br />
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('cedula')); ?>:</b>
+	<b><?php echo CHtml::encode($data->getAttributeLabel('Cedula')); ?>:</b>
 	<?php echo CHtml::encode($data->cedula); ?>
 	<br />
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('numerocuenta')); ?>:</b>
+	<b><?php echo CHtml::encode($data->getAttributeLabel('Numero Cuenta')); ?>:</b>
 	<?php echo CHtml::encode($data->numerocuenta); ?>
 	<br />
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('banco')); ?>:</b>
+	<b><?php echo CHtml::encode($data->getAttributeLabel('Banco')); ?>:</b>
 	<?php echo CHtml::encode($data->banco); ?>
 	<br />
 
 	
-	<b><?php echo CHtml::encode($data->getAttributeLabel('cuentacliente')); ?>:</b>
+	<b><?php echo CHtml::encode($data->getAttributeLabel('Cuenta Cliente')); ?>:</b>
 	<?php echo CHtml::encode($data->cuentacliente); ?>
 	<br />
 
