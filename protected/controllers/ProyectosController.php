@@ -58,10 +58,15 @@ class ProyectosController extends Controller
         
         protected function FechaPhptoMysql($pfechaphp)
         {
-                list($d, $m, $y) = explode('-', $pfechaphp);
+            try{
+                list($d, $m, $y) = explode('-', $pfechaphp); 
                 $nuevafecha=mktime(0, 0, 0, $m, $d, $y);
                 $fechamysql=strftime('%Y-%m-%d',$nuevafecha);
-                
+            }
+            catch (Exception $excepcion)
+            {
+                throw new CHttpException(500,$excepcion,500);
+            }                
                 return $fechamysql;
         }
 
@@ -85,6 +90,7 @@ class ProyectosController extends Controller
                     
                     $inicioperiodo = $modelperiodos->inicio;
                     $finperiodo = $modelperiodos->fin;
+                    
                     $inicioperiodo = $this->FechaPhptoMysql($inicioperiodo);
                     $finperiodo = $this->FechaPhptoMysql($finperiodo);                   
 
@@ -101,12 +107,24 @@ class ProyectosController extends Controller
                     $resultado = $resultado ? $modelproyectos->save() : $resultado;
                     if ($resultado)
                     {
+                        try{
                         $transaction->commit();    
+                        }
+                        catch (Exception $error)
+                        {
+                            throw new CDbException(500, $error, 500); 
+                        }
                         $this->redirect(array('view','id'=>$modelproyectos->idtbl_Proyectos));
                     }
                     else
                     {
+                        try{
                         $transaction->rollBack();                        
+                        }
+                        catch (Exception $excepcion)
+                        {
+                            throw new CDbException(500, $error, 500); 
+                        }
                     }
                 }            
             }
