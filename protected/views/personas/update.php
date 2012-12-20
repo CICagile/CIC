@@ -9,7 +9,6 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'Listar Personas', 'url'=>array('index')),
 	array('label'=>'Create Personas', 'url'=>array('create')),
 	array('label'=>'Ver Personas', 'url'=>array('view', 'id'=>$model->idtbl_Personas)),
 	array('label'=>'Búsqueda Personas', 'url'=>array('admin')),

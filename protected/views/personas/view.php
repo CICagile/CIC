@@ -8,7 +8,6 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'Listar Personas', 'url'=>array('index')),
 	array('label'=>'Create Personas', 'url'=>array('create')),
 	array('label'=>'Update Personas', 'url'=>array('update', 'id'=>$model->idtbl_Personas)),
 	array('label'=>'Delete Personas', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->idtbl_Personas),'confirm'=>'Are you sure you want to delete this item?')),
