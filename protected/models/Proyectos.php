@@ -41,10 +41,11 @@ class Proyectos extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-                        array('nombre, codigo','required'),			
-			array('tbl_Periodos_idPeriodo', 'numerical', 'integerOnly'=>true),
-			array('nombre', 'length', 'max'=>250),
-			array('codigo', 'length', 'max'=>20),
+                        array('nombre, codigo','required', 'message' => '{attribute} es requerido.'),
+                        array('nombre', 'unique', 'className' => 'Proyectos', 'message' => 'Ya existe un proyecto con ese nombre.'),
+                        array('codigo', 'unique', 'className' => 'Proyectos', 'message' => 'Ya existe un proyecto con ese código.'),			
+			array('nombre', 'length', 'min'=>3, 'max'=>250, 'tooShort'=> 'El {attribute} debe ser mayor a {min} caracteres.', 'tooLong' => 'El {attribute} debe ser menor a {max} caracteres.'),
+			array('codigo', 'length', 'min'=>2, 'max'=>20, 'tooShort'=> 'El {attribute} debe ser mayor a {min} caracteres.', 'tooLong' => 'El {attribute} debe ser menor a {max} caracteres.'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('idtbl_Proyectos, nombre, codigo, tbl_Periodos_idPeriodo', 'safe', 'on'=>'search'),
@@ -70,10 +71,10 @@ class Proyectos extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'idtbl_Proyectos' => 'Idtbl Proyectos',
-			'nombre' => 'Nombre del Proyecto',
-			'codigo' => 'Código',
-			'tbl_Periodos_idPeriodo' => 'Tbl Periodos Id Periodo',
+			'idtbl_Proyectos' => 'Id proyecto',
+			'nombre' => 'Nombre del proyecto',
+			'codigo' => 'Código del proyecto',
+			'tbl_Periodos_idPeriodo' => 'Id periodo',
 		);
 	}
 

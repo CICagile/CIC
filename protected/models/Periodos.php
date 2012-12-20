@@ -42,14 +42,26 @@ class Periodos extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('inicio, fin', 'required'),
-                        array('inicio', 'date', 'format'=> 'yyyy-MM-dd'),
-                        array('fin', 'date', 'format'=> 'yyyy-MM-dd'),
+			array('inicio, fin', 'required', 'message' => 'La {attribute} es requerido.'),
+                        array('inicio', 'date', 'format'=> 'dd-MM-yyyy'),
+                        array('fin', 'date', 'format'=> 'dd-MM-yyyy'),
+                        array('fin','compare', 'compareAttribute' => 'inicio', 'operator' => '!=', 'message' => 'La {attribute} debe ser distinto a la fecha de inicio.'),
+                        array('fin','compare', 'compareAttribute' => 'inicio', 'operator' => '>', 'message' => 'La {attribute} debe ser mayor a la fecha de inicio.'),
+                       // array('fin', 'ValidadorFechaMayor'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('idPeriodo, inicio, fin', 'safe', 'on'=>'search'),
 		);
 	}
+        
+        public function ValidadorFechaMayor($attribute, $params)
+        {
+            if($this->inicio == $this->fin)
+            {
+                $this->addError('fin','La fecha de finalización del proyecto debe ser mayor a la fecha de inicio.');
+            }
+            
+        }
 
 	/**
 	 * @return array relational rules.
@@ -72,7 +84,7 @@ class Periodos extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'idPeriodo' => 'Id Periodo',
+			'idPeriodo' => 'Id periodo',
 			'inicio' => 'Fecha inicio',
 			'fin' => 'Fecha fin',
 		);

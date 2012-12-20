@@ -8,25 +8,25 @@
 <div class="form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'proyectos-form',
-	'enableClientValidation'=>true,
+	'id'=>'proyectos-form',	
+        'enableAjaxValidation'=>true,        
 )); ?>
 
 	<p class="note">Campos con <span class="required">*</span> son obligatorios.</p>
 
 	<?php echo $form->errorSummary(array($modelproyectos,$modelperiodos)); ?>
+        
+        <div class="row">
+		<?php echo $form->labelEx($modelproyectos,'codigo'); ?>
+		<?php echo $form->textField($modelproyectos,'codigo',array('size'=>20,'maxlength'=>20)); ?>
+		<?php echo $form->error($modelproyectos,'codigo'); ?>
+	</div>
 
 	<div class="row">
 		<?php echo $form->labelEx($modelproyectos,'nombre'); ?>
 		<?php echo $form->textField($modelproyectos,'nombre',array('size'=>60,'maxlength'=>250)); ?>
 		<?php echo $form->error($modelproyectos,'nombre'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($modelproyectos,'codigo'); ?>
-		<?php echo $form->textField($modelproyectos,'codigo',array('size'=>20,'maxlength'=>20)); ?>
-		<?php echo $form->error($modelproyectos,'codigo'); ?>
-	</div>	
+	</div>		
         
         <div class="row">
 		<?php echo $form->labelEx($modelperiodos,'inicio'); ?>

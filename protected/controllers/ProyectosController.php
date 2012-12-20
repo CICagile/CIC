@@ -71,22 +71,26 @@ class ProyectosController extends Controller
 	 */
 	public function actionCreate()
 	{
-            $modelproyectos=new Proyectos;
+            $modelproyectos= new Proyectos;
             $modelperiodos = new Periodos;
+            
+            $this->performAjaxValidation(array($modelproyectos,$modelperiodos));
 
             if(isset($_POST['Periodos']) && isset($_POST['Proyectos']))
-            {	
-                $inicioperiodo = $_POST['Periodos']['inicio'];
-                $finperiodo = $_POST['Periodos']['fin'];                
-                unset($_POST['Periodos']);          
-
-                $inicioperiodo = $this->FechaPhptoMysql($inicioperiodo);
-                $finperiodo = $this->FechaPhptoMysql($finperiodo);                   
-
-                $modelperiodos->inicio = $inicioperiodo;
-                $modelperiodos->fin = $finperiodo;
-                
+            {	                
+                $modelperiodos->attributes=$_POST['Periodos'];
+                 unset($_POST['Periodos']);
+                 
                 if ($modelperiodos->validate()) {
+                    
+                    $inicioperiodo = $modelperiodos->inicio;
+                    $finperiodo = $modelperiodos->fin;
+                    $inicioperiodo = $this->FechaPhptoMysql($inicioperiodo);
+                    $finperiodo = $this->FechaPhptoMysql($finperiodo);                   
+
+                    $modelperiodos->inicio = $inicioperiodo;
+                    $modelperiodos->fin = $finperiodo;
+                    
                     $transaction = Yii::app()->db->beginTransaction();
                     $resultado = $modelperiodos->save(false);//Guardo el periodo sin validar, ya que lo valide con anterioridad                                       
 
@@ -198,11 +202,11 @@ class ProyectosController extends Controller
 	 * Performs the AJAX validation.
 	 * @param CModel the model to be validated
 	 */
-	protected function performAjaxValidation($model)
+	protected function performAjaxValidation($models)
 	{
 		if(isset($_POST['ajax']) && $_POST['ajax']==='proyectos-form')
 		{
-			echo CActiveForm::validate($model);
+			echo CActiveForm::validate($models);
 			Yii::app()->end();
 		}
 	}
