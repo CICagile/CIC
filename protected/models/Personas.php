@@ -75,14 +75,14 @@ class Personas extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'idtbl_Personas' => 'Idtbl Personas',
+			'idtbl_Personas' => 'Id Persona',
 			'nombre' => 'Nombre',
-			'apellido1' => 'Apellido1',
-			'apellido2' => 'Apellido2',
-			'cedula' => 'Cedula',
-			'numerocuenta' => 'Numerocuenta',
+			'apellido1' => 'Primer  Apellido',
+			'apellido2' => 'Segundo Apellido',
+			'cedula' => 'Cédula',
+			'numerocuenta' => 'Número de Cuenta',
 			'banco' => 'Banco',
-			'cuentacliente' => 'Cuentacliente',
+			'cuentacliente' => 'Cuenta Cliente',
 		);
 	}
 

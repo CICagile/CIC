@@ -88,5 +88,6 @@ return array(
 		'adminEmail'=>'webmaster@example.com',
 	),
         'language'=>'es',
+      
         
 );
