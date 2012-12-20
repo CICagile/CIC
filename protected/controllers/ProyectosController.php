@@ -78,7 +78,7 @@ class ProyectosController extends Controller
 
             if(isset($_POST['Periodos']) && isset($_POST['Proyectos']))
             {	                
-                $modelperiodos->attributes=$_POST['Periodos'];
+                 $modelperiodos->attributes=$_POST['Periodos'];
                  unset($_POST['Periodos']);
                  
                 if ($modelperiodos->validate()) {
@@ -106,9 +106,7 @@ class ProyectosController extends Controller
                     }
                     else
                     {
-                        $transaction->rollBack();
-                        unset($_POST['Periodos']);
-                        unset($_POST['Proyectos']);
+                        $transaction->rollBack();                        
                     }
                 }            
             }

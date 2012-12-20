@@ -9,7 +9,8 @@
 
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'proyectos-form',	
-        'enableAjaxValidation'=>true,        
+        'enableAjaxValidation'=>true,   
+    
 )); ?>
 
 	<p class="note">Campos con <span class="required">*</span> son obligatorios.</p>

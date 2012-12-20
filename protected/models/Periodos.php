@@ -46,24 +46,25 @@ class Periodos extends CActiveRecord
                         array('inicio', 'date', 'format'=> 'dd-MM-yyyy'),
                         array('fin', 'date', 'format'=> 'dd-MM-yyyy'),
                         array('fin','compare', 'compareAttribute' => 'inicio', 'operator' => '!=', 'message' => 'La {attribute} debe ser distinto a la fecha de inicio.'),
-                        array('fin','compare', 'compareAttribute' => 'inicio', 'operator' => '>', 'message' => 'La {attribute} debe ser mayor a la fecha de inicio.'),
-                       // array('fin', 'ValidadorFechaMayor'),
+                        //array('fin','compare', 'compareAttribute' => 'inicio', 'operator' => '>', 'message' => 'La {attribute} debe ser mayor a la fecha de inicio.'),                        
+                        array('fin', 'ValidadorFechaMayor'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('idPeriodo, inicio, fin', 'safe', 'on'=>'search'),
 		);
-	}
+	}       
         
         public function ValidadorFechaMayor($attribute, $params)
         {
-            if($this->inicio == $this->fin)
-            {
-                $this->addError('fin','La fecha de finalización del proyecto debe ser mayor a la fecha de inicio.');
+            if(strtotime($this->fin) < strtotime($this->inicio)) {
+                $this->addError($attribute,'La fecha de finalización del proyecto no puede ser menor que la fecha de inicio.');
             }
+
             
         }
 
-	/**
+
+        	/**
 	 * @return array relational rules.
 	 */
 	public function relations()
