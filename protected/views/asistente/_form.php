@@ -1,7 +1,3 @@
-OJO!!! http://stackoverflow.com/questions/13376842/loading-data-from-another-table-in-yii
-TAMBIEN HAY QUE FIJARSE QUE LOS CARACTERES MAXIMOS COINCIDAN CON LOS DE LA BASE DE DATOS!!!
-
-
 
 <?php
 /* @var $this AsistenteController */
@@ -52,7 +48,8 @@ TAMBIEN HAY QUE FIJARSE QUE LOS CARACTERES MAXIMOS COINCIDAN CON LOS DE LA BASE 
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'banco'); ?>
-		<?php echo $form->textField($model,'banco',array('size'=>50,'maxlength'=>50)); ?>
+		<?php echo $form->dropDownList($model, 'banco',
+                                CHtml::listData(Banco::model()->findAll(), 'nombre', 'nombre')); ?>
 		<?php echo $form->error($model,'banco'); ?>
 	</div>
 
@@ -70,14 +67,40 @@ TAMBIEN HAY QUE FIJARSE QUE LOS CARACTERES MAXIMOS COINCIDAN CON LOS DE LA BASE 
         
         <div class="row">
 		<?php echo $form->labelEx($model,'carrera'); ?>
-		<?php echo $form->textField($model,'carrera',array('size'=>45,'maxlength'=>45)); ?>
+		<?php echo $form->dropDownList($model, 'carrera',
+                        CHtml::listData(Carrera::model()->findAll(), 'nombre', 'nombre')); ?>
 		<?php echo $form->error($model,'carrera'); ?>
 	</div>
         
         <div class="row">
 		<?php echo $form->labelEx($model,'codigo'); ?>
-		<?php echo $form->textField($model,'codigo',array('size'=>45,'maxlength'=>45)); ?>
+		<?php echo $form->textField($model,'codigo',array('size'=>20,'maxlength'=>20)); ?>
 		<?php echo $form->error($model,'codigo'); ?>
+	</div>
+        
+        <div class="row">
+		<?php echo $form->labelEx($model,'rol'); ?>
+		<?php echo $form->dropDownList($model, 'rol',
+ CHtml::listData(RolAsistente::model()->findAll(), 'nombre', 'nombre')) ?>
+		<?php echo $form->error($model,'rol'); ?>
+	</div>
+        
+        <div class="row">
+		<?php echo $form->labelEx($model,'horas'); ?>
+		<?php echo $form->textField($model,'horas',array('size'=>5,'maxlength'=>5)); ?>
+		<?php echo $form->error($model,'horas'); ?>
+	</div>
+        
+        <div class="row">
+		<?php echo $form->labelEx($model,'telefono'); ?>
+		<?php echo $form->textField($model,'telefono',array('size'=>25,'maxlength'=>25)); ?>
+		<?php echo $form->error($model,'telefono'); ?>
+	</div>
+        
+        <div class="row">
+		<?php echo $form->labelEx($model,'correo'); ?>
+		<?php echo $form->textField($model,'correo',array('size'=>25,'maxlength'=>25)); ?>
+		<?php echo $form->error($model,'correo'); ?>
 	</div>
 
 	<div class="row buttons">

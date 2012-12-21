@@ -7,7 +7,7 @@
  * instancias representando cada proyecto.
  *
  */
-class Asistente  extends CActiveRecord{
+class Asistente  extends CModel{
     
     public $nombre;
     public $apellido1;
@@ -24,19 +24,6 @@ class Asistente  extends CActiveRecord{
     public $rol;
     public $horas;
     
-    public function __construct(){
-    }
-    
-    /**
-     * Returns the static model of the specified AR class.
-     * @param string $className active record class name.
-     * @return Persona the static model class
-     */
-    public static function model($className=__CLASS__)
-    {
-            return parent::model($className);
-    }
-    
     /**
 	 * @return array validation rules for model attributes.
 	 */
@@ -45,17 +32,15 @@ class Asistente  extends CActiveRecord{
             // NOTE: you should only define rules for those attributes that
             // will receive user inputs.
             return array(
-                array('nombre, apellido1, cedula, numerocuenta, banco, cuentacliente, carnet, carrera, telefono, correo', 'required'),
-                array('nombre, apellido1, apellido2, cedula', 'length', 'max'=>20),
+                array('nombre, apellido1, cedula, numerocuenta, banco, cuentacliente, carnet, carrera, telefono, correo, codigo, rol, horas', 'required'),
+                array('nombre, apellido1, apellido2, cedula, codigo', 'length', 'max'=>20),
                 array('carnet','length', 'max'=>15),
-                array('carrera','length', 'max'=>45),
+                array('carrera, rol','length', 'max'=>45),
                 array('telefono, correo', 'length', 'max'=>25),
                 array('numerocuenta', 'length', 'max'=>30),
-                array('banco', 'length', 'max'=>50),
+                array('banco', 'length', 'max'=>70),
                 array('cuentacliente', 'length', 'max'=>17),
-                // The following rule is used by search().
-                // Please remove those attributes that should not be searched.
-                array('idtbl_Personas, nombre, apellido1, apellido2, cedula, numerocuenta, banco, cuentacliente', 'safe', 'on'=>'search'),
+                array('horas', 'numerical', 'max'=>20, 'min'=>0, 'tooBig'=>'Se permite un máximo de {max} horas'), //maximo pemitido 20 horas?
             );
 	}
         
@@ -71,7 +56,10 @@ class Asistente  extends CActiveRecord{
                 'cedula' => 'Cédula',
                 'numerocuenta' => 'N° Cuenta',
                 'banco' => 'Banco',
-                'cuentacliente' => 'Cuenta Clietne',
+                'cuentacliente' => 'Cuenta Cliente',
+                'codigo' => 'Código del proyecto',
+                'telefono' => 'Teléfono',
+                'correo' => 'Correo Electrónico'
             );
 	}
         
@@ -104,10 +92,33 @@ class Asistente  extends CActiveRecord{
                 $transaccion->commit();
             } catch (Exception $e) {
                 $transaccion->rollback();
+                echo $e->getMessage();
                 return false;
             }
             return true;
         }
+
+    /**
+     * Retorna un array con los nombres de los atributos
+     */
+    public function attributeNames()
+	{
+		$className=get_class($this);
+		if(!isset(self::$_names[$className]))
+		{
+			$class=new ReflectionClass(get_class($this));
+			$names=array();
+			foreach($class->getProperties() as $property)
+			{
+				$name=$property->getName();
+				if($property->isPublic() && !$property->isStatic())
+					$names[]=$name;
+			}
+			return self::$_names[$className]=$names;
+		}
+		else
+			return self::$_names[$className];
+	}
 }
 
 ?>
