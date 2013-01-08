@@ -32,15 +32,19 @@ class Asistente  extends CModel{
             // NOTE: you should only define rules for those attributes that
             // will receive user inputs.
             return array(
-                array('nombre, apellido1, cedula, numerocuenta, banco, cuentacliente, carnet, carrera, telefono, correo, codigo, rol, horas', 'required'),
+                array('nombre, apellido1, cedula, numerocuenta, banco, cuentacliente, carnet, carrera, telefono, correo, codigo, rol, horas', 'required', 'message'=>'{attribute} no puede dejarse en blanco.'),
                 array('nombre, apellido1, apellido2, cedula, codigo', 'length', 'max'=>20),
                 array('carnet','length', 'max'=>15),
                 array('carrera, rol','length', 'max'=>45),
                 array('telefono, correo', 'length', 'max'=>25),
                 array('numerocuenta', 'length', 'max'=>30),
                 array('banco', 'length', 'max'=>70),
-                array('cuentacliente', 'length', 'max'=>17),
-                array('horas', 'numerical', 'max'=>20, 'min'=>0, 'tooBig'=>'Se permite un máximo de {max} horas'),
+                array('cuentacliente', 'length', 'min'=>17, 'max'=>17),
+                array('telefono, cedula, cuentacliente, carnet', 'numerical', 'message'=>'{attribute} sólo puede estar compuesto por dígitos.'),
+                array('horas', 'numerical', 'max'=>20, 'min'=>0, 'tooBig'=>'Se permite un máximo de {max} horas', 'tooSmall'=>'Se permite un mínimo de {min} horas.'),
+                array('correo', 'email', 'message'=>'Dirección de correo inválida'),
+                array('nombre, apellido1, apellido2, ', 'match', 'pattern'=>'/^[\p{L} ]+$/u'),
+                array('numerocuenta,codigo', 'match', 'pattern'=>'/^[\p{N}-]+$/u')
             );
 	}
         
