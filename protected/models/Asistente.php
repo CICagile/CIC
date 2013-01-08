@@ -40,7 +40,7 @@ class Asistente  extends CModel{
                 array('numerocuenta', 'length', 'max'=>30),
                 array('banco', 'length', 'max'=>70),
                 array('cuentacliente', 'length', 'max'=>17),
-                array('horas', 'numerical', 'max'=>20, 'min'=>0, 'tooBig'=>'Se permite un máximo de {max} horas'), //maximo pemitido 20 horas?
+                array('horas', 'numerical', 'max'=>20, 'min'=>0, 'tooBig'=>'Se permite un máximo de {max} horas'),
             );
 	}
         
