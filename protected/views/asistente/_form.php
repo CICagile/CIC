@@ -9,7 +9,7 @@
 
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'asistente-form',
-	'enableAjaxValidation'=>false,
+	'enableAjaxValidation'=>true,
 )); ?>
 
 	<p class="note">Los campos marcados con <span class="required">*</span> son obligatorios.</p>
