@@ -61,7 +61,7 @@ class Proyectos extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'tblPersonases' => array(self::MANY_MANY, 'Personas', 'tbl_profesoresproyectos(tbl_Proyectos_idtbl_Proyectos, tbl_Personas_idtbl_Personas)'),
-			'tblPeriodosIdPeriodo' => array(self::BELONGS_TO, 'Periodos', 'tbl_Periodos_idPeriodo'),
+			'periodos' => array(self::BELONGS_TO, 'Periodos', 'tbl_Periodos_idPeriodo'),
 		);
 	}
 

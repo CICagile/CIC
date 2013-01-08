@@ -25,7 +25,7 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($modelproyectos,'nombre'); ?>
-		<?php echo $form->textField($modelproyectos,'nombre',array('size'=>60,'maxlength'=>250)); ?>
+		<?php echo $form->textArea($modelproyectos,'nombre',array('size'=>60,'maxlength'=>250)); ?>
 		<?php echo $form->error($modelproyectos,'nombre'); ?>
 	</div>		
         

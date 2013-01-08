@@ -64,7 +64,7 @@ class ProyectosController extends Controller
                 $fechamysql=strftime('%Y-%m-%d',$nuevafecha);
             }
             catch (Exception $excepcion)
-            {
+            {               
                 throw new CHttpException(500,$excepcion,500);
             }                
                 return $fechamysql;
@@ -74,56 +74,62 @@ class ProyectosController extends Controller
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
+        public function CrearActualizarGenerico($proyecto, $modelo)
+        {
+            
+        }
+        
+            
 	public function actionCreate()
 	{
             $modelproyectos= new Proyectos;
             $modelperiodos = new Periodos;
             
             $this->performAjaxValidation(array($modelproyectos,$modelperiodos));
-
+            
             if(isset($_POST['Periodos']) && isset($_POST['Proyectos']))
             {	                
                  $modelperiodos->attributes=$_POST['Periodos'];
                  unset($_POST['Periodos']);
                  
                 if ($modelperiodos->validate()) {
+                          
+                    $modelperiodos->inicio = $this->FechaPhptoMysql($modelperiodos->inicio);
+                    $modelperiodos->fin = $this->FechaPhptoMysql($modelperiodos->fin);  
                     
-                    $inicioperiodo = $modelperiodos->inicio;
-                    $finperiodo = $modelperiodos->fin;
+                    $transaction = Yii::app()->db->beginTransaction(); 
                     
-                    $inicioperiodo = $this->FechaPhptoMysql($inicioperiodo);
-                    $finperiodo = $this->FechaPhptoMysql($finperiodo);                   
-
-                    $modelperiodos->inicio = $inicioperiodo;
-                    $modelperiodos->fin = $finperiodo;
-                    
-                    $transaction = Yii::app()->db->beginTransaction();
+                    try{
                     $resultado = $modelperiodos->save(false);//Guardo el periodo sin validar, ya que lo valide con anterioridad                                       
+                    }
+                    catch (Exception $excepcion){
+                          throw new CDbException($excepcion, 500); 
+                    }
 
                     $modelproyectos->attributes=$_POST['Proyectos'];
                      unset($_POST['Proyectos']);
-                    $modelproyectos->tbl_Periodos_idPeriodo = $modelperiodos->idPeriodo;
+                    $modelproyectos->tbl_Periodos_idPeriodo = $modelperiodos->idPeriodo;  
 
                     $resultado = $resultado ? $modelproyectos->save() : $resultado;
                     if ($resultado)
                     {
                         try{
-                        $transaction->commit();    
+                            $transaction->commit(); 
+                            $this->redirect(array('view','id'=>$modelproyectos->idtbl_Proyectos));
                         }
-                        catch (Exception $error)
-                        {
-                            throw new CDbException(500, $error, 500); 
+                        catch (Exception $excepcion){
+                          throw new CDbException($excepcion, 500); 
                         }
-                        $this->redirect(array('view','id'=>$modelproyectos->idtbl_Proyectos));
                     }
                     else
                     {
                         try{
-                        $transaction->rollBack();                        
+                            $transaction->rollBack();   
+                            throw new CDbException('Error', 500); 
                         }
                         catch (Exception $excepcion)
                         {
-                            throw new CDbException(500, $error, 500); 
+                            throw new CDbException($excepcion, 500); 
                         }
                     }
                 }            
@@ -144,10 +150,11 @@ class ProyectosController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
-		$model=$this->loadModel($id);
+		$modelproyectos =$this->loadModel($id);
+                $modelperiodos = $proyecto->periodos;
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation(array($modelproyectos,$modelperiodos));
 
 		if(isset($_POST['Proyectos']))
 		{
@@ -157,7 +164,8 @@ class ProyectosController extends Controller
 		}
 
 		$this->render('update',array(
-			'model'=>$model,
+			'modelproyectos'=> $modelproyectos,
+                        'modelperiodos' => $modelperiodos,
 		));
 	}
 

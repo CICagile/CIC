@@ -3,16 +3,16 @@
 /* @var $dataProvider CActiveDataProvider */
 
 $this->breadcrumbs=array(
-	'Proyectoses',
+	'Proyectos',
 );
 
 $this->menu=array(
-	array('label'=>'Create Proyectos', 'url'=>array('create')),
-	array('label'=>'Manage Proyectos', 'url'=>array('admin')),
+	array('label'=>'Nuevo Proyecto', 'url'=>array('create')),
+	//array('label'=>'Manage Proyectos', 'url'=>array('admin')),
 );
 ?>
 
-<h1>Proyectoses</h1>
+<h1>Lista de Proyectos</h1>
 
 <?php $this->widget('zii.widgets.CListView', array(
 	'dataProvider'=>$dataProvider,

@@ -40,10 +40,9 @@ class SiteController extends Controller
 		if($error=Yii::app()->errorHandler->error)
 		{
 			if(Yii::app()->request->isAjaxRequest)
-				echo $error['message'];
-			else
-                        {
-                                $error['message'] = 'Lo sentimos, ha ocurrido un error. Por favor vuelva a intentarlo.';
+				echo $error['message'];			
+                        else
+                        {                               
 				$this->render('error', $error);
                         }
 		}

@@ -58,11 +58,8 @@ class Periodos extends CActiveRecord
         {
             if(strtotime($this->fin) < strtotime($this->inicio)) {
                 $this->addError($attribute,'La fecha de finalización del proyecto no puede ser menor que la fecha de inicio.');
-            }
-
-            
+            }            
         }
-
 
         	/**
 	 * @return array relational rules.
@@ -75,7 +72,7 @@ class Periodos extends CActiveRecord
 			'historialeshorasasistentes' => array(self::HAS_MANY, 'Historialeshorasasistente', 'tbl_Periodos_idPeriodo'),
 			'historialperiodosasistentesxproyectos' => array(self::HAS_MANY, 'Historialperiodosasistentesxproyecto', 'tbl_Periodos_idPeriodo'),
 			'historialroles' => array(self::HAS_MANY, 'Historialroles', 'tbl_Periodos_idPeriodo'),
-			'proyectoses' => array(self::HAS_MANY, 'Proyectos', 'tbl_Periodos_idPeriodo'),
+			'proyectos' => array(self::HAS_MANY, 'Proyectos', 'tbl_Periodos_idPeriodo'),
 		);
 	}
 
