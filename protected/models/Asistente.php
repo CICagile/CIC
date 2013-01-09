@@ -120,6 +120,30 @@ class Asistente  extends CModel{
             'correo'
         );
     }
+    
+    public function __get($name)
+    {
+        if (property_exists($this, $name))
+        {
+            return $this->$name;
+        }
+        else
+        {
+            return parent::__get($name);
+        }
+    }
+    
+    public function __set($name, $value)
+    {
+        if (property_exists($this, $name))
+        {
+            $this->$name = $value;
+        }
+        else
+        {
+            paretn::__set($name, $value);
+        }
+    }
 }
 
 ?>
