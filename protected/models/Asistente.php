@@ -106,23 +106,20 @@ class Asistente  extends CModel{
      * Retorna un array con los nombres de los atributos
      */
     public function attributeNames()
-	{
-		$className=get_class($this);
-		if(!isset(self::$_names[$className]))
-		{
-			$class=new ReflectionClass(get_class($this));
-			$names=array();
-			foreach($class->getProperties() as $property)
-			{
-				$name=$property->getName();
-				if($property->isPublic() && !$property->isStatic())
-					$names[]=$name;
-			}
-			return self::$_names[$className]=$names;
-		}
-		else
-			return self::$_names[$className];
-	}
+    {
+        return array(
+            'nombre',
+            'apellido1',
+            'apellido2',
+            'cedula',
+            'numerocuenta',
+            'banco',
+            'cuentacliente',
+            'codigo',
+            'telefono',
+            'correo'
+        );
+    }
 }
 
 ?>
