@@ -74,7 +74,18 @@
         
         <div class="row">
 		<?php echo $form->labelEx($model,'codigo'); ?>
-		<?php echo $form->textField($model,'codigo',array('size'=>20,'maxlength'=>20)); ?>
+                <?php $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
+                        'attribute'=>'codigo',
+                        'model'=>$model,
+                        'sourceUrl'=>array('asistentecontroller/aclist'),
+                        'name'=>'codigo_autocomplete',
+                        'options'=>array(
+                            'minLength'=>3
+                        ),
+                        'htmlOptions'=>array(
+                            'size'=>20, 'maxlength'=>20
+                        )
+                        )); ?>
 		<?php echo $form->error($model,'codigo'); ?>
 	</div>
         

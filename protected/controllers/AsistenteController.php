@@ -44,6 +44,17 @@ class AsistenteController extends Controller
 			),
 		);
 	}
+        
+        public function actions()
+        {
+            return array(
+                'aclist'=>array(
+                'class'=>'application.extensions.EAutoCmpleteAction',
+                'model'=>'Proyectos',
+                'attribute'=>'codigo'
+                )
+            );  
+        }
 
 	/**
 	 * Displays a particular model.
