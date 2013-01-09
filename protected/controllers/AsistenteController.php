@@ -70,8 +70,12 @@ class AsistenteController extends Controller
 		if(isset($_POST['Asistente']))
 		{
 			$model->attributes=$_POST['Asistente'];
-			if($model->validate() && $model->crear())
+			if($model->validate()){
+                            if($model->crear())
 				$this->redirect(Yii::app()->homeUrl);
+                            else
+                                $this->redirect ('error');
+                        }
 		}
 
 		$this->render('create',array(

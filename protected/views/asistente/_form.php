@@ -14,7 +14,7 @@
 
 	<p class="note">Los campos marcados con <span class="required">*</span> son obligatorios.</p>
 
-	<?php echo $form->errorSummary($model,'Se han detectado los siguiente errores:'); ?>
+	<?php echo $form->errorSummary($model,'Se han detectado los siguientes errores:'); ?>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'nombre'); ?>
@@ -49,8 +49,8 @@
 	<div class="row">
 		<?php echo $form->labelEx($model,'banco'); ?>
 		<?php echo $form->dropDownList($model, 'banco',
-                                CHtml::listData(Banco::model()->findAll(), 'nombre', 'nombre')); ?>
-		<?php echo $form->error($model,'banco'); ?>
+                                CHtml::listData(Banco::model()->findAll(), 'nombre', 'nombre'), array('empty'=>'Elija un banco')); ?>
+		<?php echo $form->error($model,'banco', $htmlOptions=array(), $enableAjaxValidation=false); ?>
 	</div>
 
 	<div class="row">
@@ -68,8 +68,8 @@
         <div class="row">
 		<?php echo $form->labelEx($model,'carrera'); ?>
 		<?php echo $form->dropDownList($model, 'carrera',
-                        CHtml::listData(Carrera::model()->findAll(), 'nombre', 'nombre')); ?>
-		<?php echo $form->error($model,'carrera'); ?>
+                        CHtml::listData(Carrera::model()->findAll(), 'nombre', 'nombre'), array('empty'=>'Elija una carrera')); ?>
+		<?php echo $form->error($model,'banco', $htmlOptions=array(), $enableAjaxValidation=false); ?>
 	</div>
         
         <div class="row">
@@ -81,8 +81,8 @@
         <div class="row">
 		<?php echo $form->labelEx($model,'rol'); ?>
 		<?php echo $form->dropDownList($model, 'rol',
- CHtml::listData(RolAsistente::model()->findAll(), 'nombre', 'nombre')) ?>
-		<?php echo $form->error($model,'rol'); ?>
+                        CHtml::listData(RolAsistente::model()->findAll(), 'nombre', 'nombre'), array('empty'=>'Elija un rol')) ?>
+		<?php echo $form->error($model,'banco', $htmlOptions=array(), $enableAjaxValidation=false); ?>
 	</div>
         
         <div class="row">
