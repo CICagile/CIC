@@ -63,9 +63,7 @@ class ProyectosController extends Controller
                 $nuevafecha=mktime(0, 0, 0, $m, $d, $y);
                 $fechamysql=strftime('%Y-%m-%d',$nuevafecha);
             }
-            catch (Exception $excepcion)
-            {               
-                throw new CHttpException(500,$excepcion,500);
+            catch (Exception $e){ //El catch no ejecuta ninguna funcion porque las excepciones son manejas por el CErrorHandler de Yii.                
             }                
                 return $fechamysql;
         }
@@ -74,12 +72,6 @@ class ProyectosController extends Controller
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-        public function CrearActualizarGenerico($proyecto, $modelo)
-        {
-            
-        }
-        
-            
 	public function actionCreate()
 	{
             $modelproyectos= new Proyectos;
@@ -93,44 +85,30 @@ class ProyectosController extends Controller
                  unset($_POST['Periodos']);
                  
                 if ($modelperiodos->validate()) {
-                          
+                    
                     $modelperiodos->inicio = $this->FechaPhptoMysql($modelperiodos->inicio);
                     $modelperiodos->fin = $this->FechaPhptoMysql($modelperiodos->fin);  
                     
-                    $transaction = Yii::app()->db->beginTransaction(); 
+                    $transaction = Yii::app()->db->beginTransaction();                     
                     
-                    try{
-                    $resultado = $modelperiodos->save(false);//Guardo el periodo sin validar, ya que lo valide con anterioridad                                       
-                    }
-                    catch (Exception $excepcion){
-                          throw new CDbException($excepcion, 500); 
-                    }
+                    $resultado = $modelperiodos->save(false);//Guardo el periodo sin validar, ya que lo valide con anterioridad                                                           
 
                     $modelproyectos->attributes=$_POST['Proyectos'];
                      unset($_POST['Proyectos']);
                     $modelproyectos->tbl_Periodos_idPeriodo = $modelperiodos->idPeriodo;  
 
                     $resultado = $resultado ? $modelproyectos->save() : $resultado;
-                    if ($resultado)
-                    {
-                        try{
-                            $transaction->commit(); 
-                            $this->redirect(array('view','id'=>$modelproyectos->idtbl_Proyectos));
-                        }
-                        catch (Exception $excepcion){
-                          throw new CDbException($excepcion, 500); 
-                        }
+                    if ($resultado){
+                        $transaction->commit(); 
+                        Yii::log("Creación exitosa del proyecto con el código: ".$modelproyectos->codigo, "info", "application.
+controllers.ProyectosController");
+                        $this->redirect(array('view','id'=>$modelproyectos->idtbl_Proyectos));
                     }
-                    else
-                    {
-                        try{
-                            $transaction->rollBack();   
-                            throw new CDbException('Error', 500); 
-                        }
-                        catch (Exception $excepcion)
-                        {
-                            throw new CDbException($excepcion, 500); 
-                        }
+                    else{                            
+                            $transaction->rollBack(); 
+                            Yii::log("Rollback al intentar crear el proyecto con el código: ".$modelproyectos->codigo, "warning", "application.
+controllers.ProyectosController");
+                            throw new CHttpException(500,'Ha ocurrido un error interno, vuelva a intentarlo.'); 
                     }
                 }            
             }
@@ -218,7 +196,7 @@ class ProyectosController extends Controller
 	{
 		$model=Proyectos::model()->findByPk($id);
 		if($model===null)
-			throw new CHttpException(404,'The requested page does not exist.');
+			throw new CHttpException(404,'La página solicitado no se ha encontrado.');                       
 		return $model;
 	}
 

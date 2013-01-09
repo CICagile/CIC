@@ -8,10 +8,9 @@ $this->breadcrumbs=array(
 );
 ?>
 
-<h2>Ha ocurrido un error de tipo: <?php echo $code; ?></h2>
+<h2>Error: <?php echo $code; ?></h2>
 
 <div class="error">
-<?php /*echo CHtml::encode($message); */
-echo 'Lo sentimos, ha ocurrido un inconveniente con su petición, por favor vuelva a intentarlo.'
+<?php echo CHtml::encode($message);
 ?>
 </div>

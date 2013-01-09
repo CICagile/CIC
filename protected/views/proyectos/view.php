@@ -43,9 +43,7 @@ $this->menu=array(
                 list($y, $m, $d) = explode('-', $fecha);               
                 $fecha = $d.'-'.$m.'-'.$y;                 
             }
-            catch (Exception $excepcion)
-            {               
-                throw new CHttpException(500,$excepcion,500);
+            catch (Exception $e){  
             }    
             return $fecha;
         }
