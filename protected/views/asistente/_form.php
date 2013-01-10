@@ -69,7 +69,7 @@
 		<?php echo $form->labelEx($model,'carrera'); ?>
 		<?php echo $form->dropDownList($model, 'carrera',
                         CHtml::listData(Carrera::model()->findAll(), 'nombre', 'nombre'), array('empty'=>'Elija una carrera')); ?>
-		<?php echo $form->error($model,'banco', NULL, $enableAjaxValidation=false); ?>
+		<?php echo $form->error($model,'carrera', NULL, $enableAjaxValidation=false); ?>
 	</div>
         
         <div class="row">
@@ -93,7 +93,7 @@
 		<?php echo $form->labelEx($model,'rol'); ?>
 		<?php echo $form->dropDownList($model, 'rol',
                         CHtml::listData(RolAsistente::model()->findAll(), 'nombre', 'nombre'), array('empty'=>'Elija un rol')) ?>
-		<?php echo $form->error($model,'banco', NULL, $enableAjaxValidation=false); ?>
+		<?php echo $form->error($model,'rol', NULL, $enableAjaxValidation=false); ?>
 	</div>
         
         <div class="row">
