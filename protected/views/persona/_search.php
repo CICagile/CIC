@@ -42,13 +42,13 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'banco'); ?>
-		<?php echo $form->textField($model,'banco',array('size'=>50,'maxlength'=>50)); ?>
+		<?php echo $form->label($model,'cuentacliente'); ?>
+		<?php echo $form->textField($model,'cuentacliente',array('size'=>17,'maxlength'=>17)); ?>
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'cuentacliente'); ?>
-		<?php echo $form->textField($model,'cuentacliente',array('size'=>17,'maxlength'=>17)); ?>
+		<?php echo $form->label($model,'idtbl_Bancos'); ?>
+		<?php echo $form->textField($model,'idtbl_Bancos'); ?>
 	</div>
 
 	<div class="row buttons">

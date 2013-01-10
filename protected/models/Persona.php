@@ -10,12 +10,8 @@
  * @property string $apellido2
  * @property string $cedula
  * @property string $numerocuenta
- * @property string $banco
  * @property string $cuentacliente
- *
- * The followings are the available model relations:
- * @property Proyectos[] $tblProyectoses
- * @property Contactos[] $contactoses
+ * @property integer $idtbl_Bancos
  */
 class Persona extends CActiveRecord
 {
@@ -45,14 +41,14 @@ class Persona extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('nombre, apellido1, cedula, numerocuenta, banco, cuentacliente', 'required'),
+			array('nombre, apellido1, cedula, numerocuenta, cuentacliente, idtbl_Bancos', 'required'),
+			array('idtbl_Bancos', 'numerical', 'integerOnly'=>true),
 			array('nombre, apellido1, apellido2, cedula', 'length', 'max'=>20),
 			array('numerocuenta', 'length', 'max'=>30),
-			array('banco', 'length', 'max'=>50),
 			array('cuentacliente', 'length', 'max'=>17),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('idtbl_Personas, nombre, apellido1, apellido2, cedula, numerocuenta, banco, cuentacliente', 'safe', 'on'=>'search'),
+			array('idtbl_Personas, nombre, apellido1, apellido2, cedula, numerocuenta, cuentacliente, idtbl_Bancos', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -64,8 +60,6 @@ class Persona extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'tblProyectoses' => array(self::MANY_MANY, 'Proyectos', 'tbl_profesoresproyectos(tbl_Personas_idtbl_Personas, tbl_Proyectos_idtbl_Proyectos)'),
-			'contactoses' => array(self::HAS_MANY, 'Contactos', 'tbl_Personas_idtbl_Personas'),
 		);
 	}
 
@@ -81,8 +75,8 @@ class Persona extends CActiveRecord
 			'apellido2' => 'Apellido2',
 			'cedula' => 'Cedula',
 			'numerocuenta' => 'Numerocuenta',
-			'banco' => 'Banco',
 			'cuentacliente' => 'Cuentacliente',
+			'idtbl_Bancos' => 'Idtbl Bancos',
 		);
 	}
 
@@ -103,8 +97,8 @@ class Persona extends CActiveRecord
 		$criteria->compare('apellido2',$this->apellido2,true);
 		$criteria->compare('cedula',$this->cedula,true);
 		$criteria->compare('numerocuenta',$this->numerocuenta,true);
-		$criteria->compare('banco',$this->banco,true);
 		$criteria->compare('cuentacliente',$this->cuentacliente,true);
+		$criteria->compare('idtbl_Bancos',$this->idtbl_Bancos);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

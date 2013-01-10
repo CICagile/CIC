@@ -29,13 +29,13 @@
 	<?php echo CHtml::encode($data->numerocuenta); ?>
 	<br />
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('banco')); ?>:</b>
-	<?php echo CHtml::encode($data->banco); ?>
+	<b><?php echo CHtml::encode($data->getAttributeLabel('cuentacliente')); ?>:</b>
+	<?php echo CHtml::encode($data->cuentacliente); ?>
 	<br />
 
 	<?php /*
-	<b><?php echo CHtml::encode($data->getAttributeLabel('cuentacliente')); ?>:</b>
-	<?php echo CHtml::encode($data->cuentacliente); ?>
+	<b><?php echo CHtml::encode($data->getAttributeLabel('idtbl_Bancos')); ?>:</b>
+	<?php echo CHtml::encode($data->idtbl_Bancos); ?>
 	<br />
 
 	*/ ?>
