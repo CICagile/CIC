@@ -32,7 +32,7 @@ class ProyectosController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update'),
+				'actions'=>array('create','update', 'agregarasistente', 'AsistenteAutoComplete'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -199,6 +199,75 @@ controllers.ProyectosController");
 			throw new CHttpException(404,'La página solicitado no se ha encontrado.');                       
 		return $model;
 	}
+        
+        public function actionagregarasistente($id)    
+        {
+            $id = 4;
+            $model =$this->loadModel($id);            
+            // Uncomment the following line if AJAX validation is needed
+            $this->performAjaxValidation(array($model));
+                
+            $this->render('agregarasistente', array(
+			'model'=>$model,
+		));
+        }
+        
+        public function actionAsistenteAutoComplete()
+        {            
+            if (isset($_GET['term'])) {
+                
+            $keyword=$_GET['term'];
+            // escape % and _ characters
+            $keyword=strtr($keyword, array('%'=>'\%', '_'=>'\_'));
+             
+            $dataReader = Yii::app()->db->createCommand()
+                ->select(array('carnet','nombre', 'apellido1', 'apellido2'))
+                ->from('tbl_personas p')
+                ->join('tbl_asistentesproyectos a', 'p.idtbl_Personas=a.tbl_Personas_idtbl_Personas')
+                ->where(array('like', 'carnet','%'.$keyword.'%'))
+                ->query(); 
+            
+             $return_array = array();
+             if($dataReader->count() == 0)
+             {
+                 $return_array[] = array(
+                        'label'=>'No se ha encontrado ese carnet.',
+                        'value'=>'',                       
+                    );
+             }
+             else{              
+                foreach($dataReader as $row){             
+                        $return_array[] = array(
+                            'label'=>$row['nombre']." ".$row['apellido1']." ".$row['apellido2'],
+                            'value'=>$row['carnet'],                            
+                        );
+                    }
+             }
+                echo CJSON::encode($return_array);
+            }
+//            if (isset($_GET['term'])) {
+//                $criteria = new CDbCriteria;
+//                $criteria->alias = "proyecto";
+//                $criteria->condition = "proyecto.codigo like '" . $_GET['term'] . "%'";
+//                
+//                $dataProvider = new CActiveDataProvider(get_class(Proyectos::model()), array(
+//                    'criteria'=>$criteria,
+//                ));
+//                $proyectos = $dataProvider->getData();
+//                $return_array = array();
+//                foreach($proyectos as $proyecto) {
+//                    $return_array[] = array(
+//                        'label'=>$proyecto->nombre,
+//                        'value'=>$proyecto->codigo,
+//                        'id'=>$proyecto->idtbl_Proyectos,
+//                    );
+//                }
+//                echo CJSON::encode($return_array);
+//            }
+        }
+        
+        
+
 
 	/**
 	 * Performs the AJAX validation.

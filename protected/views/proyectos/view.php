@@ -10,7 +10,8 @@ $this->breadcrumbs=array(
 $this->menu=array(
 	array('label'=>'Ver Proyectos', 'url'=>array('index')),
 	array('label'=>'Nuevo Proyecto', 'url'=>array('create')),
-	array('label'=>'Editar Proyecto', 'url'=>array('update', 'id'=>$model->idtbl_Proyectos)),
+        array('label'=>'Editar Proyecto', 'url'=>array('update', 'id'=>$model->idtbl_Proyectos)),
+	array('label'=>'Agregar asistente', 'url'=>array('agregarasistente', 'id'=>$model->idtbl_Proyectos)),
 	/*array('label'=>'Delete Proyectos', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->idtbl_Proyectos),'confirm'=>'Are you sure you want to delete this item?')),
 	array('label'=>'Manage Proyectos', 'url'=>array('admin')),*/
 );
