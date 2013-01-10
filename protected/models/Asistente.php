@@ -144,6 +144,24 @@ class Asistente  extends CModel{
             parent::__set($name, $value);
         }
     }
+    
+    /**
+     * Verifica que el código digitado se encuentre en la base de datos.
+     * De esta forma se previene que elija un proyecto de la lista y luego
+     * digite un número más, ingresando de esta forma un código incorrecto. 
+     */
+    public function validarCodigoProyecto() {
+        if ($this->validate(array('codigo'))) {
+            $criteria = new CDbCriteria;
+            $criteria->alias = "proyecto";
+            $criteria->condition = "proyecto.codigo = " . $this->codigo;
+            if (!$this->validate(array('codigo')) || !Proyectos::model()->exists($criteria)) {
+                $this->addError('codigo', $this->getAttributeLabel('codigo') . ' no fue encontrado en la base de datos.');
+            }
+        }//fin si el codigo es valido
+        else
+            $this->clearErrors ();  //Se quitan los errores para que no se muestren dos veces
+    }//fin validarCodigoProyecto
 }
 
 ?>

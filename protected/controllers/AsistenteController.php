@@ -47,13 +47,6 @@ class AsistenteController extends Controller
         
         public function actionCodigoAutoComplete()
         {
-            /*return array(
-                'aclist'=>array(
-                'class'=>'application.extensions.EAutoCmpleteAction',
-                'model'=>'Proyectos',
-                'attribute'=>'codigo'
-                )
-            );*/
             if (isset($_GET['term'])) {
                 $criteria = new CDbCriteria;
                 $criteria->alias = "proyecto";
@@ -100,7 +93,8 @@ class AsistenteController extends Controller
 		if(isset($_POST['Asistente']))
 		{
 			$model->attributes=$_POST['Asistente'];
-			if($model->validate()){
+                        $model->validarCodigoProyecto();
+			if($model->validate(NULL, false)){  //se agrega el false para que no borre el error de validar codigo proyecto si este es generado.
                             if($model->crear())
 				$this->redirect(Yii::app()->homeUrl);
                             else
