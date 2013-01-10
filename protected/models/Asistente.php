@@ -141,7 +141,7 @@ class Asistente  extends CModel{
         }
         else
         {
-            paretn::__set($name, $value);
+            parent::__set($name, $value);
         }
     }
 }
