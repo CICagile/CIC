@@ -112,8 +112,17 @@ class AsistenteController extends Controller
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * @param integer $id the ID of the model to be updated
 	 */
-	public function actionUpdate($id)
+	public function actionUpdate($id = NULL)
 	{
+            if ($id === NULL) {
+                /* Cuando busca un asistente, en la página en la que ve los detalles del asistente,
+                 * le debería salir las opciones de modificar que son modificar datos personales,
+                 * agregar asistente a un nuevo proyecto y modificar datos del asistente
+                 */
+                echo '<p>hola</p>';
+                echo 'linea 2';
+            }
+            else {
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
@@ -122,14 +131,16 @@ class AsistenteController extends Controller
 		if(isset($_POST['Asistente']))
 		{
 			$model->attributes=$_POST['Asistente'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->idtbl_Personas));
+			/*if($model->save())
+				$this->redirect(array('view','id'=>$model->idtbl_Personas));*/
 		}
 
 		$this->render('update',array(
 			'model'=>$model,
 		));
+            }
 	}
+        
 
 	/**
 	 * Deletes a particular model.
@@ -178,7 +189,7 @@ class AsistenteController extends Controller
 	 */
 	public function loadModel($id)
 	{
-		$model=Asistente::model()->findByPk($id);
+		$model=Persona::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;

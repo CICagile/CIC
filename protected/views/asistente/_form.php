@@ -114,7 +114,7 @@
 	</div>
 
 	<div class="row buttons">
-		<?php echo CHtml::submitButton('Create'); ?>
+		<?php echo CHtml::submitButton('Guardar'); ?>
 	</div>
 
 <?php $this->endWidget(); ?>
