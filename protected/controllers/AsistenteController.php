@@ -32,7 +32,7 @@ class AsistenteController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update'),
+				'actions'=>array('create','update','codigoautocomplete'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -45,15 +45,34 @@ class AsistenteController extends Controller
 		);
 	}
         
-        public function actions()
+        public function actionCodigoAutoComplete()
         {
-            return array(
+            /*return array(
                 'aclist'=>array(
                 'class'=>'application.extensions.EAutoCmpleteAction',
                 'model'=>'Proyectos',
                 'attribute'=>'codigo'
                 )
-            );  
+            );*/
+            if (isset($_GET['term'])) {
+                $criteria = new CDbCriteria;
+                $criteria->alias = "proyecto";
+                $criteria->condition = "proyecto.codigo like '" . $_GET['term'] . "%'";
+                
+                $dataProvider = new CActiveDataProvider(get_class(Proyectos::model()), array(
+                    'criteria'=>$criteria,
+                ));
+                $proyectos = $dataProvider->getData();
+                $return_array = array();
+                foreach($proyectos as $proyecto) {
+                    $return_array[] = array(
+                        'label'=>$proyecto->nombre,
+                        'value'=>$proyecto->codigo,
+                        'id'=>$proyecto->idtbl_Proyectos,
+                    );
+                }
+                echo CJSON::encode($return_array);
+            }
         }
 
 	/**

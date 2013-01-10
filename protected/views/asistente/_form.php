@@ -77,10 +77,9 @@
                 <?php $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
                         'attribute'=>'codigo',
                         'model'=>$model,
-                        'sourceUrl'=>array('asistentecontroller/aclist'),
-                        'name'=>'codigo_autocomplete',
+                        'source'=>$this->createUrl('asistente/codigoautocomplete'),
                         'options'=>array(
-                            'minLength'=>3
+                            'showAnim'=>'fold',
                         ),
                         'htmlOptions'=>array(
                             'size'=>20, 'maxlength'=>20
