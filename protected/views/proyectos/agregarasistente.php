@@ -20,7 +20,7 @@
         
         <div class="row">
         <label for="codigo">Proyecto</label>  
-        <?php echo $form->textArea($model,'nombre',array('value' => $model->codigo,  'readonly' => 'readonly', 'rows'=>'4' ,'cols'=> '50')); ?>                 
+        <?php echo $form->textArea($model,'nombre',array('readonly' => 'readonly', 'rows'=>'4' ,'cols'=> '50')); ?>                 
 	</div>
                
         <div class="row">
@@ -43,15 +43,15 @@
         
          <div class="row">
 		<label for="rol">Rol del asistente<span class="required">*</span></label>
-		<?php echo $form->dropDownList(RolAsistente::model(), 'nombre',
-                        CHtml::listData(RolAsistente::model()->findAll(), 'nombre', 'nombre'), array('empty'=>'Elija un rol', 'id'=>'rol')) ?>
+		<?php echo $form->dropDownList(RolAsistente::model(), 'idtbl_RolesAsistentes',
+                        CHtml::listData(RolAsistente::model()->findAll(), 'idtbl_RolesAsistentes', 'nombre'), array('empty'=>'Elija un rol', 'id'=>'rol')) ?>
 		 <div class="errorMessage" id="rol_error" style="display:none"></div>	
 	</div>
         
         <div class="row">
-		<label for="inicio">Fecha inicio<span class="required">*</span></label>
+		<label for="inicio">Fecha inicio en el proyecto<span class="required">*</span></label>
 		<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-                        'name' => 'ininio',
+                        'name' => 'inicio',
                         'id' => 'inicio',
                         'value' => '',
                         'language' => 'es',
@@ -67,29 +67,9 @@
                     ));?>
                  <div class="errorMessage" id="inicio_error" style="display:none"></div>
 	</div>
-        
-        <div class="row">
-		<label for="inicio">Fecha fin<span class="required">*</span></label>
-		<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-                        'name' => 'fin',
-                        'id' => 'fin',
-                        'value' => '',
-                        'language' => 'es',
-                        'options' => array(                            
-                            'showAnim'=>'fold',
-                            'dateFormat'=>'dd-mm-yy',
-                            'changeYear'=>true,
-                            'changeMonth'=>true,
-                        ),
-                        'htmlOptions'=>array(                            
-                            'readonly' => 'readonly'
-                        ),
-                    ));?>
-                 <div class="errorMessage" id="fin_error" style="display:none"></div>
-	</div>
 	        
         <div class="row">
-            <label for="horas">Cantidad de horas<span class="required">*</span></label>
+            <label for="horas">Cantidad de horas semanales<span class="required">*</span></label>
             <input type="text" name="horas" id="horas">
             <div class="errorMessage" id="horas_error" style="display:none"></div>
 	</div>

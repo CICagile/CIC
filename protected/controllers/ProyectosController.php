@@ -201,12 +201,35 @@ controllers.ProyectosController");
 	}
         
         public function actionagregarasistente($id)    
-        {
-            $id = 4;
+        {            
             $model =$this->loadModel($id);            
             // Uncomment the following line if AJAX validation is needed
-            $this->performAjaxValidation(array($model));
+            //$this->performAjaxValidation(array($model));
+            
+            if(isset($_POST['Proyectos']))
+            {
+                $carnet = $_POST['asistente'];
+                $idrol = $_POST['RolAsistente']['idtbl_RolesAsistentes'];
+                $fechainicio = $this->FechaPhptoMysql($_POST['inicio']);                
+                $horas = $_POST['horas'];                
                 
+                if($model->agregarAsistenteProyecto($model->idtbl_Proyectos, $carnet, $idrol, $fechainicio, $horas))
+                {                
+                    Yii::log("Asociacion exitosa del asistente: " .$carnet. " al proyecto: ".$model->idtbl_Proyectos, "info", "application.
+    controllers.ProyectosController");
+                    $this->render('view',array(
+			'model'=>$this->loadModel($model->idtbl_Proyectos),
+                    ));
+                }
+                else
+                {   
+                    Yii::log("Error al asociar asistente: " .$carnet. " al proyecto: ".$model->idtbl_Proyectos, "warning", "application.
+    controllers.ProyectosController");
+                    $error = array('code' => '500', 'message' => 'No se puedo procesar su petición.');
+                    $this->render('error', $error);
+                }
+            }
+            
             $this->render('agregarasistente', array(
 			'model'=>$model,
 		));
@@ -224,7 +247,7 @@ controllers.ProyectosController");
                 ->select(array('carnet','nombre', 'apellido1', 'apellido2'))
                 ->from('tbl_personas p')
                 ->join('tbl_asistentesproyectos a', 'p.idtbl_Personas=a.tbl_Personas_idtbl_Personas')
-                ->where(array('like', 'carnet','%'.$keyword.'%'))
+                ->where(array('like', 'carnet','%'.$keyword.'%'))                
                 ->query(); 
             
              $return_array = array();
@@ -245,30 +268,7 @@ controllers.ProyectosController");
              }
                 echo CJSON::encode($return_array);
             }
-//            if (isset($_GET['term'])) {
-//                $criteria = new CDbCriteria;
-//                $criteria->alias = "proyecto";
-//                $criteria->condition = "proyecto.codigo like '" . $_GET['term'] . "%'";
-//                
-//                $dataProvider = new CActiveDataProvider(get_class(Proyectos::model()), array(
-//                    'criteria'=>$criteria,
-//                ));
-//                $proyectos = $dataProvider->getData();
-//                $return_array = array();
-//                foreach($proyectos as $proyecto) {
-//                    $return_array[] = array(
-//                        'label'=>$proyecto->nombre,
-//                        'value'=>$proyecto->codigo,
-//                        'id'=>$proyecto->idtbl_Proyectos,
-//                    );
-//                }
-//                echo CJSON::encode($return_array);
-//            }
-        }
-        
-        
-
-
+        } 
 	/**
 	 * Performs the AJAX validation.
 	 * @param CModel the model to be validated
