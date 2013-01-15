@@ -32,7 +32,8 @@ class Asistente  extends CModel{
             // NOTE: you should only define rules for those attributes that
             // will receive user inputs.
             return array(
-                array('nombre, apellido1, cedula, numerocuenta, banco, cuentacliente, carnet, carrera, telefono, correo, codigo, rol, horas', 'required', 'message'=>'{attribute} no puede dejarse en blanco.'),
+                array('nombre, apellido1, cedula, numerocuenta, banco, cuentacliente, carnet, carrera, telefono, correo, codigo, rol, horas', 'required', 'message'=>'{attribute} no puede dejarse en blanco.', 'on'=>'nuevo'),
+                array('nombre, apellido1, cedula, numerocuenta, banco, cuentacliente, carnet, carrera, telefono, correo', 'required', 'message'=>'{attribute} no puede dejarse en blanco.', 'on'=>'actDP'),
                 array('nombre, apellido1, apellido2, cedula, codigo', 'length', 'max'=>20),
                 array('carnet','length', 'max'=>15),
                 array('carrera, rol','length', 'max'=>45),
@@ -162,6 +163,38 @@ class Asistente  extends CModel{
         else
             $this->clearErrors ();  //Se quitan los errores para que no se muestren dos veces
     }//fin validarCodigoProyecto
+    
+    /**
+     *Esta funcion llama al SP buscarDatosPersonalesAsistentePorPK y hace una busqueda de todos
+     * los datos personales de un asistente a partir del PK de un registro en la tabla tbl_Personas
+     * en la base de datos.
+     * @param int $pPK El PK de un registro de la tabla personas.
+     * @return Asistente El modelo encontrado. NULL si no encontro algun registro con ese pk.
+     */
+    public function buscarAsistentePorPK($pPK) {
+        $conexion = Yii::app()->db;
+        $call = 'CALL buscarDatosPersonalesAsistentePorPK(:pk)';
+            $transaccion = Yii::app()->db->beginTransaction();
+            $resultado = NULL;
+            try {
+                $comando = $conexion->createCommand($call);
+                $comando->bindParam(':pk', $pPK, PDO::PARAM_INT);
+                $resultado = $comando->query();
+                $transaccion->commit();
+            } catch (Exception $e) {
+                $transaccion->rollback();
+                echo $e->getMessage();
+                return NULL;
+            }
+            if ($resultado != NULL) {
+                /*$arr = $resultado->read();
+                print_r($arr);*/
+                return $resultado->read(); 
+            }
+            else
+                return NULL;
+            
+    }//fin buscar asistente por pk
 }
 
 ?>

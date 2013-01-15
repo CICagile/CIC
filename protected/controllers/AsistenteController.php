@@ -32,7 +32,7 @@ class AsistenteController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','codigoautocomplete'),
+				'actions'=>array('create','updateDP','codigoautocomplete'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -86,6 +86,7 @@ class AsistenteController extends Controller
 	public function actionCreate()
 	{
 		$model=new Asistente;
+                $model->scenario = 'nuevo';
 
 		// Uncomment the following line if AJAX validation is needed
                 $this->performAjaxValidation($model);
@@ -108,34 +109,33 @@ class AsistenteController extends Controller
 	}
 
 	/**
-	 * Updates a particular model.
-	 * If update is successful, the browser will be redirected to the 'view' page.
-	 * @param integer $id the ID of the model to be updated
-	 */
-	public function actionUpdate($id = NULL)
+         * Actualiza los Datos Personales de un asistente.
+         * @param type $id PK del asistente en la tabla personas de la DB.
+         */
+	public function actionUpdateDP($id = NULL)
 	{
             if ($id === NULL) {
                 /* Cuando busca un asistente, en la página en la que ve los detalles del asistente,
                  * le debería salir las opciones de modificar que son modificar datos personales,
                  * agregar asistente a un nuevo proyecto y modificar datos del asistente
                  */
-                echo '<p>hola</p>';
-                echo 'linea 2';
+                echo '<h1>Lista de asistentes</h1>';
             }
             else {
 		$model=$this->loadModel($id);
+                $model->scenario = 'actDP';
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Asistente']))
 		{
 			$model->attributes=$_POST['Asistente'];
-			/*if($model->save())
-				$this->redirect(array('view','id'=>$model->idtbl_Personas));*/
+			if($model->validate()){}
+				//$this->redirect(array('view','id'=>$model->idtbl_Personas));
 		}
 
-		$this->render('update',array(
+		$this->render('updateDP',array(
 			'model'=>$model,
 		));
             }
@@ -189,9 +189,12 @@ class AsistenteController extends Controller
 	 */
 	public function loadModel($id)
 	{
-		$model=Persona::model()->findByPk($id);
-		if($model===null)
+		//$model=Persona::model()->findByPk($id);
+                $model = new Asistente;
+                $atributos = $model->buscarAsistentePorPK($id);
+		if($atributos===null)
 			throw new CHttpException(404,'The requested page does not exist.');
+                $model->attributes = $atributos;
 		return $model;
 	}
 

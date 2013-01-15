@@ -45,8 +45,8 @@
 		<?php echo $form->textField($model,'numerocuenta',array('size'=>30,'maxlength'=>30)); ?>
 		<?php echo $form->error($model,'numerocuenta'); ?>
 	</div>
-
-	<div class="row">
+        
+        <div class="row">
 		<?php echo $form->labelEx($model,'banco'); ?>
 		<?php echo $form->dropDownList($model, 'banco',
                                 CHtml::listData(Banco::model()->findAll(), 'nombre', 'nombre'), array('empty'=>'Elija un banco')); ?>
@@ -72,36 +72,7 @@
 		<?php echo $form->error($model,'carrera', NULL, $enableAjaxValidation=false); ?>
 	</div>
         
-        <div class="row">
-		<?php echo $form->labelEx($model,'codigo'); ?>
-                <?php $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
-                        'attribute'=>'codigo',
-                        'model'=>$model,
-                        'source'=>$this->createUrl('asistente/codigoautocomplete'),
-                        'options'=>array(
-                            'showAnim'=>'fold',
-                        ),
-                        'htmlOptions'=>array(
-                            'size'=>20, 'maxlength'=>20
-                        )
-                        )); ?>
-		<?php echo $form->error($model,'codigo'); ?>
-	</div>
-        
-        <div class="row">
-		<?php echo $form->labelEx($model,'rol'); ?>
-		<?php echo $form->dropDownList($model, 'rol',
-                        CHtml::listData(RolAsistente::model()->findAll(), 'nombre', 'nombre'), array('empty'=>'Elija un rol')) ?>
-		<?php echo $form->error($model,'rol', NULL, $enableAjaxValidation=false); ?>
-	</div>
-        
-        <div class="row">
-		<?php echo $form->labelEx($model,'horas'); ?>
-		<?php echo $form->textField($model,'horas',array('size'=>5,'maxlength'=>5)); ?>
-		<?php echo $form->error($model,'horas'); ?>
-	</div>
-        
-        <div class="row">
+         <div class="row">
 		<?php echo $form->labelEx($model,'telefono'); ?>
 		<?php echo $form->textField($model,'telefono',array('size'=>25,'maxlength'=>25)); ?>
 		<?php echo $form->error($model,'telefono'); ?>
@@ -112,9 +83,9 @@
 		<?php echo $form->textField($model,'correo',array('size'=>25,'maxlength'=>25)); ?>
 		<?php echo $form->error($model,'correo'); ?>
 	</div>
-
-	<div class="row buttons">
-		<?php echo CHtml::submitButton('Crear'); ?>
+        
+        <div class="row buttons">
+		<?php echo CHtml::submitButton('Guardar'); ?>
 	</div>
 
 <?php $this->endWidget(); ?>
