@@ -85,7 +85,7 @@
 	</div>
         
         <div class="row buttons">
-		<?php echo CHtml::submitButton('Guardar'); ?>
+		<?php echo CHtml::submitButton('Guardar cambios', array('confirm'=>'¿Seguro que quiere cambiar la información del asistente?')); ?>
 	</div>
 
 <?php $this->endWidget(); ?>
