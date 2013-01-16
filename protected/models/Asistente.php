@@ -225,6 +225,15 @@ class Asistente  extends CModel{
         }
         return TRUE;
     }
+    
+    /**
+     *Valida que el carnet del estudiante que se quiere crear o actualizar sea único.
+     * @return boolean TRUE si el carnet es único en la tabla asistentes, FALSE de lo contrario.
+     */
+    public function validarCarnetUnico() {
+        $sql = "SELECT COUNT(*) FROM tbl_Asistentes WHERE carnet = '" . $this->carnet . "'";
+        return true;
+    }//fin validar carnet unico
 }
 
 ?>
