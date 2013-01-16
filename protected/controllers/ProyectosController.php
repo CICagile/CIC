@@ -32,7 +32,7 @@ class ProyectosController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update', 'agregarasistente', 'AsistenteAutoComplete'),
+				'actions'=>array('create','update', 'agregarasistente', 'AsistenteAutoComplete', 'ValidarAgregarAsistente'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -200,7 +200,7 @@ controllers.ProyectosController");
 		return $model;
 	}
         
-        public function actionagregarasistente($id)    
+        public function actionAgregarAsistente($id)    
         {            
             $model =$this->loadModel($id);            
             // Uncomment the following line if AJAX validation is needed
@@ -245,8 +245,8 @@ controllers.ProyectosController");
              
             $dataReader = Yii::app()->db->createCommand()
                 ->select(array('carnet','nombre', 'apellido1', 'apellido2'))
-                ->from('tbl_personas p')
-                ->join('tbl_asistentesproyectos a', 'p.idtbl_Personas=a.tbl_Personas_idtbl_Personas')
+                ->from('tbl_asistentes a')
+                ->join('tbl_personas p', 'a.idtbl_Personas=p.idtbl_Personas')
                 ->where(array('like', 'carnet','%'.$keyword.'%'))                
                 ->query(); 
             
@@ -269,7 +269,104 @@ controllers.ProyectosController");
                 echo CJSON::encode($return_array);
             }
         } 
-	/**
+        
+        public function actionValidarAgregarAsistente() {
+        if (isset($_POST['action'])) {
+
+            $action = $_POST['action'];
+            $response = array();
+
+            if ($action == 'validate_asistente') {
+                if (isset($_POST['carne'])) {
+                    $data = $_POST['carne'];
+                    $carne = trim($data);
+                    if ($carne == '') {
+                        $response = array(
+                            'ok' => false,
+                            'msg' => "Indique el carnet del asistente.");
+                    } else if (!$this->existeCarnet($carne)) {
+                        $response = array(
+                            'ok' => false,
+                            'msg' => "El carnet #" . $carne . " no corresponde a ningun asistente.");
+                    } else {
+                        $response = array(
+                            'ok' => true,
+                            'msg' => "Valido.");
+                    }
+                }
+            }//validate-asistente                
+            else if ($action == 'validate_rol') {
+                if (isset($_POST['rol'])) {
+                    $data = $_POST['rol'];
+                    $rol = trim($data);
+                    if ($rol == '') {
+                        $response = array(
+                            'ok' => false,
+                            'msg' => "Seleccione un rol.");
+                    } else if (!$this->existeRol($rol)) {
+                        $response = array(
+                            'ok' => false,
+                            'msg' => "El rol que ha seleccionado es invalido.");
+                    } else {
+                        $response = array(
+                            'ok' => true,
+                            'msg' => "Valido.");
+                    }
+                }
+            }//validate-rol
+            else if ($action == 'validate_fecha') {
+                if (isset($_POST['fecha']) && isset($_POST['codigo'])) {
+                    $datafecha = $_POST['fecha'];
+                    $datacod = $_POST['codigo'];
+                    $fecha = trim($datafecha);
+                    $codigo = trim($datacod);
+                    if ($fecha == '') {
+                        $response = array(
+                            'ok' => false,
+                            'msg' => "Seleccione la fecha de inicio de la asistencia.");
+                    } else if (!$this->validarFechaInicioProyecto($fecha, $codigo)) {
+                        $response = array(
+                            'ok' => false,
+                            'msg' => "El rol que ha seleccionado es invalido.");
+                    } else {
+                        $response = array(
+                            'ok' => true,
+                            'msg' => "Valido.");
+                    }
+                }
+            }//validate-fecha
+            echo CJSON::encode($response);
+        }
+    }
+        
+        protected function existeRol($rol) //Permite determinar si un Rol existe a partir del nombre del rol.
+        {
+            $criteria = new CDbCriteria();
+            $criteria->compare('nombre', $rol);            
+            $roles = RolAsistente::model()->findAll($criteria);
+            if(count($roles)== 0)
+                return false;
+            else
+                return true;
+        }
+        
+        protected function existeCarnet($carne)//Permite determinar si un Carnet existe.
+        {
+            $criteria = new CDbCriteria();
+            $criteria->compare('carnet', $carne);            
+            $result = Asistentes::model()->findAll($criteria);
+            if(count($result)== 0)
+                return false;
+            else
+                return true;
+        }
+        
+        protected function validarFechaInicioProyecto($fechainicio, $codigo)
+        {
+            return false;
+        }
+
+        /**
 	 * Performs the AJAX validation.
 	 * @param CModel the model to be validated
 	 */
