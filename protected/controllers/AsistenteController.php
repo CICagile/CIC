@@ -131,8 +131,12 @@ class AsistenteController extends Controller
 		if(isset($_POST['Asistente']))
 		{
 			$model->attributes=$_POST['Asistente'];
-			if($model->validate()){}
-				//$this->redirect(array('view','id'=>$model->idtbl_Personas));
+			if($model->validate()){
+				if ($model->actualizarDatosPersonales($id))
+                                    $this->redirect(Yii::app()->homeUrl);
+                                //else
+                                    //$this->redirect('error');
+                        }//fin si los datos son válidos
 		}
 
 		$this->render('updateDP',array(
@@ -191,9 +195,9 @@ class AsistenteController extends Controller
 	{
 		//$model=Persona::model()->findByPk($id);
                 $model = new Asistente;
-                $atributos = $model->buscarAsistentePorPK($id);
+                $atributos = $model->buscarAsistentePorCarnet($id);
 		if($atributos===null)
-			throw new CHttpException(404,'The requested page does not exist.');
+			throw new CHttpException(404,'No se encontro el carnet ' . $id);
                 $model->attributes = $atributos;
 		return $model;
 	}

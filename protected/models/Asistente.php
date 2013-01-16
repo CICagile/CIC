@@ -158,7 +158,7 @@ class Asistente  extends CModel{
             $criteria->condition = "proyecto.codigo = " . $this->codigo;
             if (!Proyectos::model()->exists($criteria)) {
                 $this->addError('codigo', $this->getAttributeLabel('codigo') . ' no fue encontrado en la base de datos.');
-            }
+            }//fin si el código existe en la base de datos
         }//fin si el codigo es valido
         else
             $this->clearErrors ();  //Se quitan los errores para que no se muestren dos veces
@@ -168,17 +168,17 @@ class Asistente  extends CModel{
      *Esta funcion llama al SP buscarDatosPersonalesAsistentePorPK y hace una busqueda de todos
      * los datos personales de un asistente a partir del PK de un registro en la tabla tbl_Personas
      * en la base de datos.
-     * @param int $pPK El PK de un registro de la tabla personas.
-     * @return Asistente El modelo encontrado. NULL si no encontro algun registro con ese pk.
+     * @param string $pCarnet El carnet de un registro de la tabla Asistentes.
+     * @return array Un arreglo con los atributos del asistente. NULL si no encontro algun registro con ese pk.
      */
-    public function buscarAsistentePorPK($pPK) {
+    public function buscarAsistentePorCarnet($pCarnet) {
         $conexion = Yii::app()->db;
-        $call = 'CALL buscarDatosPersonalesAsistentePorPK(:pk)';
+        $call = 'CALL buscarDatosPersonalesAsistentePorCarnet(:pCarnet)';
             $transaccion = Yii::app()->db->beginTransaction();
             $resultado = NULL;
             try {
                 $comando = $conexion->createCommand($call);
-                $comando->bindParam(':pk', $pPK, PDO::PARAM_INT);
+                $comando->bindParam(':pCarnet', $pCarnet, PDO::PARAM_STR);
                 $resultado = $comando->query();
                 $transaccion->commit();
             } catch (Exception $e) {
@@ -186,15 +186,45 @@ class Asistente  extends CModel{
                 echo $e->getMessage();
                 return NULL;
             }
-            if ($resultado != NULL) {
-                /*$arr = $resultado->read();
-                print_r($arr);*/
-                return $resultado->read(); 
-            }
-            else
-                return NULL;
+            
+            return $resultado->rowCount === 1 ? $resultado->read() : NULL;
             
     }//fin buscar asistente por pk
+    
+    /**
+     * Cambia los datos personales de un asistente en la base de datos
+     * por los que se proporcionan en el formulario.
+     * @param string $pPK El carnet anterior del Asistente.
+     * @return boolean True si no ocurrio ningún error y false de lo contrario.
+     */
+    public function actualizarDatosPersonales($pCarnet) {
+        $conexion = Yii::app()->db;
+        $call = 'CALL actualizarDatosPersonalesAsistente(:pCarnet,:nombre,:apellido1,:apellido2,:cedula,:numerocuenta,:cuentacliente,:carnet,:carrera,:banco,:telefono,:correo)';
+        $transaction = Yii::app()->db->beginTransaction();
+        try {
+            $comando = $conexion->createCommand($call);
+            $comando->bindParam(':pCarnet',$pCarnet, PDO::PARAM_INT);
+            $comando->bindParam(':nombre',$this->nombre, PDO::PARAM_STR);
+            $comando->bindParam(':apellido1',$this->apellido1, PDO::PARAM_STR);
+            $comando->bindParam(':apellido2',$this->apellido2, PDO::PARAM_STR);
+            $comando->bindParam(':cedula',$this->cedula, PDO::PARAM_STR);
+            $comando->bindParam(':numerocuenta',$this->numerocuenta, PDO::PARAM_STR);
+            $comando->bindParam(':cuentacliente',$this->cuentacliente, PDO::PARAM_STR);
+            $comando->bindParam(':carnet',$this->carnet, PDO::PARAM_STR);
+            $comando->bindParam(':carrera',$this->carrera, PDO::PARAM_STR);
+            $comando->bindParam(':banco',$this->banco, PDO::PARAM_STR);
+            $comando->bindParam(':telefono',$this->telefono, PDO::PARAM_STR);
+            $comando->bindParam(':correo',$this->correo, PDO::PARAM_STR);
+            $comando->execute();
+            $transaction->commit();
+        }
+        catch (Exception $e) {
+            echo $e->getMessage();
+            $transaction->rollback();
+            return FALSE;
+        }
+        return TRUE;
+    }
 }
 
 ?>
