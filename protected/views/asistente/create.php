@@ -2,15 +2,14 @@
 /* @var $this PersonaController */
 /* @var $model Persona */
 
-/*$this->breadcrumbs=array(
-	'Personas'=>array('index'),
-	'Create',
-);*/
+$this->breadcrumbs=array(
+	'Asistentes'=>array('index'),
+	'Registrar Nuevo Asistente',
+);
 
-/*$this->menu=array(
-	array('label'=>'List Persona', 'url'=>array('index')),
-	array('label'=>'Manage Persona', 'url'=>array('admin')),
-);*/
+$this->menu=array(
+	array('label'=>'Modificar datos de un asistente', 'url'=>array('update')),
+);
 ?>
 
 <h1>Registrar Nuevo Asistente</h1>

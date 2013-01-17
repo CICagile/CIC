@@ -32,7 +32,7 @@ class AsistenteController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','updateDP','codigoautocomplete'),
+				'actions'=>array('create','updateDP','codigoautocomplete','update'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -107,10 +107,14 @@ class AsistenteController extends Controller
 			'model'=>$model,
 		));
 	}
+        
+        public function actionUpdate() {
+            $this->render('update');
+        }//fin action update
 
 	/**
          * Actualiza los Datos Personales de un asistente.
-         * @param type $id PK del asistente en la tabla personas de la DB.
+         * @param type $id Carnet del asistente.
          */
 	public function actionUpdateDP($id = NULL)
 	{
@@ -119,7 +123,7 @@ class AsistenteController extends Controller
                  * le debería salir las opciones de modificar que son modificar datos personales,
                  * agregar asistente a un nuevo proyecto y modificar datos del asistente
                  */
-                echo '<h1>Lista de asistentes</h1>';
+                $this->actionUpdate();
             }
             else {
 		$model=$this->loadModel($id);
@@ -166,10 +170,9 @@ class AsistenteController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('Asistente');
-		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
-		));
+		//$dataProvider=new CActiveDataProvider('Asistente');
+		$this->render('index'
+		);
 	}
 
 	/**
