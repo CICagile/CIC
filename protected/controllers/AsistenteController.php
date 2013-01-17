@@ -94,8 +94,8 @@ class AsistenteController extends Controller
 		if(isset($_POST['Asistente']))
 		{
 			$model->attributes=$_POST['Asistente'];
-                        $model->validarCodigoProyecto();
-			if($model->validate(NULL, false)){  //se agrega el false para que no borre el error de validar codigo proyecto si este es generado.
+                        $model->ajustarCarnetBuscado();
+			if($model->validate()){
                             if($model->crear())
 				$this->redirect(Yii::app()->homeUrl);
                             else
@@ -131,6 +131,7 @@ class AsistenteController extends Controller
 		if(isset($_POST['Asistente']))
 		{
 			$model->attributes=$_POST['Asistente'];
+                        $model->ajustarCarnetBuscado($id);
 			if($model->validate()){
 				if ($model->actualizarDatosPersonales($id))
                                     $this->redirect(Yii::app()->homeUrl);

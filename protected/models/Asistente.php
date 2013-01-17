@@ -24,6 +24,8 @@ class Asistente  extends CModel{
     public $rol;
     public $horas;
     
+    private $carnet_buscado;
+    
     /**
 	 * @return array validation rules for model attributes.
 	 */
@@ -45,7 +47,10 @@ class Asistente  extends CModel{
                 array('horas', 'numerical', 'max'=>20, 'min'=>0, 'tooBig'=>'Se permite un máximo de {max} horas', 'tooSmall'=>'Se permite un mínimo de {min} horas.'),
                 array('correo', 'email', 'message'=>'Dirección de correo inválida'),
                 array('nombre, apellido1, apellido2, ', 'match', 'pattern'=>'/^[\p{L} ]+$/u'),
-                array('numerocuenta,codigo', 'match', 'pattern'=>'/^[\p{N}-]+$/u')
+                array('numerocuenta,codigo', 'match', 'pattern'=>'/^[\p{N}-]+$/u'),
+                array('carnet','validarCarnetUnico','on'=>'nuevo'),
+                array('carnet','validarCarnetUnico','on'=>'actDP'),
+                array('codigo','validarCodigoProyecto','on'=>'nuevo')
             );
 	}
         
@@ -151,17 +156,15 @@ class Asistente  extends CModel{
      * De esta forma se previene que elija un proyecto de la lista y luego
      * digite un número más, ingresando de esta forma un código incorrecto. 
      */
-    public function validarCodigoProyecto() {
-        if ($this->validate(array('codigo'))) {
-            $criteria = new CDbCriteria;
-            $criteria->alias = "proyecto";
-            $criteria->condition = "proyecto.codigo = " . $this->codigo;
-            if (!Proyectos::model()->exists($criteria)) {
-                $this->addError('codigo', $this->getAttributeLabel('codigo') . ' no fue encontrado en la base de datos.');
-            }//fin si el código existe en la base de datos
-        }//fin si el codigo es valido
-        else
-            $this->clearErrors ();  //Se quitan los errores para que no se muestren dos veces
+    public function validarCodigoProyecto($attribute,$params) {
+        if(isset($params['on']) && $params['on'] != $this->scenario)
+            return;
+        $criteria = new CDbCriteria;
+        $criteria->alias = "proyecto";
+        $criteria->condition = "proyecto.codigo = " . $this->codigo;
+        if (!Proyectos::model()->exists($criteria)) {
+            $this->addError('codigo', $this->getAttributeLabel('codigo') . ' no fue encontrado en la base de datos.');
+        }//fin si el código existe en la base de datos
     }//fin validarCodigoProyecto
     
     /**
@@ -230,10 +233,28 @@ class Asistente  extends CModel{
      *Valida que el carnet del estudiante que se quiere crear o actualizar sea único.
      * @return boolean TRUE si el carnet es único en la tabla asistentes, FALSE de lo contrario.
      */
-    public function validarCarnetUnico() {
-        $sql = "SELECT COUNT(*) FROM tbl_Asistentes WHERE carnet = '" . $this->carnet . "'";
-        return true;
-    }//fin validar carnet unico
-}
+    public function validarCarnetUnico($attribute,$params) {
+        if(isset($params['on']) && $params['on'] != $this->scenario)
+            return;
+        $conexion = Yii::app()->db;
+        $sql = "SELECT * FROM tbl_Asistentes WHERE carnet = '" . $this->carnet_buscado . "'";
+        $comando = $conexion->createCommand($sql);
+        $resultado = $comando->query();
+        if ($resultado->rowCount != 0) {
+            $this->addError('carnet', 'Ya existe un asistente con el carnet ' . $this->carnet . '.');
+        }//fin si el carnet es único
+    }//fin validar que el carnet sea único
+    
+    /**
+     * Si el carnet no cambió en el formulario de actualizar los datos personales entonces
+     * se cambia la variable privada carnet_buscado a NULL para que no de un error falso
+     * de que ya existe OTRO asistente con ese carnet.
+     * @param type $pCarnet El carnet que tenía el asistente antes de las modificaciones.
+     */
+    public function ajustarCarnetBuscado($pCarnet = NULL) {
+        $this->carnet_buscado = $pCarnet === $this->carnet ? NULL : $this->carnet;
+    }//fin ajustar carnet buscado
+    
+}//fin clase Modelo Asistente
 
 ?>
