@@ -12,6 +12,9 @@
 )); ?>
         
     <h2>Agregar asistente al Proyecto: <?php echo $model->codigo?></h2>
+    <p>Periodo del proyecto: <?php echo FechaMysqltoPhp($model->periodos->inicio)
+    .' hasta '.FechaMysqltoPhp($model->periodos->fin)?></p>
+   
     <p id="idproyecto" style="display:none"><?php echo $model->idtbl_Proyectos?></p>
         
         <div class="errorSummary" id="errorSummary" style="display:none"></div>	
@@ -71,7 +74,7 @@
         <div class="row">
             <label for="horas">Cantidad de horas semanales<span class="required">*</span></label>
             <input type="text" name="horas" id="horas">
-            <div class="errorMessage" id="horas_error" style="display:none"></div>
+            <div class="errorMessage" id="horas_error"></div>
 	</div>
 
 	<div class="row buttons">
@@ -87,6 +90,8 @@
         //En el campo de fecha inicio coloco la fecha de hoy por default.
         var d = new Date();
         $('#inicio').val(d.getDate() + "-" + d.getMonth() + 1 + "-" + d.getFullYear());
+        
+        $('#horas').val('20');
         
         $("#rol").blur(function() {
             $("#rol_error").html('');
@@ -159,23 +164,40 @@
 	});
         
          $("#horas").blur(function() {
-
-		
-
-		var form_data = {
-			action: 'check_rol',
-			rol: $(this).val()
-		};
-
-		$.ajax({
-			type: "POST",
-			url: "../checkrol",
-			data: form_data,
-			success: function(result) {
-				$("#rol_error").html(result);
-			}
-		});
-
+            $("#horas_error").html('');                
+            var form_data = {
+                action: 'validate_horas',
+                horas: $(this).val()
+            };
+            $.ajax({
+                type: "POST",
+                url: "../ValidarAgregarAsistente",
+                data: form_data,
+                dataType: 'json',
+                success: function(result) {
+                    if(result.ok){
+                        //falta agregar los  CSS de valido.
+                    }
+                    else{
+                        $("#horas_error").html(result.msg);
+                        //falta agregar los  CSS de invalido.
+                    }				
+                }
+            });
 	}); 
 });
 </script>
+
+<?php
+function FechaMysqltoPhp($pfechamysql)
+        {
+            try{
+                $fecha = substr($pfechamysql, 0, 10);
+                list($y, $m, $d) = explode('-', $fecha);               
+                $fecha = $d.'-'.$m.'-'.$y;                 
+            }
+            catch (Exception $e){  
+            } 
+            return $fecha;
+}
+?>

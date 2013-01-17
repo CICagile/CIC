@@ -299,7 +299,7 @@ controllers.ProyectosController");
                 if (isset($_POST['rol'])) {
                     $data = $_POST['rol'];
                     $rol = trim($data);
-                    if ($rol == '') {
+                    if ($rol == '') {//Si no selecciona un rol
                         $response = array(
                             'ok' => false,
                             'msg' => "Seleccione un rol.");
@@ -320,14 +320,10 @@ controllers.ProyectosController");
                     $datacod = $_POST['codigo'];
                     $fecha = trim($datafecha);
                     $codigo = trim($datacod);
-                    if ($fecha == '') {
+                    if (!$this->validarFechaInicioAsistencia($fecha, $codigo)) {
                         $response = array(
                             'ok' => false,
-                            'msg' => "Seleccione la fecha de inicio de la asistencia.");
-                    } else if (!$this->validarFechaInicioProyecto($fecha, $codigo)) {
-                        $response = array(
-                            'ok' => false,
-                            'msg' => "El rol que ha seleccionado es invalido.");
+                            'msg' => "La fecha seleccionada no cumple con el periodo del proyecto.");
                     } else {
                         $response = array(
                             'ok' => true,
@@ -335,6 +331,27 @@ controllers.ProyectosController");
                     }
                 }
             }//validate-fecha
+            else if ($action == 'validate_horas') { 
+                define('MIN_VALUE', 1);   // RIGHT - Works OUTSIDE of a class definition.
+                define('MAX_VALUE', 20);
+                if (isset($_POST['horas'])) {
+                    $data = $_POST['horas'];
+                    $horas = trim($data);
+                    if ($horas == '') {//Si no ingresa el numero de horas
+                        $response = array(
+                            'ok' => false,
+                            'msg' => "Ingrese la cantidad de horas");
+                    } else if (!is_numeric($horas)) {
+                        $response = array(
+                            'ok' => false,
+                            'msg' => "Debe ingresar un numero.");
+                    } else if($this->ConvertirHoras($horas) < MIN_VALUE || $this->ConvertirHoras($horas) > MAX_VALUE){
+                        $response = array(
+                            'ok' => false,
+                            'msg' => "La cantidad de horas semanales corresponde al rango de 1-20 horas.");
+                    }
+                }
+            }//validate-horas
             echo CJSON::encode($response);
         }
     }
@@ -361,10 +378,31 @@ controllers.ProyectosController");
                 return true;
         }
         
-        protected function validarFechaInicioProyecto($fechainicio, $codigo)
+        protected function validarFechaInicioAsistencia($pfechainicio, $pidproyecto)
         {
-            return false;
+            $proyecto =$this->loadModel($pidproyecto); 
+            $fechainicio = $this->FechaPhptoMysql($pfechainicio);
+            
+            $proyectoini = $proyecto->periodos->inicio;
+            $proyectofin = $proyecto->periodos->fin;
+            
+            if(strtotime($proyectoini) > strtotime($fechainicio)) {
+                return false;
+            }            
+            else if(strtotime($proyectofin) < strtotime($fechainicio)){
+                return false;
+            }
+            else
+                return true;
         }
+        
+        protected function ConvertirHoras($var) {        
+            if ((float) $var != (int) $var) {
+                return (float) $var;
+            } else {
+                return (int) $var;
+            }                
+    }
 
         /**
 	 * Performs the AJAX validation.
