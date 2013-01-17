@@ -98,8 +98,8 @@ class AsistenteController extends Controller
 			if($model->validate()){
                             if($model->crear())
 				$this->redirect(Yii::app()->homeUrl);
-                            else
-                                $this->redirect ('error');
+                            //else
+                                //$this->redirect ('error');
                         }
 		}
 
