@@ -190,21 +190,28 @@ controllers.ProyectosController");
         if (isset($_POST['Proyectos'])) {
             
             $carnet = $_POST['asistente'];
-            $idrol = $_POST['rol'];
+            $idrol = $this->obtenerIdRol($_POST['rol']);
             $fechainicio = $this->FechaPhptoMysql($_POST['inicio']);
             $horas = $_POST['horas'];
 
             if ($model->agregarAsistenteProyecto($model->idtbl_Proyectos, $carnet, $idrol, $fechainicio, $horas)) {
                 Yii::log("Asociacion exitosa del asistente: " . $carnet . " al proyecto: " . $model->idtbl_Proyectos, "info", "application.
-    controllers.ProyectosController");
-                $this->render('view', array(
-                    'model' => $this->loadModel($model->idtbl_Proyectos),
-                ));
+    controllers.ProyectosController");                
+                $response = array(
+                    'ok' => true, 
+                    'msg' => "Asociacion exitosa del asistente: " . $carnet . " al proyecto: " . $model->codigo
+                );
+                echo CJSON::encode($response);               
+                Yii::app()->end();        
             } else {
                 Yii::log("Error al asociar asistente: " . $carnet . " al proyecto: " . $model->idtbl_Proyectos, "warning", "application.
     controllers.ProyectosController");
-                $error = array('code' => '500', 'message' => 'No se puedo procesar su petición.');
-                $this->render('error', $error);
+                $response = array(
+                    'ok' => false, 
+                    'msg' => "Ha ocurrido un error al intentar asociar el asistente " . $carnet . " al proyecto: " . $model->codigo
+                );
+                echo CJSON::encode($response);               
+                Yii::app()->end(); 
             }
         }
 
@@ -251,12 +258,12 @@ controllers.ProyectosController");
             $response = array();
             if ($action == 'validate_form_agregar') {
                     $responseform = array();
+                    $datacod = $_POST['codigo'];
                     $carne = $_POST['carne'];
-                    $responseform[] = $this->validarAsistente($carne);
+                    $responseform[] = $this->validarAsistente($carne, $datacod);
                     $rol = $_POST['rol'];
                     $responseform[] = $this->validarRol($rol);
-                    $datafecha = $_POST['fecha'];
-                    $datacod = $_POST['codigo'];
+                    $datafecha = $_POST['fecha'];                    
                     $responseform[] = $this->validarFechaAsistencia($datafecha, $datacod);
                     $horas = $_POST['horas'];
                     $responseform[] = $this->validarHorasAsistencia($horas);
@@ -273,7 +280,8 @@ controllers.ProyectosController");
             else if ($action == 'validate_asistente') {
                 if (isset($_POST['carne'])) {
                     $data = $_POST['carne'];
-                    $response = $this->validarAsistente($data);
+                    $datacod = $_POST['codigo'];
+                    $response = $this->validarAsistente($data, $datacod);
                 }
             }//validate-asistente                
             else if ($action == 'validate_rol') {
@@ -340,9 +348,10 @@ controllers.ProyectosController");
         return $response;
     }
 
-    protected function validarAsistente($pcarne) {
+    protected function validarAsistente($pcarne, $pidproyecto) {
         $response = array();
         $carne = trim($pcarne);
+        $idproyecto = trim($pidproyecto);
         if ($carne == '') {
             $response = array(
                 'ok' => false,
@@ -351,7 +360,11 @@ controllers.ProyectosController");
             $response = array(
                 'ok' => false,
                 'msg' => "El carnet #" . $carne . " no corresponde a ningun asistente.");
-        } else {
+        } else if ($this->existeAsistenteProyecto($carne, $idproyecto)) {
+            $response = array(
+                'ok' => false,
+                'msg' => "El asistente con carnet #" . $carne . " ya esta vinculado a este proyecto");
+        }else {
             $response = array(
                 'ok' => true,
                 'msg' => "Valido.");
@@ -388,12 +401,15 @@ controllers.ProyectosController");
             return true;
     }
     
-    protected function obtenerIdRol($prol)
-    {
+    protected function obtenerIdRol($prol){
         $criteria = new CDbCriteria();
         $criteria->compare('nombre', $prol);
         $roles = RolAsistente::model()->findAll($criteria);
-        $idrol = $roles[0][0];
+        $idrol = $prol;
+        foreach($roles as $rol)
+        {
+            $idrol = $rol->idtbl_RolesAsistentes;
+        }      
         return $idrol;
     }
 
@@ -405,6 +421,20 @@ controllers.ProyectosController");
             return false;
         else
             return true;
+    }
+    
+    protected function existeAsistenteProyecto($pcarne, $idproyecto) {        
+        $asistente = Asistentes::model()->findByAttributes(array('carnet' => $pcarne));        
+        $proyectosasistente = $asistente->proyectos;
+        $res = false;
+        foreach ($proyectosasistente as $proy)
+        {
+            if($proy->idtbl_Proyectos == $idproyecto)
+            {
+                $res = true;
+            }
+        }
+        return $res;            
     }
 
     protected function validarFechaInicioAsistencia($pfechainicio, $pidproyecto) {

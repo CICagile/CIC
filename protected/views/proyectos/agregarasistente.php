@@ -79,6 +79,7 @@
 
 	<div class="row buttons">
 		<?php echo CHtml::submitButton('Agregar'); ?>
+                <p id="infovalidacion"></p>
 	</div>
 
 <?php $this->endWidget(); ?>
@@ -124,7 +125,8 @@
             $("#errorSummary").css('display', 'none');
             var form_data = {
                 action: 'validate_asistente',
-                carne: $(this).val()
+                carne: $(this).val(),
+                codigo: $("#idproyecto").html()
             };
             $.ajax({
                 type: "POST",
@@ -199,6 +201,7 @@
         
         $("#errorSummary").html('');  
         $("#errorSummary").css('display', 'none');
+        $("#infovalidacion").html('Validando datos...');  
         
         var form_data = {
             action: 'validate_form_agregar',
@@ -215,6 +218,7 @@
             dataType: 'json',
             success: function(result) {
                 if(result.ok){
+                        $("#infovalidacion").html('');
                         var idproyecto = $("#idproyecto").html(); 
                         var form_data = $("#proyectos-agregarasistente-form").serialize();
                         $.ajax({              
@@ -222,13 +226,21 @@
                         url: "../AgregarAsistente/" + idproyecto,
                         data: form_data,
                         dataType: 'json',
-                        success: function() {                            				
+                        success: function(result) {  
+                            if(result.ok){
+                                alert(result.msg);
+                                var url = "../view/" + idproyecto;    
+                                $(location).attr('href',url);
+                            }
+                            else
+                               alert(result.msg); 
                         }
-                    });
+                        });
                 }
                 else{
                     $("#errorSummary").css('display', '');
                     $("#errorSummary").html(result.msg);
+                    $("#infovalidacion").html('');  
                     //falta agregar los  CSS de invalido.
                 }				
             }
@@ -239,8 +251,7 @@
 </script>
 
 <?php
-function FechaMysqltoPhp($pfechamysql)
-        {
+function FechaMysqltoPhp($pfechamysql){
             try{
                 $fecha = substr($pfechamysql, 0, 10);
                 list($y, $m, $d) = explode('-', $fecha);               

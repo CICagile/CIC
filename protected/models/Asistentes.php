@@ -61,7 +61,7 @@ class Asistentes extends CActiveRecord
 		return array(
 			'idtblCarreras' => array(self::BELONGS_TO, 'Carreras', 'idtbl_Carreras'),
 			'idtblPersonas' => array(self::BELONGS_TO, 'Personas', 'idtbl_Personas'),
-			'tblProyectoses' => array(self::MANY_MANY, 'Proyectos', 'tbl_asistentes_has_tbl_proyectos(idtbl_Asistentes, idtbl_Proyectos)'),
+			'proyectos' => array(self::MANY_MANY, 'Proyectos', 'tbl_asistentes_has_tbl_proyectos(idtbl_Asistentes, idtbl_Proyectos)'),
 		);
 	}
 
