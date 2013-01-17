@@ -8,10 +8,13 @@
 
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'proyectos-agregarasistente-form',
-	'enableAjaxValidation'=>true,    
+	'enableAjaxValidation'=>false,
 )); ?>
         
     <h2>Agregar asistente al Proyecto: <?php echo $model->codigo?></h2>
+    <p>Periodo del proyecto: <?php echo FechaMysqltoPhp($model->periodos->inicio)
+    .' hasta '.FechaMysqltoPhp($model->periodos->fin)?></p>
+   
     <p id="idproyecto" style="display:none"><?php echo $model->idtbl_Proyectos?></p>
         
         <div class="errorSummary" id="errorSummary" style="display:none"></div>	
@@ -71,7 +74,7 @@
         <div class="row">
             <label for="horas">Cantidad de horas semanales<span class="required">*</span></label>
             <input type="text" name="horas" id="horas">
-            <div class="errorMessage" id="horas_error" style="display:none"></div>
+            <div class="errorMessage" id="horas_error"></div>
 	</div>
 
 	<div class="row buttons">
@@ -88,8 +91,12 @@
         var d = new Date();
         $('#inicio').val(d.getDate() + "-" + d.getMonth() + 1 + "-" + d.getFullYear());
         
+        $('#horas').val('20');
+        
         $("#rol").blur(function() {
             $("#rol_error").html('');
+            $("#errorSummary").html('');  
+            $("#errorSummary").css('display', 'none');
             var form_data = {
                 action: 'validate_rol',
                 rol: $(this).val()
@@ -112,7 +119,9 @@
 	});
         
         $("#asistente").blur(function() {
-            $("#asistente_error").html('');                
+            $("#asistente_error").html('');
+            $("#errorSummary").html('');  
+            $("#errorSummary").css('display', 'none');
             var form_data = {
                 action: 'validate_asistente',
                 carne: $(this).val()
@@ -135,7 +144,9 @@
         });
         
         $("#inicio").change(function() {
-            $("#inicio_error").html('');                
+            $("#inicio_error").html('');  
+            $("#errorSummary").html('');  
+            $("#errorSummary").css('display', 'none');
             var form_data = {
                 action: 'validate_fecha',
                 fecha: $(this).val(),
@@ -159,23 +170,84 @@
 	});
         
          $("#horas").blur(function() {
-
-		
-
-		var form_data = {
-			action: 'check_rol',
-			rol: $(this).val()
-		};
-
-		$.ajax({
-			type: "POST",
-			url: "../checkrol",
-			data: form_data,
-			success: function(result) {
-				$("#rol_error").html(result);
-			}
-		});
-
+            $("#horas_error").html('');
+            $("#errorSummary").html('');  
+            $("#errorSummary").css('display', 'none');
+            var form_data = {
+                action: 'validate_horas',
+                horas: $(this).val()
+            };
+            $.ajax({
+                type: "POST",
+                url: "../ValidarAgregarAsistente",
+                data: form_data,
+                dataType: 'json',
+                success: function(result) {
+                    if(result.ok){
+                        //falta agregar los  CSS de valido.
+                    }
+                    else{
+                        $("#horas_error").html(result.msg);
+                        //falta agregar los  CSS de invalido.
+                    }				
+                }
+            });
 	}); 
+        
+        $("#proyectos-agregarasistente-form").submit(function(e){
+        e.preventDefault();    
+        
+        $("#errorSummary").html('');  
+        $("#errorSummary").css('display', 'none');
+        
+        var form_data = {
+            action: 'validate_form_agregar',
+            rol: $("#rol").val(),            
+            horas: $("#horas").val(),
+            fecha: $("#inicio").val(),
+            codigo: $("#idproyecto").html(),
+            carne: $("#asistente").val()
+        };
+        $.ajax({
+            type: "POST",
+            url: "../ValidarAgregarAsistente",
+            data: form_data,
+            dataType: 'json',
+            success: function(result) {
+                if(result.ok){
+                        var idproyecto = $("#idproyecto").html(); 
+                        var form_data = $("#proyectos-agregarasistente-form").serialize();
+                        $.ajax({              
+                        type: "POST",
+                        url: "../AgregarAsistente/" + idproyecto,
+                        data: form_data,
+                        dataType: 'json',
+                        success: function() {                            				
+                        }
+                    });
+                }
+                else{
+                    $("#errorSummary").css('display', '');
+                    $("#errorSummary").html(result.msg);
+                    //falta agregar los  CSS de invalido.
+                }				
+            }
+        });
+
+        });
 });
 </script>
+
+<?php
+function FechaMysqltoPhp($pfechamysql)
+        {
+            try{
+                $fecha = substr($pfechamysql, 0, 10);
+                list($y, $m, $d) = explode('-', $fecha);               
+                $fecha = $d.'-'.$m.'-'.$y;                 
+            }
+            catch (Exception $e){  
+            } 
+            return $fecha;
+}
+?>
