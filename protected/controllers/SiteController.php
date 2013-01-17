@@ -41,8 +41,15 @@ class SiteController extends Controller
 		{
 			if(Yii::app()->request->isAjaxRequest)
 				echo $error['message'];
-			else
+                        else if ($error['code'] == '500')
+                        {
+                            $error['message'] = 'Ha ocurrido un error interno, vuelva a intentarlo.';
+                            $this->render('error', $error);
+                        }
+                        else
+                        {                               
 				$this->render('error', $error);
+                        }
 		}
 	}
 
@@ -76,7 +83,7 @@ class SiteController extends Controller
 	 * Displays the login page
 	 */
 	public function actionLogin()
-	{
+	{                
 		$model=new LoginForm;
 
 		// if it is ajax validation request
@@ -91,8 +98,17 @@ class SiteController extends Controller
 		{
 			$model->attributes=$_POST['LoginForm'];
 			// validate user input and redirect to the previous page if valid
-			if($model->validate() && $model->login())
+			if($model->validate() && $model->login()){
+                                Yii::log("Autenticacion exitosa del usuario: " . Yii::app()->user->id, 
+"info", "application.controllers.SiteController");
 				$this->redirect(Yii::app()->user->returnUrl);
+                                
+                                }
+                        else{
+                            Yii::log("Fallo al intentar autenticarse.", "warning", "application.
+controllers.SiteController");
+                        }
+                            
 		}
 		// display the login form
 		$this->render('login',array('model'=>$model));
@@ -103,6 +119,8 @@ class SiteController extends Controller
 	 */
 	public function actionLogout()
 	{
+                Yii::log("Logout del usuario: " . Yii::app()->user->id, 
+"info", "application.controllers.SiteController");
 		Yii::app()->user->logout();
 		$this->redirect(Yii::app()->homeUrl);
 	}
