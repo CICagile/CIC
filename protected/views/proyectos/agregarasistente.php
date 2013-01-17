@@ -17,7 +17,7 @@
    
     <p id="idproyecto" style="display:none"><?php echo $model->idtbl_Proyectos?></p>
         
-        <div class="errorSummary" id="errorSummary"></div>	
+        <div class="errorSummary" id="errorSummary" style="display:none"></div>	
 
 	<p class="note">Campos con <span class="required">*</span> son requeridos.</p>	
         
@@ -95,6 +95,8 @@
         
         $("#rol").blur(function() {
             $("#rol_error").html('');
+            $("#errorSummary").html('');  
+            $("#errorSummary").css('display', 'none');
             var form_data = {
                 action: 'validate_rol',
                 rol: $(this).val()
@@ -117,7 +119,9 @@
 	});
         
         $("#asistente").blur(function() {
-            $("#asistente_error").html('');                
+            $("#asistente_error").html('');
+            $("#errorSummary").html('');  
+            $("#errorSummary").css('display', 'none');
             var form_data = {
                 action: 'validate_asistente',
                 carne: $(this).val()
@@ -140,7 +144,9 @@
         });
         
         $("#inicio").change(function() {
-            $("#inicio_error").html('');                
+            $("#inicio_error").html('');  
+            $("#errorSummary").html('');  
+            $("#errorSummary").css('display', 'none');
             var form_data = {
                 action: 'validate_fecha',
                 fecha: $(this).val(),
@@ -164,7 +170,9 @@
 	});
         
          $("#horas").blur(function() {
-            $("#horas_error").html('');                
+            $("#horas_error").html('');
+            $("#errorSummary").html('');  
+            $("#errorSummary").css('display', 'none');
             var form_data = {
                 action: 'validate_horas',
                 horas: $(this).val()
@@ -189,12 +197,15 @@
         $("#proyectos-agregarasistente-form").submit(function(e){
         e.preventDefault();    
         
-        $("#errorSummary").html('');                
+        $("#errorSummary").html('');  
+        $("#errorSummary").css('display', 'none');
+        
         var form_data = {
-            action: 'validate_form',
+            action: 'validate_form_agregar',
             rol: $("#rol").val(),            
             horas: $("#horas").val(),
-            inicio: $("#inicio").val(),
+            fecha: $("#inicio").val(),
+            codigo: $("#idproyecto").html(),
             carne: $("#asistente").val()
         };
         $.ajax({
@@ -205,23 +216,18 @@
             success: function(result) {
                 if(result.ok){
                         var idproyecto = $("#idproyecto").html(); 
+                        var form_data = $("#proyectos-agregarasistente-form").serialize();
                         $.ajax({              
                         type: "POST",
                         url: "../AgregarAsistente/" + idproyecto,
                         data: form_data,
                         dataType: 'json',
-                        success: function(result) {
-                            if(result.ok){
-                                //falta agregar los  CSS de valido.
-                            }
-                            else{
-                                $("#errorSummary").html(result.msg);
-                                //falta agregar los  CSS de invalido.
-                            }				
+                        success: function() {                            				
                         }
                     });
                 }
                 else{
+                    $("#errorSummary").css('display', '');
                     $("#errorSummary").html(result.msg);
                     //falta agregar los  CSS de invalido.
                 }				

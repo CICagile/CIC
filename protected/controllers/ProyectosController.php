@@ -249,7 +249,28 @@ controllers.ProyectosController");
         if (isset($_POST['action'])) {
             $action = $_POST['action'];
             $response = array();
-            if ($action == 'validate_asistente') {
+            if ($action == 'validate_form_agregar') {
+                    $responseform = array();
+                    $carne = $_POST['carne'];
+                    $responseform[] = $this->validarAsistente($carne);
+                    $rol = $_POST['rol'];
+                    $responseform[] = $this->validarRol($rol);
+                    $datafecha = $_POST['fecha'];
+                    $datacod = $_POST['codigo'];
+                    $responseform[] = $this->validarFechaAsistencia($datafecha, $datacod);
+                    $horas = $_POST['horas'];
+                    $responseform[] = $this->validarHorasAsistencia($horas);
+                    
+                    $response = array('ok' => true,'msg' => '');                    
+                    foreach ($responseform as $res) {               
+                         if(!$res['ok'])
+                         {
+                              $response['ok'] = false;
+                              $response['msg'] = $response['msg']."</br>-".$res['msg'];
+                         }
+                    } 
+            }//validate form on submit
+            else if ($action == 'validate_asistente') {
                 if (isset($_POST['carne'])) {
                     $data = $_POST['carne'];
                     $response = $this->validarAsistente($data);
@@ -276,11 +297,6 @@ controllers.ProyectosController");
             }//validate-horas
             echo CJSON::encode($response);
         }
-    }
-    
-    protected function validarSubmitAgregarAsistente($pidproyecto,$pasistente, $prol,$fpecha,$phoras ){
-        
-        Yii::app()->end();
     }
 
     protected function validarHorasAsistencia($phoras) {
