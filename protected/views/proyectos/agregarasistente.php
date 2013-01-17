@@ -8,7 +8,7 @@
 
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'proyectos-agregarasistente-form',
-	'enableAjaxValidation'=>true,
+	'enableAjaxValidation'=>false,
 )); ?>
         
     <h2>Agregar asistente al Proyecto: <?php echo $model->codigo?></h2>
@@ -17,7 +17,7 @@
    
     <p id="idproyecto" style="display:none"><?php echo $model->idtbl_Proyectos?></p>
         
-        <div class="errorSummary" id="errorSummary" style="display:none"></div>	
+        <div class="errorSummary" id="errorSummary"></div>	
 
 	<p class="note">Campos con <span class="required">*</span> son requeridos.</p>	
         
@@ -185,6 +185,50 @@
                 }
             });
 	}); 
+        
+        $("#proyectos-agregarasistente-form").submit(function(e){
+        e.preventDefault();    
+        
+        $("#errorSummary").html('');                
+        var form_data = {
+            action: 'validate_form',
+            rol: $("#rol").val(),            
+            horas: $("#horas").val(),
+            inicio: $("#inicio").val(),
+            carne: $("#asistente").val()
+        };
+        $.ajax({
+            type: "POST",
+            url: "../ValidarAgregarAsistente",
+            data: form_data,
+            dataType: 'json',
+            success: function(result) {
+                if(result.ok){
+                        var idproyecto = $("#idproyecto").html(); 
+                        $.ajax({              
+                        type: "POST",
+                        url: "../AgregarAsistente/" + idproyecto,
+                        data: form_data,
+                        dataType: 'json',
+                        success: function(result) {
+                            if(result.ok){
+                                //falta agregar los  CSS de valido.
+                            }
+                            else{
+                                $("#errorSummary").html(result.msg);
+                                //falta agregar los  CSS de invalido.
+                            }				
+                        }
+                    });
+                }
+                else{
+                    $("#errorSummary").html(result.msg);
+                    //falta agregar los  CSS de invalido.
+                }				
+            }
+        });
+
+        });
 });
 </script>
 
