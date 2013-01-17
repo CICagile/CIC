@@ -8,7 +8,7 @@
 
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'proyectos-agregarasistente-form',
-	'enableAjaxValidation'=>true,
+	'enableAjaxValidation'=>true,    
 )); ?>
         
     <h2>Agregar asistente al Proyecto: <?php echo $model->codigo?></h2>
