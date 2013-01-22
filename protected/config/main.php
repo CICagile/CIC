@@ -7,7 +7,7 @@
 // CWebApplication properties can be configured here.
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'=>'My Web Application',
+	'name'=>'Página CIC',
 
 	// preloading 'log' component
 	'preload'=>array('log'),
@@ -87,7 +87,5 @@ return array(
 		// this is used in contact page
 		'adminEmail'=>'webmaster@example.com',
 	),
-        'language'=>'es',
-      
-        
+    'language'=>'es',
 );
