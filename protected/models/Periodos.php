@@ -45,8 +45,7 @@ class Periodos extends CActiveRecord
 			array('inicio, fin', 'required', 'message' => 'La {attribute} es requerido.'),
                         array('inicio', 'date', 'format'=> 'dd-MM-yyyy'),
                         array('fin', 'date', 'format'=> 'dd-MM-yyyy'),
-                        array('fin','compare', 'compareAttribute' => 'inicio', 'operator' => '!=', 'message' => 'La {attribute} debe ser distinto a la fecha de inicio.'),
-                        //array('fin','compare', 'compareAttribute' => 'inicio', 'operator' => '>', 'message' => 'La {attribute} debe ser mayor a la fecha de inicio.'),                        
+                        array('fin','compare', 'compareAttribute' => 'inicio', 'operator' => '!=', 'message' => 'La {attribute} debe ser distinto a la fecha de inicio.'),                       
                         array('fin', 'ValidadorFechaMayor'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.

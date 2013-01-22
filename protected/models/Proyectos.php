@@ -98,4 +98,25 @@ class Proyectos extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+        
+        public function agregarAsistenteProyecto($pidproyecto, $pcarnet, $pidrol, $pfechaini, $phoras) {
+            $conexion = Yii::app()->db;
+            $call = 'CALL agregarAsistenteProyecto(:idproyecto,:carnet,:idrol,:fechaini,:horas)';
+            $transaccion = Yii::app()->db->beginTransaction();
+            try {
+                $comando = $conexion->createCommand($call);
+                $comando->bindParam(':idproyecto', $pidproyecto);
+                $comando->bindParam(':carnet', $pcarnet);
+                $comando->bindParam(':idrol', $pidrol);
+                $comando->bindParam(':fechaini', $pfechaini);                              
+                $comando->bindParam(':horas', $phoras);               
+                $comando->execute();
+                $transaccion->commit();
+            } catch (Exception $e) {
+                $transaccion->rollback();               
+                return false;
+            }
+            return true;
+        }
+
 }
