@@ -12,8 +12,8 @@
 )); ?>
         
     <h2>Agregar asistente al Proyecto: <?php echo $model->codigo?></h2>
-    <p>Periodo del proyecto: <?php echo FechaMysqltoPhp($model->periodos->inicio)
-    .' hasta '.FechaMysqltoPhp($model->periodos->fin)?></p>
+    <p>Periodo del proyecto: <?php echo $this->FechaMysqltoPhp($model->periodos->inicio)
+    .' hasta '.$this->FechaMysqltoPhp($model->periodos->fin)?></p>
    
     <p id="idproyecto" style="display:none"><?php echo $model->idtbl_Proyectos?></p>
         
@@ -250,15 +250,4 @@
 });
 </script>
 
-<?php
-function FechaMysqltoPhp($pfechamysql){
-            try{
-                $fecha = substr($pfechamysql, 0, 10);
-                list($y, $m, $d) = explode('-', $fecha);               
-                $fecha = $d.'-'.$m.'-'.$y;                 
-            }
-            catch (Exception $e){  
-            } 
-            return $fecha;
-}
-?>
+

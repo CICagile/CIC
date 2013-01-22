@@ -27,27 +27,16 @@ $this->menu=array(
 		'nombre',		
 		array(
                         'label' => $model->periodos->getAttributeLabel('inicio'),
-                        'value' => FechaMysqltoPhp($model->periodos->inicio),
+                        'value' => $this->FechaMysqltoPhp($model->periodos->inicio),
                 ),
                 array(
                         'label' => $model->periodos->getAttributeLabel('fin'),
-                        'value' => FechaMysqltoPhp($model->periodos->fin),
+                        'value' => $this->FechaMysqltoPhp($model->periodos->fin),
                 )
                 
 	),
 )); 
-
-        function FechaMysqltoPhp($pfechamysql)
-        {
-            try{
-                $fecha = substr($pfechamysql, 0, 10);
-                list($y, $m, $d) = explode('-', $fecha);               
-                $fecha = $d.'-'.$m.'-'.$y;                 
-            }
-            catch (Exception $e){  
-            }    
-            return $fecha;
-        }
+      
 ?>
 
 

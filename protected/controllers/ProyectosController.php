@@ -62,6 +62,17 @@ class ProyectosController extends Controller {
         }
         return $fechamysql;
     }
+    
+    public function FechaMysqltoPhp($pfechamysql){
+            try{
+                $fecha = substr($pfechamysql, 0, 10);
+                list($y, $m, $d) = explode('-', $fecha);               
+                $fecha = $d.'-'.$m.'-'.$y;                 
+            }
+            catch (Exception $e){  
+            } 
+            return $fecha;
+    }
 
     /**
      * Creates a new model.
