@@ -53,7 +53,7 @@ class Asistente  extends CModel{
                 array('codigo','validarCodigoProyecto','on'=>'nuevo')
             );
 	}
-        
+               
         /**
 	 * @return array customized attribute labels (name=>label)
 	 */
@@ -126,6 +126,40 @@ class Asistente  extends CModel{
             'correo'
         );
     }
+    
+    public function search()
+	{
+           $call = 'CALL verAsistentes()';
+           $rawData=Yii::app()->db->createCommand($call)->queryAll();
+            // or using: $rawData=User::model()->findAll();
+            $dataProvider= new CArrayDataProvider($rawData, array(
+            'keyField'=>'carnet',
+            'id'=>'user',
+            'sort'=>array(
+            'attributes'=>array(
+            'carnet',
+             'nombre',
+             'apellido1',
+             'apellido2',
+             'cedula',
+             'numerocuenta',
+             'cuentacliente',
+             'telefono',
+             'correo',
+              //'banco',
+             //'carrera',
+             ),
+             ),
+            'pagination'=>array(
+            'pageSize'=>10,
+              ),
+            ));
+            return $dataProvider;
+            }
+           
+            
+
+		
     
     public function __get($name)
     {

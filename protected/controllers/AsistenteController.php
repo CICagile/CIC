@@ -108,9 +108,6 @@ class AsistenteController extends Controller
 		));
 	}
         
-        public function actionUpdate() {
-            $this->render('update');
-        }//fin action update
 
 	/**
          * Actualiza los Datos Personales de un asistente.
@@ -123,7 +120,7 @@ class AsistenteController extends Controller
                  * le debería salir las opciones de modificar que son modificar datos personales,
                  * agregar asistente a un nuevo proyecto y modificar datos del asistente
                  */
-                $this->actionUpdate();
+                $this->actionIndex();
             }
             else {
 		$model=$this->loadModel($id);
