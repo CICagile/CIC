@@ -97,7 +97,7 @@ class AsistenteController extends Controller
                         $model->ajustarCarnetBuscado();
 			if($model->validate()){
                             if($model->crear())
-				$this->redirect(Yii::app()->homeUrl);
+				$this->actionAdmin ();
                             else
                                 $this->redirect ('error');
                         }
