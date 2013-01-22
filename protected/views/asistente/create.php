@@ -8,7 +8,7 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'Modificar datos de un asistente', 'url'=>array('update')),
+	array('label'=>'Ver información de asistentes', 'url'=>array('admin')),
 );
 ?>
 
