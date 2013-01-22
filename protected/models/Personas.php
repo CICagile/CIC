@@ -2,17 +2,6 @@
 
 /**
  * This is the model class for table "tbl_personas".
- *
- * The followings are the available columns in table 'tbl_personas':
- * @property integer $idtbl_Personas
- * @property string $nombre
- * @property string $apellido1
- * @property string $apellido2
- * @property string $cedula
- * @property string $numerocuenta
- * @property string $banco
- * @property string $cuentacliente
- *
  * The followings are the available model relations:
  * @property Proyectos[] $tblProyectoses
  * @property Contactos[] $contactoses
@@ -45,14 +34,11 @@ class Personas extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('nombre, apellido1, cedula, numerocuenta, banco, cuentacliente', 'required'),
+			array('nombre, apellido1, cedula, numerocuenta, cuentacliente', 'required'),
 			array('nombre, apellido1, apellido2, cedula', 'length', 'max'=>20),
 			array('numerocuenta', 'length', 'max'=>30),
-			array('banco', 'length', 'max'=>50),
 			array('cuentacliente', 'length', 'max'=>17),
-			// The following rule is used by search().
-			// Please remove those attributes that should not be searched.
-			array('idtbl_Personas, nombre, apellido1, apellido2, cedula, numerocuenta, banco, cuentacliente', 'safe', 'on'=>'search'),
+			array('idtbl_Personas, nombre, apellido1, apellido2, cedula, numerocuenta,cuentacliente', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -81,7 +67,6 @@ class Personas extends CActiveRecord
 			'apellido2' => 'Segundo Apellido',
 			'cedula' => 'Cédula',
 			'numerocuenta' => 'Número de Cuenta',
-			'banco' => 'Banco',
 			'cuentacliente' => 'Cuenta Cliente',
 		);
 	}
@@ -103,7 +88,6 @@ class Personas extends CActiveRecord
 		$criteria->compare('apellido2',$this->apellido2,true);
 		$criteria->compare('cedula',$this->cedula,true);
 		$criteria->compare('numerocuenta',$this->numerocuenta,true);
-		$criteria->compare('banco',$this->banco,true);
 		$criteria->compare('cuentacliente',$this->cuentacliente,true);
 
 		return new CActiveDataProvider($this, array(

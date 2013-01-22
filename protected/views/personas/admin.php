@@ -53,7 +53,6 @@ Opcionalmente ud puede ingresar comparadores (<b>&lt;</b>, <b>&lt;=</b>, <b>&gt;
 		'apellido2',
 		'cedula',
 		'numerocuenta',
-		'banco',
 		'cuentacliente',
 		array(
 			'class'=>'CButtonColumn',

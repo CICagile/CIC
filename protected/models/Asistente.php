@@ -24,6 +24,18 @@ class Asistente  extends CModel{
     public $rol;
     public $horas;
     
+    
+        public static function model($className=__CLASS__)
+	{
+		return parent::model($className);
+	}
+        
+        public function tableName()
+	{
+		return 'tbl_asistente';
+	}
+
+    
     /**
 	 * @return array validation rules for model attributes.
 	 */
@@ -44,10 +56,13 @@ class Asistente  extends CModel{
                 array('horas', 'numerical', 'max'=>20, 'min'=>0, 'tooBig'=>'Se permite un máximo de {max} horas', 'tooSmall'=>'Se permite un mínimo de {min} horas.'),
                 array('correo', 'email', 'message'=>'Dirección de correo inválida'),
                 array('nombre, apellido1, apellido2, ', 'match', 'pattern'=>'/^[\p{L} ]+$/u'),
-                array('numerocuenta,codigo', 'match', 'pattern'=>'/^[\p{N}-]+$/u')
-            );
+                array('numerocuenta,codigo', 'match', 'pattern'=>'/^[\p{N}-]+$/u'),
+                // The following rule is used by search().
+		// Please remove those attributes that should not be searched.
+		array('nombre,carnet,carrera,banco,apellido1, apellido2, numerocuenta', 'safe', 'on'=>'search'),
+                );
 	}
-        
+               
         /**
 	 * @return array customized attribute labels (name=>label)
 	 */
@@ -121,6 +136,40 @@ class Asistente  extends CModel{
         );
     }
     
+    public function search()
+	{
+           $call = 'CALL verAsistentes()';
+           $rawData=Yii::app()->db->createCommand($call)->queryAll();
+            // or using: $rawData=User::model()->findAll();
+            $dataProvider= new CArrayDataProvider($rawData, array(
+            'keyField'=>'carnet',
+            'id'=>'user',
+            'sort'=>array(
+            'attributes'=>array(
+            'carnet',
+             'nombre',
+             'apellido1',
+             'apellido2',
+             'cedula',
+             'numerocuenta',
+             'cuentacliente',
+             'telefono',
+             'correo',
+              //'banco',
+             //'carrera',
+             ),
+             ),
+            'pagination'=>array(
+            'pageSize'=>10,
+              ),
+            ));
+            return $dataProvider;
+            }
+           
+            
+
+		
+    
     public function __get($name)
     {
         if (property_exists($this, $name))
@@ -141,9 +190,10 @@ class Asistente  extends CModel{
         }
         else
         {
-            paretn::__set($name, $value);
+            parent::__set($name, $value);
         }
     }
+   
 }
 
 ?>

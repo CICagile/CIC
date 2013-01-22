@@ -7,10 +7,7 @@ class AsistenteController extends Controller
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
 	public $layout='//layouts/column2';
-
-	/**
-	 * @return array action filters
-	 */
+      
 	public function filters()
 	{
 		return array(
@@ -51,9 +48,9 @@ class AsistenteController extends Controller
 	 */
 	public function actionView($id)
 	{
-		$this->render('view',array(
-			'model'=>$this->loadModel($id),
-		));
+               	$this->render('view',array(
+                        'model'=>$this->loadModel($id),
+                ));
 	}
 
 	/**
@@ -63,8 +60,6 @@ class AsistenteController extends Controller
 	public function actionCreate()
 	{
 		$model=new Asistente;
-
-		// Uncomment the following line if AJAX validation is needed
                 $this->performAjaxValidation($model);
 
 		if(isset($_POST['Asistente']))
@@ -90,6 +85,7 @@ class AsistenteController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
+               // $model=new Asistente;
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
@@ -99,7 +95,10 @@ class AsistenteController extends Controller
 		{
 			$model->attributes=$_POST['Asistente'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->idtbl_Personas));
+				//$this->redirect(array('view','id'=>$model->idtbl_Personas));
+                                  $this->redirect(Yii::app()->homeUrl);
+                        else
+                                $this->redirect ('error');
 		}
 
 		$this->render('update',array(
@@ -126,7 +125,7 @@ class AsistenteController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('Asistente');
+                $dataProvider=new  CActiveDataProvider('Asistente');
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));
@@ -137,11 +136,10 @@ class AsistenteController extends Controller
 	 */
 	public function actionAdmin()
 	{
-		$model=new Asistente('search');
+		$model=new Asistente();
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['Asistente']))
 			$model->attributes=$_GET['Asistente'];
-
 		$this->render('admin',array(
 			'model'=>$model,
 		));
@@ -152,9 +150,9 @@ class AsistenteController extends Controller
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer the ID of the model to be loaded
 	 */
-	public function loadModel($id)
+	public function loadModel($carnet)
 	{
-		$model=Asistente::model()->findByPk($id);
+		$model=Asistente::model()->findBySql($carnet);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
@@ -172,4 +170,6 @@ class AsistenteController extends Controller
 			Yii::app()->end();
 		}
 	}
+        
+ 
 }

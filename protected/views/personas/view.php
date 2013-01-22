@@ -26,7 +26,6 @@ $this->menu=array(
 		'apellido2',
 		'cedula',
 		'numerocuenta',
-		'banco',
 		'cuentacliente',
 	),
 )); ?>
