@@ -195,7 +195,7 @@ class Asistente  extends CModel{
             return;
         $criteria = new CDbCriteria;
         $criteria->alias = "proyecto";
-        $criteria->condition = "proyecto.codigo = " . $this->codigo;
+        $criteria->condition = "proyecto.codigo = '" . $this->codigo . "'";
         if (!Proyectos::model()->exists($criteria)) {
             $this->addError('codigo', $this->getAttributeLabel('codigo') . ' no fue encontrado en la base de datos.');
         }//fin si el código existe en la base de datos
