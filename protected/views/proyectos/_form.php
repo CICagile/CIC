@@ -9,7 +9,8 @@
 
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'proyectos-form',	
-        'enableAjaxValidation'=>true,   
+        'enableAjaxValidation'=>true,  
+        'clientOptions'=>array('validateOnSubmit'=>true),
     
 )); ?>
 
@@ -25,7 +26,7 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($modelproyectos,'nombre'); ?>
-		<?php echo $form->textArea($modelproyectos,'nombre',array('size'=>60,'maxlength'=>250)); ?>
+		<?php echo $form->textArea($modelproyectos,'nombre',array('size'=>60,'maxlength'=>500)); ?>
 		<?php echo $form->error($modelproyectos,'nombre'); ?>
 	</div>		
         

@@ -79,16 +79,18 @@ class ProyectosController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      */
     public function actionCreate() {
+        
         $modelproyectos = new Proyectos;
-        $modelperiodos = new Periodos;
+        $modelperiodos = new Periodos;   
+        
+        $this->performAjaxValidation(array($modelproyectos,$modelperiodos));
 
-        $this->performAjaxValidation(array($modelproyectos, $modelperiodos));
-
-        if (isset($_POST['Periodos']) && isset($_POST['Proyectos'])) {
+        if (isset($_POST['Periodos']) && isset($_POST['Proyectos'])) {           
+            
             $modelperiodos->attributes = $_POST['Periodos'];
-            unset($_POST['Periodos']);
-
-            if ($modelperiodos->validate()) {
+            $modelproyectos->attributes = $_POST['Proyectos']; 
+            
+            if ($modelperiodos->validate() && $modelproyectos->validate()) {
 
                 $modelperiodos->inicio = $this->FechaPhptoMysql($modelperiodos->inicio);
                 $modelperiodos->fin = $this->FechaPhptoMysql($modelperiodos->fin);
@@ -97,8 +99,7 @@ class ProyectosController extends Controller {
 
                 $resultado = $modelperiodos->save(false); //Guardo el periodo sin validar, ya que lo valide con anterioridad                                                           
 
-                $modelproyectos->attributes = $_POST['Proyectos'];
-                unset($_POST['Proyectos']);
+                
                 $modelproyectos->tbl_Periodos_idPeriodo = $modelperiodos->idPeriodo;
 
                 $resultado = $resultado ? $modelproyectos->save() : $resultado;
