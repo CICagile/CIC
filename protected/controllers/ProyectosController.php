@@ -268,7 +268,7 @@ controllers.ProyectosController");
         if (isset($_POST['action'])) {
             $action = $_POST['action'];
             $response = array();
-            if ($action == 'validate_form_agregar') {
+            if ($action == 'validate_form_agregar') {//validate form on submit
                     $responseform = array();
                     $datacod = $_POST['codigo'];
                     $carne = $_POST['carne'];
@@ -278,7 +278,7 @@ controllers.ProyectosController");
                     $datafecha = $_POST['fecha'];                    
                     $responseform[] = $this->validarFechaAsistencia($datafecha, $datacod);
                     $horas = $_POST['horas'];
-                    $responseform[] = $this->validarHorasAsistencia($horas);
+                    $responseform[] = $this->validarHorasAsistencia($horas, $carne);
                     
                     $response = array('ok' => true,'msg' => '');                    
                     foreach ($responseform as $res) {               
@@ -288,7 +288,7 @@ controllers.ProyectosController");
                               $response['msg'] = $response['msg']."</br>-".$res['msg'];
                          }
                     } 
-            }//validate form on submit
+            }
             else if ($action == 'validate_asistente') {
                 if (isset($_POST['carne'])) {
                     $data = $_POST['carne'];
@@ -319,7 +319,7 @@ controllers.ProyectosController");
         }
     }
 
-    protected function validarHorasAsistencia($phoras) {
+    protected function validarHorasAsistencia($phoras, $pcarne = null) {
         $response = array();
         define('MIN_VALUE', 1);   //Cantidad de horas minimas de asistencia por semana
         define('MAX_VALUE', 20);  //Cantidad de horas maximas de asistencia por semana
@@ -335,8 +335,14 @@ controllers.ProyectosController");
         } else if ($this->convertirStringNumerico($horas) < MIN_VALUE || $this->convertirStringNumerico($horas) > MAX_VALUE) {
             $response = array(
                 'ok' => false,
-                'msg' => "La cantidad de horas semanales debe estar en un rango de 1-20 horas.");
-        } else {
+                'msg' => "La cantidad de horas semanales debe estar en un rango de 1-20 horas.");           
+        }else if(!is_null($pcarne)){
+            if ($this->validarCantidadHorasAcumuladas($horas, $pcarne)> MAX_VALUE) {
+            $response = array(
+                'ok' => false,
+                'msg' => "La cantidad de horas que desea agregar a este Asistente excede la cantidad horas permitidas en distintos proyectos por semana.");           
+            }
+        }else {
             $response = array(
                 'ok' => true,
                 'msg' => "Valido.");
@@ -470,6 +476,19 @@ controllers.ProyectosController");
             return (float) $pstring;
         else
             return (int) $pstring;
+    }
+    
+    protected function validarCantidadHorasAcumuladas($phoras, $pcarne){
+         $asistente = Asistentes::model()->findByAttributes(array('carnet' => $pcarne));
+         $horasacumuladas = $asistente->verificarHorasAcumuladasProyectos($asistente->idtbl_Asistentes);
+         if(is_null($horasacumuladas)){  
+             $phoras = 0;
+             return $phoras;
+         }
+         else{    
+            $phoras = $phoras + current($horasacumuladas);
+            return $phoras;
+         }
     }
 
     /**

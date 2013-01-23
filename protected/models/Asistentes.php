@@ -98,4 +98,24 @@ class Asistentes extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+        
+        public function verificarHorasAcumuladasProyectos($pidAsistente) {
+        $conexion = Yii::app()->db;
+        $call = 'CALL verificarHorasAcumuladasProyectos(:pidAsistente)';
+            $transaccion = Yii::app()->db->beginTransaction();
+            $resultado = NULL;
+            try {
+                $comando = $conexion->createCommand($call);
+                $comando->bindParam(':pidAsistente', $pidAsistente);
+                $resultado = $comando->query();
+                $transaccion->commit();
+            } catch (Exception $e) {
+                $transaccion->rollback();
+                echo $e->getMessage();
+                return NULL;
+            }
+            
+            return $resultado->rowCount === 1 ? $resultado->read() : NULL;
+            
+    }
 }
