@@ -1,6 +1,4 @@
 <?php
-//@var $this AsistenteController
-  //@var $model Asistente;
 $model = new Asistente();
 $this->breadcrumbs=array(
 	'Asistente'=>array('index'),
@@ -11,49 +9,37 @@ $this->menu=array(
 	array('label'=>'Registrar nuevo asistente', 'url'=>array('create')),
 	
 );
-
+//columnas que se mostrarán en el CGridView
 $columns = array(
     array(
-        'header'=>CHtml::encode('carnet'),
+        'header'=>CHtml::encode('Carnet'),
         'name'=>'carnet',
     ),
     array(
-        'header'=>CHtml::encode('nombre'),
+        'header'=>CHtml::encode('Nombre'),
         'name'=>'nombre',
     ),
     array(
-        'header'=>CHtml::encode('apellido1'),
+        'header'=>CHtml::encode('Primer Apellido'),
         'name'=>'apellido1',
     ),
     array(
-        'header'=>CHtml::encode('apellido2'),
+        'header'=>CHtml::encode('Segundo Apellido'),
         'name'=>'apellido2',
     ),
     array(
-        'header'=>CHtml::encode('cedula'),
-        'name'=>'cedula',
-     ),     
-    array(
-        'header'=>CHtml::encode('numerocuenta'),
-        'name'=>'numerocuenta',
-    ),
-    array(
-        'header'=>CHtml::encode('cuentacliente'),
-        'name'=>'cuentacliente',
-    ),
-    array(
-        'header'=>CHtml::encode('telefono'),
+        'header'=>CHtml::encode('Teléfono'),
         'name'=>'telefono',
     ),
     array(
-        'header'=>CHtml::encode('correo'),
+        'header'=>CHtml::encode('Correo Electrónico'),
         'name'=>'correo',
     ),
     array(
         'class'=>'CButtonColumn',
-        'viewButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("view"=>$data["carnet"]))',
+        'viewButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("id"=>$data["carnet"]))',
         'updateButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/updateDP", array("id"=>$data["carnet"]))',
-        'deleteButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("view"=>$data["carnet"]))',),
+        'deleteButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("id"=>$data["carnet"]))',),
    );
 
 Yii::app()->clientScript->registerScript('search', "$('.search-button').click(function()
@@ -70,13 +56,10 @@ Yii::app()->clientScript->registerScript('search', "$('.search-button').click(fu
 ");
 ?>
 
-<h1>Busqueda</h1>
+<h1>Búsqueda</h1>
 
 <p>
-<!--
-Opcionalmente ud puede ingresar comparadores (<b>&lt;</b>, <b>&lt;=</b>, <b>&gt;</b>, <b>&gt;=</b>, <b>&lt;&gt;</b>
-ó <b>=</b>) al principio de cada valor de búsqueda.
-!-->
+
 </p>
 
 <?php /*echo CHtml::link('Advanced Search','#',array('class'=>'search-button')); */?>
