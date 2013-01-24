@@ -126,13 +126,13 @@ class Asistente  extends CModel{
             'correo'
         );
     }
-    
+    //Función que llama a un store procedure para ver todos los asistentes y 
+    // es invocado en la vista de admin. 
     public function search()
 	{
            $call = 'CALL verAsistentes()';
            $rawData=Yii::app()->db->createCommand($call)->queryAll();
-            // or using: $rawData=User::model()->findAll();
-            $dataProvider= new CArrayDataProvider($rawData, array(
+           $dataProvider= new CArrayDataProvider($rawData, array(
             'keyField'=>'carnet',
             'id'=>'user',
             'sort'=>array(
@@ -141,13 +141,8 @@ class Asistente  extends CModel{
              'nombre',
              'apellido1',
              'apellido2',
-             'cedula',
-             'numerocuenta',
-             'cuentacliente',
              'telefono',
              'correo',
-              //'banco',
-             //'carrera',
              ),
              ),
             'pagination'=>array(
