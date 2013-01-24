@@ -98,8 +98,8 @@ class Asistente  extends CModel{
                 $comando->execute();
                 $transaccion->commit();
             } catch (Exception $e) {
+                Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
                 $transaccion->rollback();
-                echo $e->getMessage();
                 return false;
             }
             return true;
@@ -248,7 +248,7 @@ class Asistente  extends CModel{
             $transaction->commit();
         }
         catch (Exception $e) {
-            echo $e->getMessage();
+             Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
             $transaction->rollback();
             return FALSE;
         }
