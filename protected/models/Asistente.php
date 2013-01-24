@@ -74,11 +74,11 @@ class Asistente  extends CModel{
          * Funcion de guardado.
          * Crea un nuevo asistente en la base de datos. Usa el stored procedure 'registrarNuevoAsistente'
          * y lo hace de forma transaccional.
-         * @param Periodo $pPeriodo El periodo inicial del asistente.
+         * @param Periodos $pPeriodo El periodo inicial del asistente.
          */
         public function crear($pPeriodo) {
             $conexion = Yii::app()->db;
-            $call = 'CALL registrarNuevoAsistente(:nombre,:ape1,:ape2,:ced,:numc,:ccliente,:carnet,:carrera,:cod,:rol,:horas,:tel,:correo,:banco,:inicio,:fin)';
+            $call = "CALL registrarNuevoAsistente(:nombre,:ape1,:ape2,:ced,:numc,:ccliente,:carnet,:carrera,:cod,:rol,:horas,:tel,:correo,:banco,'" . $pPeriodo->inicio . "','" . $pPeriodo->fin. "')";
             $transaccion = Yii::app()->db->beginTransaction();
             try {
                 $comando = $conexion->createCommand($call);
@@ -96,8 +96,6 @@ class Asistente  extends CModel{
                 $comando->bindParam(':tel', $this->telefono, PDO::PARAM_STR);
                 $comando->bindParam(':correo', $this->correo, PDO::PARAM_STR);
                 $comando->bindParam(':banco', $this->banco, PDO::PARAM_STR);
-                $comando->bindParam(':incio', $pPeriodo->inicio, PDO::PARAM_STR);
--               $comando->bindParam(':fin', $pPeriodo->fin, PDO::PARAM_STR);
                 $comando->execute();
                 $transaccion->commit();
             } catch (Exception $e) {
