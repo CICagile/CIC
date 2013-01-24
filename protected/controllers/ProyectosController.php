@@ -340,7 +340,7 @@ controllers.ProyectosController");
             if ($this->validarCantidadHorasAcumuladas($horas, $pcarne)> MAX_VALUE) {
             $response = array(
                 'ok' => false,
-                'msg' => "La cantidad de horas que desea agregar a este Asistente excede la cantidad horas permitidas".MAX_VALUE."en distintos proyectos por semana.");           
+                'msg' => "La cantidad de horas que desea agregar a este Asistente excede la cantidad horas maximas permitidas (".MAX_VALUE.") en distintos proyectos del CIC por semana.");           
             }
             else{
                 $response = array(
