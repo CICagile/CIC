@@ -336,11 +336,16 @@ controllers.ProyectosController");
             $response = array(
                 'ok' => false,
                 'msg' => "La cantidad de horas semanales debe estar en un rango de 1-20 horas.");           
-        }else if(!is_null($pcarne)){
+        }else if(!is_null($pcarne)){//Esta validacion solo se ejecuta en submit action del form
             if ($this->validarCantidadHorasAcumuladas($horas, $pcarne)> MAX_VALUE) {
             $response = array(
                 'ok' => false,
-                'msg' => "La cantidad de horas que desea agregar a este Asistente excede la cantidad horas permitidas en distintos proyectos por semana.");           
+                'msg' => "La cantidad de horas que desea agregar a este Asistente excede la cantidad horas permitidas".MAX_VALUE."en distintos proyectos por semana.");           
+            }
+            else{
+                $response = array(
+                'ok' => true,
+                'msg' => "Valido.");
             }
         }else {
             $response = array(
@@ -479,15 +484,22 @@ controllers.ProyectosController");
     }
     
     protected function validarCantidadHorasAcumuladas($phoras, $pcarne){
+         define('ZERO_VALUE', 0);
          $asistente = Asistentes::model()->findByAttributes(array('carnet' => $pcarne));
-         $horasacumuladas = $asistente->verificarHorasAcumuladasProyectos($asistente->idtbl_Asistentes);
-         if(is_null($horasacumuladas)){  
-             $phoras = 0;
-             return $phoras;
+         if(!is_null($asistente)){
+            $horasacumuladas = $asistente->verificarHorasAcumuladasProyectos($asistente->idtbl_Asistentes);
+            if(is_null($horasacumuladas)){  
+                $phoras = ZERO_VALUE;
+                return $phoras;
+            }
+            else{    
+                $phoras = $phoras + current($horasacumuladas);
+                return $phoras;
+            }
          }
-         else{    
-            $phoras = $phoras + current($horasacumuladas);
-            return $phoras;
+         else{
+             $phoras = ZERO_VALUE;
+             return $phoras;
          }
     }
 
