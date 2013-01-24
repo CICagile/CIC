@@ -1,6 +1,7 @@
 <?php
 /* @var $this PersonaController */
 /* @var $model Persona */
+/* @var $periodo Periodos */
 
 $this->breadcrumbs=array(
 	'Asistentes'=>array('index'),
@@ -14,4 +15,4 @@ $this->menu=array(
 
 <h1>Registrar Nuevo Asistente</h1>
 
-<?php echo $this->renderPartial('_form', array('model'=>$model)); ?>
+<?php echo $this->renderPartial('_form', array('model'=>$model,'periodo'=>$periodo)); ?>

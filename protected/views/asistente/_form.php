@@ -3,6 +3,7 @@
 /* @var $this AsistenteController */
 /* @var $model Asistente */
 /* @var $form CActiveForm */
+/* @var $periodo Periodos */
 ?>
 
 <div class="form">
@@ -111,6 +112,46 @@
 		<?php echo $form->labelEx($model,'correo'); ?>
 		<?php echo $form->textField($model,'correo',array('size'=>25,'maxlength'=>25)); ?>
 		<?php echo $form->error($model,'correo'); ?>
+	</div>
+        
+        <div class="row">
+		<?php echo $form->labelEx($periodo,'inicio'); ?>
+		<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+                        'name' => CHtml::activeName($periodo, 'inicio'),
+                        'value' => $periodo->attributes['inicio'],
+                        'language' => 'es',
+                        'options' => array(                            
+                            'showAnim'=>'fold',
+                            'dateFormat'=>'dd-mm-yy',
+                            'changeYear'=>true,
+                            'changeMonth'=>true,
+                        ),
+                        'htmlOptions'=>array(                            
+                            'readonly' => 'readonly'
+                        ),
+                    ));?>
+                <?php echo $form->error($periodo,'inicio'); ?>
+		
+	</div>
+        
+        <div class="row">
+		<?php echo $form->labelEx($periodo,'fin'); ?>
+		<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+                        'name' => CHtml::activeName($periodo, 'fin'),
+                        'value' => $periodo->attributes['fin'],
+                        'language' => 'es',
+                        'options' => array(                            
+                            'showAnim'=>'fold',
+                            'dateFormat'=>'dd-mm-yy',
+                            'changeYear'=>true,
+                            'changeMonth'=>true,
+                        ),
+                        'htmlOptions'=>array(                            
+                            'readonly' => 'readonly'
+                        ),
+                    ));?>
+                <?php echo $form->error($periodo,'fin'); ?>
+		
 	</div>
 
 	<div class="row buttons">
