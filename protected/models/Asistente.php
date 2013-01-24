@@ -268,8 +268,9 @@ class Asistente  extends CModel{
     public function validarCarnetUnico($pCarnet = NULL) {
         if ($this->carnet != $pCarnet) {
             $conexion = Yii::app()->db;
-            $sql = "SELECT * FROM tbl_Asistentes WHERE carnet = '" . $this->carnet . "'";
+            $sql = "SELECT * FROM tbl_Asistentes WHERE carnet = :pCarnet";
             $comando = $conexion->createCommand($sql);
+            $comando->bindParam(':pCarnet',$this->carnet, PDO::PARAM_STR);
             $resultado = $comando->query();
             if ($resultado->rowCount != 0) {
                 $this->addError('carnet', 'Ya existe un asistente con el carnet ' . $this->carnet . '.');
@@ -285,10 +286,12 @@ class Asistente  extends CModel{
     public function validarCedulaUnica($pCedula = NULL) {
         if ($this->cedula != $pCedula) {
             $conexion = Yii::app()->db;
-            $sql = "SELECT COUNT(*) cuenta FROM tbl_Personas P INNER JOIN tbl_Asistentes A ON P.idtbl_Personas = A.idtbl_Personas WHERE P.cedula = '114860749';";
+            $sql = "SELECT COUNT(*) cuenta FROM tbl_Personas P INNER JOIN tbl_Asistentes A ON P.idtbl_Personas = A.idtbl_Personas WHERE P.cedula = :pCedula;";
             $comando = $conexion->createCommand($sql);
+            $comando->bindParam(':pCedula',$this->cedula, PDO::PARAM_STR);
             $resultado = $comando->query();
-            if ($resultado->read()['cuenta'] != 0) {
+            $cuenta = $resultado->read();
+            if ($cuenta['cuenta'] != 0) {
                 $this->addError('cedula', 'Ya existe un asistente con la cédula ' . $this->cedula . '.');
             }//fin si el carnet es único
         }//fin si el carnet es diferente
