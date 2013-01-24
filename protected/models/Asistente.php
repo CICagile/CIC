@@ -77,7 +77,7 @@ class Asistente  extends CModel{
          */
         public function crear() {
             $conexion = Yii::app()->db;
-            $call = 'CALL registrarNuevoAsistente(:nombre,:ape1,:ape2,:ced,:numc,:ccliente,:carnet,:carrera,:cod,:rol,:horas,:tel,:correo,:banco)';
+            $call = 'CALL registrarNuevoAsistente(:nombre,:ape1,:ape2,:ced,:numc,:ccliente,:carnet,:carrera,:cod,:rol,:horas,:tel,:correo,:banco,:inicio,:fin)';
             $transaccion = Yii::app()->db->beginTransaction();
             try {
                 $comando = $conexion->createCommand($call);
@@ -95,6 +95,8 @@ class Asistente  extends CModel{
                 $comando->bindParam(':tel', $this->telefono, PDO::PARAM_STR);
                 $comando->bindParam(':correo', $this->correo, PDO::PARAM_STR);
                 $comando->bindParam(':banco', $this->banco, PDO::PARAM_STR);
+                $comando->bindParam(':incio', $pPeriodo->inicio, PDO::PARAM_STR);
+-               $comando->bindParam(':fin', $pPeriodo->fin, PDO::PARAM_STR);
                 $comando->execute();
                 $transaccion->commit();
             } catch (Exception $e) {
