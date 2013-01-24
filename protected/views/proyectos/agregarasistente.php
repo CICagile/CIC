@@ -70,7 +70,27 @@
                     ));?>
                  <div class="errorMessage" id="inicio_error"></div>
 	</div>
-	        
+        
+        <div class="row">
+		<label for="fin">Fecha fin de la asistencia<span class="required">*</span></label>
+		<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+                        'name' => 'fin',
+                        'id' => 'fin',
+                        'value' => '',
+                        'language' => 'es',
+                        'options' => array(                            
+                            'showAnim'=>'fold',
+                            'dateFormat'=>'dd-mm-yy',
+                            'changeYear'=>true,
+                            'changeMonth'=>true,                           
+                        ),
+                        'htmlOptions'=>array(                            
+                            'readonly' => 'readonly',                            
+                        ),
+                    ));?>
+                 <div class="errorMessage" id="fin_error"></div>
+	</div>
+        
         <div class="row">
             <label for="horas">Cantidad de horas semanales<span class="required">*</span></label>
             <input type="text" name="horas" id="horas">
@@ -119,7 +139,7 @@
             });
 	});
         
-        $("#asistente").blur(function() {
+        $("#asistente").focusout(function() {
             $("#asistente_error").html('');
             $("#errorSummary").html('');  
             $("#errorSummary").css('display', 'none');
@@ -150,8 +170,8 @@
             $("#errorSummary").html('');  
             $("#errorSummary").css('display', 'none');
             var form_data = {
-                action: 'validate_fecha',
-                fecha: $(this).val(),
+                action: 'validate_fecha_inicio',
+                fecha_inicio: $(this).val(),
                 codigo: $("#idproyecto").html()
             };
             $.ajax({
@@ -165,6 +185,33 @@
                     }
                     else{
                         $("#inicio_error").html(result.msg);
+                        //falta agregar los  CSS de invalido.
+                    }				
+                }
+            });
+	});
+        
+        $("#fin").change(function() {
+            $("#fin_error").html('');  
+            $("#errorSummary").html('');  
+            $("#errorSummary").css('display', 'none');
+            var form_data = {
+                action: 'validate_fecha_fin',
+                fecha_fin: $(this).val(),
+                fecha_inicio: $('#inicio').val(),
+                codigo: $("#idproyecto").html()
+            };
+            $.ajax({
+                type: "POST",
+                url: "../ValidarAgregarAsistente",
+                data: form_data,
+                dataType: 'json',
+                success: function(result) {
+                    if(result.ok){
+                        //falta agregar los  CSS de valido.
+                    }
+                    else{
+                        $("#fin_error").html(result.msg);
                         //falta agregar los  CSS de invalido.
                     }				
                 }
@@ -207,7 +254,8 @@
             action: 'validate_form_agregar',
             rol: $("#rol").val(),            
             horas: $("#horas").val(),
-            fecha: $("#inicio").val(),
+            fecha_inicio: $("#inicio").val(),
+            fecha_fin: $("#fin").val(),
             codigo: $("#idproyecto").html(),
             carne: $("#asistente").val()
         };

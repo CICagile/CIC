@@ -204,9 +204,10 @@ controllers.ProyectosController");
             $carnet = $_POST['asistente'];
             $idrol = $this->obtenerIdRol($_POST['rol']);
             $fechainicio = $this->FechaPhptoMysql($_POST['inicio']);
+            $fechafin = $this->FechaPhptoMysql($_POST['fin']);
             $horas = $_POST['horas'];
 
-            if ($model->agregarAsistenteProyecto($model->idtbl_Proyectos, $carnet, $idrol, $fechainicio, $horas)) {
+            if ($model->agregarAsistenteProyecto($model->idtbl_Proyectos, $carnet, $idrol, $fechainicio, $fechafin, $horas)) {
                 Yii::log("Asociacion exitosa del asistente: " . $carnet . " al proyecto: " . $model->idtbl_Proyectos, "info", "application.
     controllers.ProyectosController");                
                 $response = array(
@@ -275,8 +276,10 @@ controllers.ProyectosController");
                     $responseform[] = $this->validarAsistente($carne, $datacod);
                     $rol = $_POST['rol'];
                     $responseform[] = $this->validarRol($rol);
-                    $datafecha = $_POST['fecha'];                    
-                    $responseform[] = $this->validarFechaAsistencia($datafecha, $datacod);
+                    $datafechainicio = $_POST['fecha_inicio'];                    
+                    $responseform[] = $this->validarFechaInicio($datafechainicio, $datacod);
+                    $datafechafin = $_POST['fecha_fin'];                    
+                    $responseform[] = $this->validarFechaFin($datafechafin, $datacod, $datafechainicio);
                     $horas = $_POST['horas'];
                     $responseform[] = $this->validarHorasAsistencia($horas, $carne);
                     
@@ -302,13 +305,21 @@ controllers.ProyectosController");
                     $response = $this->validarRol($data);
                 }
             }//validate-rol
-            else if ($action == 'validate_fecha') {
-                if (isset($_POST['fecha']) && isset($_POST['codigo'])) {
-                    $datafecha = $_POST['fecha'];
+            else if ($action == 'validate_fecha_inicio') {
+                if (isset($_POST['fecha_inicio']) && isset($_POST['codigo'])) {
+                    $datafechainicio = $_POST['fecha_inicio'];
                     $datacod = $_POST['codigo'];
-                    $response = $this->validarFechaAsistencia($datafecha, $datacod);
+                    $response = $this->validarFechaInicio($datafechainicio, $datacod);
                 }
-            }//validate-fecha
+            }//validate-fecha-inicio
+            else if ($action == 'validate_fecha_fin') {
+                if (isset($_POST['fecha_fin']) && isset($_POST['fecha_inicio'])&& isset($_POST['codigo'])) {
+                    $datafechainicio = $_POST['fecha_inicio'];
+                    $datafechafin = $_POST['fecha_fin'];
+                    $datacod = $_POST['codigo'];
+                    $response = $this->validarFechaFin($datafechafin, $datacod, $datafechainicio);
+                }
+            }//validate-fecha-fin 
             else if ($action == 'validate_horas') {
                 if (isset($_POST['horas'])) {
                     $data = $_POST['horas'];
@@ -355,15 +366,41 @@ controllers.ProyectosController");
         return $response;
     }
 
-    protected function validarFechaAsistencia($pfecha, $pidproyecto) {
+    protected function validarFechaInicio($pfecha, $pidproyecto) {
         $response = array();
         $fecha = trim($pfecha);
         $codigo = trim($pidproyecto);
-        if (!$this->validarFechaInicioAsistencia($fecha, $codigo)) {
+        if (!$this->validarFechaRangoAsistenciaProyecto($fecha, $codigo)) {
             $response = array(
                 'ok' => false,
-                'msg' => "La fecha seleccionada no cumple con el periodo del proyecto.");
+                'msg' => "La fecha de inicio asistencia seleccionada no cumple con el periodo del proyecto.");
         } else {
+            $response = array(
+                'ok' => true,
+                'msg' => "Valido.");
+        }
+        return $response;
+    }
+    
+    protected function validarFechaFin($pfechafin, $pidproyecto, $pfechainicio){
+        $response = array();        
+        $codigo = trim($pidproyecto);
+        if($pfechafin == '') {
+               $response = array(
+                'ok' => false,
+                'msg' => "La fecha de finalización no puede estar en blanco.");
+        }  
+        else if(strtotime($pfechafin) <= strtotime($pfechainicio)) {
+               $response = array(
+                'ok' => false,
+                'msg' => "La fecha de finalización de la asistencia no puede ser menor o igual que la fecha de inicio.");
+        }  
+        else if (!$this->validarFechaRangoAsistenciaProyecto($pfechafin, $codigo)) {
+            $response = array(
+                'ok' => false,
+                'msg' => "La fecha de finalizacion de asistencia seleccionada no cumple con el periodo del proyecto.");
+        } 
+        else {
             $response = array(
                 'ok' => true,
                 'msg' => "Valido.");
@@ -460,16 +497,16 @@ controllers.ProyectosController");
         return $res;            
     }
 
-    protected function validarFechaInicioAsistencia($pfechainicio, $pidproyecto) {
+    protected function validarFechaRangoAsistenciaProyecto($pfecha, $pidproyecto) {
         $proyecto = $this->loadModel($pidproyecto);
-        $fechainicio = $this->FechaPhptoMysql($pfechainicio);
+        $fecha = $this->FechaPhptoMysql($pfecha);
 
         $proyectoini = $proyecto->periodos->inicio;
         $proyectofin = $proyecto->periodos->fin;
 
-        if (strtotime($proyectoini) > strtotime($fechainicio)) {
+        if (strtotime($proyectoini) > strtotime($fecha)) {
             return false;
-        } else if (strtotime($proyectofin) < strtotime($fechainicio)) {
+        } else if (strtotime($proyectofin) < strtotime($fecha)) {
             return false;
         }
         else
