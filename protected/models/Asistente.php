@@ -74,10 +74,11 @@ class Asistente  extends CModel{
          * Funcion de guardado.
          * Crea un nuevo asistente en la base de datos. Usa el stored procedure 'registrarNuevoAsistente'
          * y lo hace de forma transaccional.
+         * @param Periodos $pPeriodo El periodo inicial del asistente.
          */
-        public function crear() {
+        public function crear($pPeriodo) {
             $conexion = Yii::app()->db;
-            $call = 'CALL registrarNuevoAsistente(:nombre,:ape1,:ape2,:ced,:numc,:ccliente,:carnet,:carrera,:cod,:rol,:horas,:tel,:correo,:banco)';
+            $call = "CALL registrarNuevoAsistente(:nombre,:ape1,:ape2,:ced,:numc,:ccliente,:carnet,:carrera,:cod,:rol,:horas,:tel,:correo,:banco,'" . $pPeriodo->inicio . "','" . $pPeriodo->fin. "')";
             $transaccion = Yii::app()->db->beginTransaction();
             try {
                 $comando = $conexion->createCommand($call);
@@ -98,8 +99,8 @@ class Asistente  extends CModel{
                 $comando->execute();
                 $transaccion->commit();
             } catch (Exception $e) {
+                Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
                 $transaccion->rollback();
-                echo $e->getMessage();
                 return false;
             }
             return true;
@@ -248,7 +249,7 @@ class Asistente  extends CModel{
             $transaction->commit();
         }
         catch (Exception $e) {
-            echo $e->getMessage();
+             Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
             $transaction->rollback();
             return FALSE;
         }

@@ -87,17 +87,19 @@ class AsistenteController extends Controller
 	{
 		$model=new Asistente;
                 $model->scenario = 'nuevo';
+                $periodo = new Periodos;
 
 		// Uncomment the following line if AJAX validation is needed
-                $this->performAjaxValidation($model);
+                $this->performAjaxValidation(array($model,$periodo));
 
-		if(isset($_POST['Asistente']))
+		if(isset($_POST['Asistente']) && isset($_POST['Periodos']))
 		{
 			$model->attributes=$_POST['Asistente'];
+                        $periodo->attributes = $_POST['Periodos'];
                         $model->validarCarnetUnico();
                         $model->validarCedulaUnica();
-			if($model->validate(NULL,false)){
-                            if($model->crear())
+			if($model->validate(NULL,false) && $periodo->validate()){
+                            if($model->crear($periodo))
 				$this->redirect(array('index'));
                             else
                                 $this->redirect ('error');
@@ -106,6 +108,7 @@ class AsistenteController extends Controller
 
 		$this->render('create',array(
 			'model'=>$model,
+                        'periodo'=>$periodo,
 		));
 	}
         
