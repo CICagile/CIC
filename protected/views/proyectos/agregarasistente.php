@@ -2,6 +2,18 @@
 /* @var $this ProyectosController */
 /* @var $model Proyectos */
 /* @var $form CActiveForm */
+
+
+$this->breadcrumbs=array(
+	'Proyectos'=>array('index'),
+	'Agregar Asistente',
+);
+
+$this->menu=array(
+	array('label'=>'Ver Proyectos', 'url'=>array('index')),
+	array('label'=>'Nuevo Proyecto', 'url'=>array('create')),       
+	
+);
 ?>
 
 <div class="form">
