@@ -10,5 +10,5 @@ $this->pageTitle=Yii::app()->name;
 <ul>
     <li><?php echo CHtml::link('Asistentes',array('asistente/admin')) ?></li>
     <p></p>
-    <li><?php echo CHtml::link('Proyectos',array('proyectos/index')) ?></li>
+    <li><?php echo CHtml::link('Proyectos',array('proyectos/index')) ?></li>    
 </ul>
