@@ -24,8 +24,6 @@ class Asistente  extends CModel{
     public $rol;
     public $horas;
     
-    private $carnet_buscado;
-    
     /**
 	 * @return array validation rules for model attributes.
 	 */
@@ -36,20 +34,19 @@ class Asistente  extends CModel{
             return array(
                 array('nombre, apellido1, cedula, numerocuenta, banco, cuentacliente, carnet, carrera, telefono, correo, codigo, rol, horas', 'required', 'message'=>'{attribute} no puede dejarse en blanco.', 'on'=>'nuevo'),
                 array('nombre, apellido1, cedula, numerocuenta, banco, cuentacliente, carnet, carrera, telefono, correo', 'required', 'message'=>'{attribute} no puede dejarse en blanco.', 'on'=>'actDP'),
-                array('nombre, apellido1, apellido2, cedula, codigo', 'length', 'max'=>20),
-                array('carnet','length', 'max'=>15),
+                array('nombre, apellido1, apellido2, codigo', 'length', 'max'=>20),
+                array('cedula','length','min'=>9,'max'=>20),
+                array('carnet','length', 'min'=>7,'max'=>15),
                 array('carrera, rol','length', 'max'=>45),
                 array('telefono, correo', 'length', 'max'=>25),
                 array('numerocuenta', 'length', 'max'=>30),
                 array('banco', 'length', 'max'=>70),
                 array('cuentacliente', 'length', 'min'=>17, 'max'=>17),
                 array('telefono, cedula, cuentacliente, carnet', 'match', 'pattern'=>'/^[\p{N}]+$/u', 'message'=>'{attribute} sólo puede estar compuesto por dígitos.'),
-                array('horas', 'numerical', 'max'=>20, 'min'=>0, 'tooBig'=>'Se permite un máximo de {max} horas', 'tooSmall'=>'Se permite un mínimo de {min} horas.'),
+                array('horas', 'numerical', 'max'=>20, 'min'=>1, 'tooBig'=>'Se permite un máximo de {max} horas', 'tooSmall'=>'Se permite un mínimo de {min} horas.'),
                 array('correo', 'email', 'message'=>'Dirección de correo inválida'),
                 array('nombre, apellido1, apellido2, ', 'match', 'pattern'=>'/^[\p{L} ]+$/u'),
                 array('numerocuenta,codigo', 'match', 'pattern'=>'/^[\p{N}-]+$/u'),
-                array('carnet','validarCarnetUnico','on'=>'nuevo'),
-                array('carnet','validarCarnetUnico','on'=>'actDP'),
                 array('codigo','validarCodigoProyecto','on'=>'nuevo')
             );
 	}
@@ -126,13 +123,13 @@ class Asistente  extends CModel{
             'correo'
         );
     }
-    
+    //Función que llama a un store procedure para ver todos los asistentes y 
+    // es invocado en la vista de admin. 
     public function search()
 	{
            $call = 'CALL verAsistentes()';
            $rawData=Yii::app()->db->createCommand($call)->queryAll();
-            // or using: $rawData=User::model()->findAll();
-            $dataProvider= new CArrayDataProvider($rawData, array(
+           $dataProvider= new CArrayDataProvider($rawData, array(
             'keyField'=>'carnet',
             'id'=>'user',
             'sort'=>array(
@@ -141,13 +138,8 @@ class Asistente  extends CModel{
              'nombre',
              'apellido1',
              'apellido2',
-             'cedula',
-             'numerocuenta',
-             'cuentacliente',
              'telefono',
              'correo',
-              //'banco',
-             //'carrera',
              ),
              ),
             'pagination'=>array(
@@ -264,30 +256,41 @@ class Asistente  extends CModel{
     }
     
     /**
-     *Valida que el carnet del estudiante que se quiere crear o actualizar sea único.
-     * @return boolean TRUE si el carnet es único en la tabla asistentes, FALSE de lo contrario.
+     * Valida que no exista otro asistente con ese carnet en la base de datos.
+     * @param type $pCarnet Carnet del estudiante antes de la actualización. Sirve para que no de
+     * un error falso indicando que ya existe otro asistente con ese carnet.
      */
-    public function validarCarnetUnico($attribute,$params) {
-        if(isset($params['on']) && $params['on'] != $this->scenario)
-            return;
-        $conexion = Yii::app()->db;
-        $sql = "SELECT * FROM tbl_Asistentes WHERE carnet = '" . $this->carnet_buscado . "'";
-        $comando = $conexion->createCommand($sql);
-        $resultado = $comando->query();
-        if ($resultado->rowCount != 0) {
-            $this->addError('carnet', 'Ya existe un asistente con el carnet ' . $this->carnet . '.');
-        }//fin si el carnet es único
+    public function validarCarnetUnico($pCarnet = NULL) {
+        if ($this->carnet != $pCarnet) {
+            $conexion = Yii::app()->db;
+            $sql = "SELECT * FROM tbl_Asistentes WHERE carnet = :pCarnet";
+            $comando = $conexion->createCommand($sql);
+            $comando->bindParam(':pCarnet',$this->carnet, PDO::PARAM_STR);
+            $resultado = $comando->query();
+            if ($resultado->rowCount != 0) {
+                $this->addError('carnet', 'Ya existe un asistente con el carnet ' . $this->carnet . '.');
+            }//fin si el carnet es único
+        }//fin si el carnet es diferente
     }//fin validar que el carnet sea único
     
     /**
-     * Si el carnet no cambió en el formulario de actualizar los datos personales entonces
-     * se cambia la variable privada carnet_buscado a NULL para que no de un error falso
-     * de que ya existe OTRO asistente con ese carnet.
-     * @param type $pCarnet El carnet que tenía el asistente antes de las modificaciones.
+     * Valida que no haya otro asistente con esa cédula. Si hay otra persona que tiene la misma
+     * cédula pero no está en la tabla asistentes entonces no lo cuenta.
+     * @param type $pCedula cédula que tenía antes de una actualización.
      */
-    public function ajustarCarnetBuscado($pCarnet = NULL) {
-        $this->carnet_buscado = $pCarnet === $this->carnet ? NULL : $this->carnet;
-    }//fin ajustar carnet buscado
+    public function validarCedulaUnica($pCedula = NULL) {
+        if ($this->cedula != $pCedula) {
+            $conexion = Yii::app()->db;
+            $sql = "SELECT COUNT(*) cuenta FROM tbl_Personas P INNER JOIN tbl_Asistentes A ON P.idtbl_Personas = A.idtbl_Personas WHERE P.cedula = :pCedula;";
+            $comando = $conexion->createCommand($sql);
+            $comando->bindParam(':pCedula',$this->cedula, PDO::PARAM_STR);
+            $resultado = $comando->query();
+            $cuenta = $resultado->read();
+            if ($cuenta['cuenta'] != 0) {
+                $this->addError('cedula', 'Ya existe un asistente con la cédula ' . $this->cedula . '.');
+            }//fin si el carnet es único
+        }//fin si el carnet es diferente
+    }//fin validar que el carnet sea único
     
 }//fin clase Modelo Asistente
 

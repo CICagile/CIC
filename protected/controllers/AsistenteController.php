@@ -28,11 +28,11 @@ class AsistenteController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view'),
+				'actions'=>array('view'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','updateDP','codigoautocomplete','update'),
+				'actions'=>array('create','updateDP','codigoautocomplete','update','index'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -94,10 +94,11 @@ class AsistenteController extends Controller
 		if(isset($_POST['Asistente']))
 		{
 			$model->attributes=$_POST['Asistente'];
-                        $model->ajustarCarnetBuscado();
-			if($model->validate()){
+                        $model->validarCarnetUnico();
+                        $model->validarCedulaUnica();
+			if($model->validate(NULL,false)){
                             if($model->crear())
-				$this->actionAdmin ();
+				$this->redirect(array('index'));
                             else
                                 $this->redirect ('error');
                         }
@@ -125,17 +126,24 @@ class AsistenteController extends Controller
             else {
 		$model=$this->loadModel($id);
                 $model->scenario = 'actDP';
+                $nombre = $model->nombre;
+                $apellido1 = $model->apellido1;
+                $apellido2 = $model->apellido2;
+                $carnet = $id;
 
 		// Uncomment the following line if AJAX validation is needed
 		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Asistente']))
 		{
+                        $cedula = $model->cedula;
 			$model->attributes=$_POST['Asistente'];
-                        $model->ajustarCarnetBuscado($id);
-			if($model->validate()){
+                        $model->validarCarnetUnico($id);
+                        $model->validarCedulaUnica($cedula);
+			if($model->validate(NULL, false)){
+                                $model->attributes = $_POST['Asistente'];
 				if ($model->actualizarDatosPersonales($id))
-                                    $this->redirect(Yii::app()->homeUrl);
+                                    $this->redirect(array('index'));
                                 //else
                                     //$this->redirect('error');
                         }//fin si los datos son válidos
@@ -143,23 +151,12 @@ class AsistenteController extends Controller
 
 		$this->render('updateDP',array(
 			'model'=>$model,
+                        'nombre'=>$nombre,
+                        'apellido1'=>$apellido1,
+                        'apellido2'=>$apellido2,
+                        'carnet'=>$carnet,
 		));
             }
-	}
-        
-
-	/**
-	 * Deletes a particular model.
-	 * If deletion is successful, the browser will be redirected to the 'admin' page.
-	 * @param integer $id the ID of the model to be deleted
-	 */
-	public function actionDelete($id)
-	{
-		$this->loadModel($id)->delete();
-
-		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
-		if(!isset($_GET['ajax']))
-			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
 	}
 
 	/**
@@ -168,8 +165,9 @@ class AsistenteController extends Controller
 	public function actionIndex()
 	{
 		//$dataProvider=new CActiveDataProvider('Asistente');
-		$this->render('index'
-		);
+		/*$this->render('index'
+		);*/
+                $this->actionAdmin();
 	}
 
 	/**
@@ -181,7 +179,6 @@ class AsistenteController extends Controller
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['Asistente']))
 			$model->attributes=$_GET['Asistente'];
-
 		$this->render('admin',array(
 			'model'=>$model,
 		));

@@ -12,6 +12,6 @@ $this->menu=array(
 );
 ?>
 
-<h1>Modificar información de <?php echo $model->nombre . ' ' . $model->apellido1 . ' ' . $model->apellido2 . ' (' . $model->carnet . ')'; ?></h1>
+<h1>Modificar información de <?php echo $nombre . ' ' . $apellido1 . ' ' . $apellido2 . ' (' . $carnet . ')'; ?></h1>
 
 <?php echo $this->renderPartial('_formUpdateDatosPersonalesAsistente', array('model'=>$model)); ?>
