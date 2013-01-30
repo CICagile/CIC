@@ -1,6 +1,7 @@
 <?php
 /* @var $this ProyectosController */
 /* @var $model Proyectos */
+/* @var $asistente Asistente */
 
 $this->breadcrumbs=array(
 	'Proyectos'=>array('index'),
@@ -14,6 +15,36 @@ $this->menu=array(
 	/*array('label'=>'Delete Proyectos', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->idtbl_Proyectos),'confirm'=>'Are you sure you want to delete this item?')),
 	array('label'=>'Manage Proyectos', 'url'=>array('admin')),*/
 );
+
+//Columnas de la tabla de los asistentes activos del proyecto.
+$columns = array (
+    array(
+        'header'=>CHtml::encode($asistente->getAttributeLabel('carnet')),
+        'name'=>'carnet',
+    ),
+    array(
+        'header'=>CHtml::encode($asistente->getAttributeLabel('nombre')),
+        'name'=>'nombre',
+    ),
+    array(
+        'header'=>CHtml::encode($asistente->getAttributeLabel('apellido1')),
+        'name'=>'apellido1',
+    ),
+    array(
+        'header'=>CHtml::encode($asistente->getAttributeLabel('apellido2')),
+        'name'=>'apellido2',
+    ),
+    array(
+        'header'=>CHtml::encode($asistente->getAttributeLabel('rol')),
+        'name'=>'rol',
+    ),
+    array(
+        'class'=>'CButtonColumn',
+        'viewButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("id"=>$data["carnet"]))',
+        'updateButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/updateDP", array("id"=>$data["carnet"]))',
+        'deleteButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("id"=>$data["carnet"]))',),
+);
+
 ?>
 
 <h3>Detalle del proyecto.</h3>
@@ -38,5 +69,12 @@ $this->menu=array(
       
 ?>
 
+<h3>Asistentes activos</h3>
 
-
+<?php $this->widget('zii.widgets.grid.CGridView', array(
+        'id'=>'asistente-grid',
+	'dataProvider'=>$asistente->buscarAsistentesActivosPorProyecto($model->idtbl_Proyectos),
+	//'filter'=>$model,
+	'columns'=>$columns,
+           )); 
+?>
