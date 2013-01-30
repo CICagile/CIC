@@ -4,12 +4,12 @@
 /* @var $modelperiodos Periodos */
 
 $this->breadcrumbs=array(
-	'Proyectos'=>array('index'),
+	'Proyectos'=>array('admin'),
 	'Registrar Proyectos',
 );
 
 $this->menu=array(
-	array('label'=>'Ver Proyectos', 'url'=>array('index')),
+	array('label'=>'Ver Proyectos', 'url'=>array('admin')),
 	//array('label'=>'Manage Proyectos', 'url'=>array('admin')),
 );
 ?>

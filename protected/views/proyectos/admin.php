@@ -3,54 +3,60 @@
 /* @var $model Proyectos */
 
 $this->breadcrumbs=array(
-	'Proyectoses'=>array('index'),
-	'Manage',
+	'Proyectos'=>array('admin'),
+	'Lista de Proyectos',
 );
 
-$this->menu=array(
-	array('label'=>'List Proyectos', 'url'=>array('index')),
-	array('label'=>'Create Proyectos', 'url'=>array('create')),
+$this->menu=array(	
+	array('label'=>'Nuevo Proyecto', 'url'=>array('create')),
 );
-
-Yii::app()->clientScript->registerScript('search', "
-$('.search-button').click(function(){
-	$('.search-form').toggle();
-	return false;
-});
-$('.search-form form').submit(function(){
-	$.fn.yiiGridView.update('proyectos-grid', {
-		data: $(this).serialize()
-	});
-	return false;
-});
-");
 ?>
 
-<h1>Manage Proyectoses</h1>
+<h1>Lista de Proyectos</h1>
 
-<p>
-You may optionally enter a comparison operator (<b>&lt;</b>, <b>&lt;=</b>, <b>&gt;</b>, <b>&gt;=</b>, <b>&lt;&gt;</b>
-or <b>=</b>) at the beginning of each of your search values to specify how the comparison should be done.
-</p>
 
-<?php echo CHtml::link('Advanced Search','#',array('class'=>'search-button')); ?>
-<div class="search-form" style="display:none">
-<?php $this->renderPartial('_search',array(
-	'model'=>$model,
-)); ?>
-</div><!-- search-form -->
+
 
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'proyectos-grid',
 	'dataProvider'=>$model->search(),
-	'filter'=>$model,
+	'filter'=>$model,  
+        'afterAjaxUpdate'=>'cssfechas',
 	'columns'=>array(
-		'idtbl_Proyectos',
-		'nombre',
-		'codigo',
-		'tbl_Periodos_idPeriodo',
+                'codigo',
+		'nombre',		
+		array(
+                        'name' => 'fecha_inicio_search',
+                        'value' => '$this->grid->owner->FechaMysqltoPhp($data->periodos->inicio)',                        
+                        'id' => 'fecha_ini',
+                ),
+                array(
+                        'name' => 'fecha_fin_search',
+                        'value' => '$this->grid->owner->FechaMysqltoPhp($data->periodos->fin)',                        
+                        'id' => 'fecha_fin'
+                ),
 		array(
 			'class'=>'CButtonColumn',
 		),
-	),
-)); ?>
+	)
+    )); 
+
+//Esto se utiliza para mantener el estilo css de las columnas fechas del Grid luego de un request AJAX
+$string = "'";//Esto string se utiliza para poder crear correctamente el string del Script
+Yii::app()->clientScript->registerScript('css-fechas', '
+function cssfechas(id,data)
+{
+    $('.$string.'[name="Proyectos[fecha_inicio_search]"]'.$string.').css({"visibility": "hidden", "width" : "70px"});
+    $('.$string.'[name="Proyectos[fecha_fin_search]"]'.$string.').css({"visibility": "hidden", "width" : "70px"});
+}
+
+'   
+);
+?>
+<script type="text/javascript">
+  //Esto se utiliza para mantener el estilo css de las columnas fechas del Grid en Load
+  $(document).ready(function() {
+    $('[name="Proyectos[fecha_inicio_search]"]').css({'visibility': 'hidden', 'width' : '70px'})
+    $('[name="Proyectos[fecha_fin_search]"]').css({'visibility': 'hidden', 'width' : '70px'})   
+  });
+</script>

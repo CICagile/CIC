@@ -20,6 +20,9 @@ class Proyectos extends CActiveRecord
 	 * @param string $className active record class name.
 	 * @return Proyectos the static model class
 	 */
+        public $fecha_inicio_search;
+        public $fecha_fin_search;
+    
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
@@ -48,7 +51,8 @@ class Proyectos extends CActiveRecord
 			array('codigo', 'length', 'min'=>2, 'max'=>20, 'tooShort'=> 'El {attribute} debe ser mayor a {min} caracteres.', 'tooLong' => 'El {attribute} debe ser menor a {max} caracteres.'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('idtbl_Proyectos, nombre, codigo, tbl_Periodos_idPeriodo', 'safe', 'on'=>'search'),
+			//array('idtbl_Proyectos, nombre, codigo, tbl_Periodos_idPeriodo', 'safe', 'on'=>'search'),
+                        array('idtbl_Proyectos, nombre, codigo, $fecha_inicio_search, $fecha_fin_search', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -75,6 +79,8 @@ class Proyectos extends CActiveRecord
 			'nombre' => 'Nombre del proyecto',
 			'codigo' => 'Código del proyecto',
 			'tbl_Periodos_idPeriodo' => 'Id periodo',
+                        'fecha_inicio_search' => 'Fecha Inicio',
+                        'fecha_fin_search' => 'Fecha Final'
 		);
 	}
 
@@ -88,14 +94,30 @@ class Proyectos extends CActiveRecord
 		// should not be searched.
 
 		$criteria=new CDbCriteria;
+                $criteria->with = array( 'periodos' );
 
 		$criteria->compare('idtbl_Proyectos',$this->idtbl_Proyectos);
 		$criteria->compare('nombre',$this->nombre,true);
 		$criteria->compare('codigo',$this->codigo,true);
-		$criteria->compare('tbl_Periodos_idPeriodo',$this->tbl_Periodos_idPeriodo);
+		//$criteria->compare('tbl_Periodos_idPeriodo',$this->tbl_Periodos_idPeriodo);
+                $criteria->compare( 'periodos.inicio', $this->fecha_inicio_search, true );
+                $criteria->compare( 'periodos.fin', $this->fecha_fin_search, true );
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+                        'sort'=>array(
+                        'attributes'=>array(
+                            'fecha_inicio_search'=>array(
+                                'asc'=>'periodos.inicio',
+                                'desc'=>'periodos.inicio DESC',
+                            ),
+                            'fecha_fin_search'=>array(
+                                'asc'=>'periodos.fin',
+                                'desc'=>'periodos.fin DESC',
+                            ),
+                            '*',
+                        ),
+                    ),
 		));
 	}
         
