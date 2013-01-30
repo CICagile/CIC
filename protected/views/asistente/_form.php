@@ -110,7 +110,7 @@
         
         <div class="row">
 		<?php echo $form->labelEx($model,'correo'); ?>
-		<?php echo $form->textField($model,'correo',array('size'=>25,'maxlength'=>25)); ?>
+		<?php echo $form->textField($model,'correo',array('size'=>40,'maxlength'=>40)); ?>
 		<?php echo $form->error($model,'correo'); ?>
 	</div>
         
