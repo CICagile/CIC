@@ -48,6 +48,7 @@ function cssfechas(id,data)
 {
     $('.$string.'[name="Proyectos[fecha_inicio_search]"]'.$string.').css({"visibility": "hidden", "width" : "70px"});
     $('.$string.'[name="Proyectos[fecha_fin_search]"]'.$string.').css({"visibility": "hidden", "width" : "70px"});
+    $('.$string.'[name="Proyectos[codigo]"]'.$string.').css({"width" : "110px"});
 }
 
 '   
@@ -57,6 +58,7 @@ function cssfechas(id,data)
   //Esto se utiliza para mantener el estilo css de las columnas fechas del Grid en Load
   $(document).ready(function() {
     $('[name="Proyectos[fecha_inicio_search]"]').css({'visibility': 'hidden', 'width' : '70px'})
-    $('[name="Proyectos[fecha_fin_search]"]').css({'visibility': 'hidden', 'width' : '70px'})   
+    $('[name="Proyectos[fecha_fin_search]"]').css({'visibility': 'hidden', 'width' : '70px'}) 
+    $('[name="Proyectos[codigo]"]').css({'width' : '110px'})
   });
 </script>

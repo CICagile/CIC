@@ -103,7 +103,7 @@ class ProyectosController extends Controller {
                     $transaction->commit();
                     Yii::log("Creación exitosa del proyecto con el código: " . $modelproyectos->codigo, "info", "application.
 controllers.ProyectosController");
-                    $this->redirect(array('view', 'id' => $modelproyectos->idtbl_Proyectos));
+                    $this->redirect(array('admin'));
                 } else {
                     $transaction->rollBack();
                     Yii::log("Rollback al intentar crear el proyecto con el código: " . $modelproyectos->codigo, "warning", "application.
