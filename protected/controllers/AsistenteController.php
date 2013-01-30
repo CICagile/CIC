@@ -102,7 +102,7 @@ class AsistenteController extends Controller
                             if($model->crear($periodo))
 				$this->redirect(array('index'));
                             else
-                                $this->redirect ('error');
+                                throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
                         }
 		}
 
@@ -147,8 +147,8 @@ class AsistenteController extends Controller
                                 $model->attributes = $_POST['Asistente'];
 				if ($model->actualizarDatosPersonales($id))
                                     $this->redirect(array('index'));
-                                //else
-                                    //$this->redirect('error');
+                                else
+                                    throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
                         }//fin si los datos son válidos
 		}
 
