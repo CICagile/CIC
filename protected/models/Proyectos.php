@@ -99,16 +99,17 @@ class Proyectos extends CActiveRecord
 		));
 	}
         
-        public function agregarAsistenteProyecto($pidproyecto, $pcarnet, $pidrol, $pfechaini, $phoras) {
+        public function agregarAsistenteProyecto($pidproyecto, $pcarnet, $pidrol, $pfechaini, $pfechafin, $phoras) {
             $conexion = Yii::app()->db;
-            $call = 'CALL agregarAsistenteProyecto(:idproyecto,:carnet,:idrol,:fechaini,:horas)';
+            $call = 'CALL agregarAsistenteProyecto(:idproyecto,:carnet,:idrol,:fechaini,:fechafin, :horas)';
             $transaccion = Yii::app()->db->beginTransaction();
             try {
                 $comando = $conexion->createCommand($call);
                 $comando->bindParam(':idproyecto', $pidproyecto);
                 $comando->bindParam(':carnet', $pcarnet);
                 $comando->bindParam(':idrol', $pidrol);
-                $comando->bindParam(':fechaini', $pfechaini);                              
+                $comando->bindParam(':fechaini', $pfechaini);
+                $comando->bindParam(':fechafin', $pfechafin); 
                 $comando->bindParam(':horas', $phoras);               
                 $comando->execute();
                 $transaccion->commit();
