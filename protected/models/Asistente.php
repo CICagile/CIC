@@ -173,6 +173,8 @@ class Asistente  extends CModel{
                     'apellido1',
                     'apellido2',
                     'rol',
+                    'fin',
+                    'horas', //horas que hace actualmente en ese proyecto, es diferente de las horas acumuladas.
                 ),
             ),
         ));

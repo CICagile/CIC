@@ -39,6 +39,14 @@ $columns = array (
         'name'=>'rol',
     ),
     array(
+        'header'=>CHtml::encode('Horas'),
+        'name'=>'horas',
+    ),
+    array(
+        'header'=>CHtml::encode('Fin de la asistencia'),
+        'name'=>'fin',
+    ),
+    array(
         'class'=>'CButtonColumn',
         'viewButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("id"=>$data["carnet"]))',
         'updateButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/updateDP", array("id"=>$data["carnet"]))',
