@@ -56,7 +56,7 @@ class Periodos extends CActiveRecord
         public function ValidadorFechaMayor($attribute, $params)
         {
             if(strtotime($this->fin) < strtotime($this->inicio)) {
-                $this->addError($attribute,'La fecha de finalización del proyecto no puede ser menor que la fecha de inicio.');
+                $this->addError($attribute,'La fecha de finalización no puede ser menor que la fecha de inicio.');
             }            
         }
 
@@ -106,4 +106,39 @@ class Periodos extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+        
+        /**
+         * Valida que la fecha de finalización de la asistencia sea menor que la finalización del proyecto.
+         * @param string $pCodProyecto Código del proyecto con el que se va a hacer la comparación.
+         */
+        public function validarFechaFinAsistencia($pCodProyecto){
+            
+          $select = "SELECT DATE_FORMAT(P.fin, '%d-%m-%Y') fin FROM tbl_Proyectos Pr INNER JOIN tbl_Periodos P ON Pr.tbl_Periodos_idPeriodo = P.idPeriodo WHERE Pr.codigo = :codigo";
+          $comando = Yii::app()->db->createCommand($select);
+          $comando->bindParam(':codigo',$pCodProyecto,PDO::PARAM_STR);
+          $query = $comando->query();
+          $resultado = $query->read();
+          $fin_proyecto = $resultado['fin'];
+          if (strtotime($this->fin) > strtotime($fin_proyecto)) {
+              $this->addError('fin', "" . $this->getAttributeLabel('fin') . " no se encuentra dentro del periodo del proyecto.");
+          }//fin si el proyecto termina antes que la asistencia
+    }//fin validar fecha fin asistencia
+    
+    /**
+     * Valida que la fecha de inicio de la asistencia sea mayor que la fecha de inicio del proyecto.
+     * @param string $pCodProyecto Código del proyecto con el que se va a hacer la comparación.
+     */
+    public function validarFechaInicioAsistencia($pCodProyecto){
+            
+          $select = "SELECT DATE_FORMAT(P.inicio, '%d-%m-%Y') inicio FROM tbl_Proyectos Pr INNER JOIN tbl_Periodos P ON Pr.tbl_Periodos_idPeriodo = P.idPeriodo WHERE Pr.codigo = :codigo";
+          $comando = Yii::app()->db->createCommand($select);
+          $comando->bindParam(':codigo',$pCodProyecto,PDO::PARAM_STR);
+          $query = $comando->query();
+          $resultado = $query->read();
+          $inicio_proyecto = $resultado['inicio'];
+          if (strtotime($this->inicio) < strtotime($inicio_proyecto)) {
+              $this->addError('inicio', "" . $this->getAttributeLabel('inicio') . " no se encuentra dentro del periodo del proyecto.");
+          }//fin si el proyecto termina antes que la asistencia
+    }//fin validar fecha fin asistencia
+        
 }

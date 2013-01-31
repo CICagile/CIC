@@ -15,7 +15,7 @@
 
 	<p class="note">Los campos marcados con <span class="required">*</span> son obligatorios.</p>
 
-	<?php echo $form->errorSummary($model,'Se han detectado los siguientes errores:'); ?>
+	<?php echo $form->errorSummary(array($model,$periodo),'Se han detectado los siguientes errores:'); ?>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'nombre'); ?>

@@ -98,12 +98,16 @@ class AsistenteController extends Controller
                         $periodo->attributes = $_POST['Periodos'];
                         $model->validarCarnetUnico();
                         $model->validarCedulaUnica();
-			if($model->validate(NULL,false) && $periodo->validate()){
-                            if($model->crear($periodo))
-				$this->redirect(array('index'));
-                            else
-                                throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
-                        }
+			if($model->validate(NULL,false)){
+                            $periodo->validarFechaInicioAsistencia($model->codigo);
+                            $periodo->validarFechaFinAsistencia($model->codigo);
+                            if ($periodo->validate(NULL,false)) {
+                                if($model->crear($periodo))
+                                    $this->redirect(array('index'));
+                                else
+                                    throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
+                            }//fin si el periodo es válido
+                        }//fin si los datos del asistente són válidos
 		}
 
 		$this->render('create',array(
