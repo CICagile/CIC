@@ -9,11 +9,10 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'Ver Proyectos', 'url'=>array('admin')),
-	//array('label'=>'Manage Proyectos', 'url'=>array('admin')),
+	array('label'=>'Ver Proyectos', 'url'=>array('admin'))	
 );
 ?>
 
-<h1>Registrar Proyectos</h1>
+<h1>Registrar Proyecto</h1>
 
 <?php echo $this->renderPartial('_form', array('modelproyectos'=>$modelproyectos, 'modelperiodos' => $modelperiodos,)); ?>
