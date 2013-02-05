@@ -119,5 +119,15 @@ class Proyectos extends CActiveRecord
             }
             return true;
         }
+        
+        /**
+         * Llama al stored procedure encargado de actualizar las horas que un asistente con cierto carnet cumple semanalmente en este proyecto.
+         * @param double $pHoras Cantidad de horas que el estudiante cumple semanalmente.
+         * @param string $pCarnet Carnet del estudiante al que se le cambia las horas de asistencia.
+         * @return boolean Retorna true si la operación fué exitosa y false de lo contrario.
+         */
+        public function cambiarHorasAsistencia($pHoras,$pCarnet) {
+            return true;
+        }//fin cambiar horas asistencia
 
 }
