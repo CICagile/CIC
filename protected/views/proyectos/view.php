@@ -77,7 +77,7 @@ $columns = array (
       
 ?>
 
-<h3>Asistentes activos</h3>
+<p></p><h3>Asistentes activos</h3>
 
 <?php $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'asistente-grid',
