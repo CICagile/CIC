@@ -2,7 +2,6 @@
 /* @var $this ProyectosController */
 /* @var $model Proyectos */
 /* @var $asistente Asistente */
-
 $this->breadcrumbs=array(
 	'Proyectos'=>array('index'),
 	$model->codigo,
@@ -49,7 +48,7 @@ $columns = array (
     array(
         'class'=>'CButtonColumn',
         'viewButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("id"=>$data["carnet"]))',
-        'updateButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/updateDP", array("id"=>$data["carnet"]))',
+        'updateButtonUrl'=>'Yii::app()->controller->createUrl("Proyectos/actualizarInfoAsistentes", array("id"=>"'.$model->idtbl_Proyectos.'"))',
         'deleteButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("id"=>$data["carnet"]))',),
 );
 

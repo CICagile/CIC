@@ -26,7 +26,7 @@ class ProyectosController extends Controller {
     public function accessRules() {
         return array(            
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('view','index','create', 'update', 'agregarasistente', 'AsistenteAutoComplete', 'ValidarAgregarAsistente'),
+                'actions' => array('view','ActualizarInfoAsistentes','index','create', 'update', 'agregarasistente', 'AsistenteAutoComplete', 'ValidarAgregarAsistente'),
                 'users' => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -45,6 +45,19 @@ class ProyectosController extends Controller {
      */
     public function actionView($id) {
         $this->render('view', array(
+            'model' => $this->loadModel($id),
+            'asistente' => new Asistente,
+        ));
+    }
+    
+    /**
+     * Verifica que los nuevos datos de los asistentes sean válidos y guarda los cambios.
+     * @param string $pRol El rol del asistente en el proyecto
+     * @param double $pHoras Horas que el asistente debe dedicar semanalmente al proyecto.
+     * @param fecha $pFin La fecha de finalización de la asistencia.
+     */
+    public function actionActualizarInfoAsistentes(/*$pRol, $pHoras, $pFin*/$id) {
+        $this->render('viewEditable', array(
             'model' => $this->loadModel($id),
             'asistente' => new Asistente,
         ));
