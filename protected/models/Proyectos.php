@@ -127,13 +127,14 @@ class Proyectos extends CActiveRecord
          * @return boolean Retorna true si la operación fué exitosa y false de lo contrario.
          */
         public function cambiarHorasAsistencia($pHoras,$pCarnet) {
+            $id = $this->idtbl_Proyectos;
             $conexion = Yii::app()->db;
             $call = "CALL actualizarHorasAsistencia(:carnet, :pkProyecto, :horas)";
             $transaccion = Yii::app()->db->beginTransaction();
             try {
                 $comando = $conexion->createCommand($call);
                 $comando->bindParam(':carnet', $pCarnet);
-                $comando->bindParam(':pkProyecto', $this->idtbl_Periodos);
+                $comando->bindParam(':pkProyecto', $id);
                 $comando->bindParam(':horas', $pHoras);
                 $comando->execute();
                 $transaccion->commit();

@@ -56,12 +56,33 @@ class ProyectosController extends Controller {
      * @param double $pHoras Horas que el asistente debe dedicar semanalmente al proyecto.
      * @param fecha $pFin La fecha de finalización de la asistencia.
      */
-    public function actionActualizarInfoAsistentes(/*$pRol, $pHoras, $pFin*/$id) {
+    public function actionActualizarInfoAsistentes($id, $rol = null, $horas = null, $fin = null, $carnet = null) {
+        $model = $this->loadModel($id);
+        $asistente = new Asistente;
+        $dataProvider = $asistente->buscarAsistentesActivosPorProyecto($model->idtbl_Proyectos);
+        
+        if ($carnet != null) {
+            /* Hacer las validaciones y cambios en este orden
+             * -Fecha finalización.
+             * -Horas
+             * -Roles
+             */
+            if(/*Hacer validaciones*/true) {
+                //Cambiar fecha finalización
+                if(/*!$model->CambiarHorasAsistencia($horas,$carnet)*/false)
+                    throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
+                //Cambiar roles
+                //si todo fue exitoso:
+                //$this->redirect(array('view','id'=>$id));
+            }//fin si los cambios son posibles
+        }//fin si asistente se modificó.
+        
         $this->render('viewEditable', array(
             'model' => $this->loadModel($id),
-            'asistente' => new Asistente,
+            'asistente' => $asistente,
+            'dataProvider' => $dataProvider,
         ));
-    }
+    }//fin actualizar informacion de los assitentes activos del proyecto.
 
     protected function FechaPhptoMysql($pfechaphp) {
         try {

@@ -16,6 +16,16 @@ $this->menu=array(
 	array('label'=>'Manage Proyectos', 'url'=>array('admin')),*/
 );
 
+Yii::app()->clientScript->registerScript('guardar', "
+    jQuery('#commissions-grid a.pay').live('click',function() {
+        var url = $(this).attr('href');
+        $.post(url,function(res){
+            alert(res);
+        });
+        return false;
+    });
+");
+
 //Columnas de la tabla de los asistentes activos del proyecto.
 $columns = array (
     array(
@@ -50,8 +60,16 @@ $columns = array (
     ),
     array(
         'class'=>'CButtonColumn',
+        'template'=>'{view}{guardar}{delete}',
+        'buttons'=>array(
+            'guardar'=>array(
+                'label'=>'Guardar',
+                'imageUrl'=>Yii::app()->request->baseUrl . '/images/Save.png',
+                'url'=>'Yii::app()->createUrl("Proyectos/actualizarInfoAsistentes",
+                    array("id"=>"'.$model->idtbl_Proyectos.'","rol"=>$data["rol"],"horas"=>$data["menuId"],"fin"=>$data["fin"],"carnet"=>$data["carnet"]))',
+            ),
+        ),
         'viewButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("id"=>$data["carnet"]))',
-        'updateButtonUrl'=>'Yii::app()->controller->createUrl("Proyectos/view", array("id"=>"'.$model->idtbl_Proyectos.'"))',
         'deleteButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("id"=>$data["carnet"]))',),
 );
 
@@ -83,7 +101,7 @@ $columns = array (
 
 <?php $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'asistente-grid',
-	'dataProvider'=>$asistente->buscarAsistentesActivosPorProyecto($model->idtbl_Proyectos),
+	'dataProvider'=>$dataProvider,
 	//'filter'=>$model,
 	'columns'=>$columns,
            )); 
