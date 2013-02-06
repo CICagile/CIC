@@ -129,7 +129,7 @@ class Proyectos extends CActiveRecord
         public function cambiarHorasAsistencia($pHoras,$pCarnet) {
             $conexion = Yii::app()->db;
             $call = "CALL actualizarHorasAsistencia(:carnet, :pkProyecto, :horas)";
-            $transacion = Yii::app()->db->beginTransaction();
+            $transaccion = Yii::app()->db->beginTransaction();
             try {
                 $comando = $conexion->createCommand($call);
                 $comando->bindParam(':carnet', $pCarnet);
