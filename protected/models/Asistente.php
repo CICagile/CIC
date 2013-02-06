@@ -165,7 +165,7 @@ class Asistente  extends CModel{
         $rawData = $comando->queryAll();
         $dataProvider = new CArrayDataProvider($rawData, array(
             'keyField'=>'carnet',
-            'id'=>'user',
+            'id'=>'Asistente',
             'sort'=>array(
                 'attributes'=>array(
                     'carnet',
