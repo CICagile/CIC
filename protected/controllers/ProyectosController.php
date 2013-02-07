@@ -61,7 +61,10 @@ class ProyectosController extends Controller {
         $asistente = new Asistente;
         $dataProvider = $asistente->buscarAsistentesActivosPorProyecto($model->idtbl_Proyectos);
         
-        if ($carnet != null) {
+        if (isset($_POST['horas'])) {
+            $horas = $_POST['horas'];
+            foreach ($horas as $hora)
+                print_r($hora);
             /* Hacer las validaciones y cambios en este orden
              * -Fecha finalización.
              * -Horas
@@ -275,7 +278,7 @@ controllers.ProyectosController");
                     ->select(array('carnet', 'nombre', 'apellido1', 'apellido2'))
                     ->from('tbl_asistentes a')
                     ->join('tbl_personas p', 'a.idtbl_Personas=p.idtbl_Personas')
-                    ->where(array('like', 'carnet', '%' . $keyword . '%'))
+                    ->where(array('like', 'carnet', $keyword . '%'))
                     ->query();
 
             $return_array = array();
