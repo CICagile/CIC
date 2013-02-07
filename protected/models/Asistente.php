@@ -166,17 +166,6 @@ class Asistente  extends CModel{
         $dataProvider = new CArrayDataProvider($rawData, array(
             'keyField'=>'carnet',
             'id'=>'Asistente',
-            'sort'=>array(
-                'attributes'=>array(
-                    'carnet',
-                    'nombre',
-                    'apellido1',
-                    'apellido2',
-                    'rol',
-                    'fin',
-                    'horas', //horas que hace actualmente en ese proyecto, es diferente de las horas acumuladas.
-                ),
-            ),
         ));
         return $dataProvider;
     }//fin validar que el carnet sea único
