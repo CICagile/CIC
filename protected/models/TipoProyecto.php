@@ -65,7 +65,7 @@ class TipoProyecto extends CActiveRecord
 	{
 		return array(
 			'idtbl_tipoproyecto' => 'Idtbl Tipoproyecto',
-			'nombre' => 'Nombre',
+			'nombre' => 'Tipo de proyecto',
 		);
 	}
 

@@ -64,8 +64,8 @@ class ObjetivoProyecto extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'idtbl_objetivoproyecto' => 'Idtbl Objetivoproyecto',
-			'nombre' => 'Nombre',
+			'idtbl_objetivoproyecto' => 'idtbl_objetivoproyecto',
+			'nombre' => 'Objetivo del proyecto',
 		);
 	}
 

@@ -31,8 +31,11 @@ $this->menu=array(
                 array(
                         'label' => $model->periodos->getAttributeLabel('fin'),
                         'value' => $this->FechaMysqltoPhp($model->periodos->fin),
-                )
-                
+                ),
+                '_tipoproyecto.nombre',
+                '_estadoproyecto.nombre',
+                '_objetivoproyecto.nombre',
+                '_adscrito.nombre'             
 	),
 )); 
       

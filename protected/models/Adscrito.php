@@ -66,7 +66,7 @@ class Adscrito extends CActiveRecord
 	{
 		return array(
 			'idtbl_adscrito' => 'Idtbl Adscrito',
-			'nombre' => 'Nombre',
+			'nombre' => 'Adscrito a',
 		);
 	}
 

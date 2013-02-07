@@ -1,21 +1,23 @@
 <?php
 
 /**
- * This is the model class for table "tbl_estadoproyecto".
+ * This is the model class for table "tbl_historialperiodoproyecto".
  *
- * The followings are the available columns in table 'tbl_estadoproyecto':
- * @property integer $idtbl_estadoproyecto
- * @property string $nombre
+ * The followings are the available columns in table 'tbl_historialperiodoproyecto':
+ * @property integer $idtbl_historialperiodoproyecto
+ * @property integer $idtbl_Proyectos
+ * @property integer $idPeriodo
  *
  * The followings are the available model relations:
- * @property Proyectos[] $proyectoses
+ * @property Proyectos $idtblProyectos
+ * @property Periodos $idPeriodo0
  */
-class EstadoProyecto extends CActiveRecord
+class HistorialPeriodoProyecto extends CActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
-	 * @return EstadoProyecto the static model class
+	 * @return HistorialPeriodoProyecto the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
@@ -27,7 +29,7 @@ class EstadoProyecto extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'tbl_estadoproyecto';
+		return 'tbl_historialperiodoproyecto';
 	}
 
 	/**
@@ -38,12 +40,11 @@ class EstadoProyecto extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('idtbl_estadoproyecto, nombre', 'required'),
-			array('idtbl_estadoproyecto', 'numerical', 'integerOnly'=>true),
-			array('nombre', 'length', 'max'=>250),
+			array('idtbl_Proyectos, idPeriodo', 'required'),
+			array('idtbl_Proyectos, idPeriodo', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('idtbl_estadoproyecto, nombre', 'safe', 'on'=>'search'),
+			array('idtbl_historialperiodoproyecto, idtbl_Proyectos, idPeriodo', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -55,7 +56,8 @@ class EstadoProyecto extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'proyectoses' => array(self::HAS_MANY, 'Proyectos', 'idtbl_estadoproyecto'),
+			'_proyectos' => array(self::BELONGS_TO, 'Proyectos', 'idtbl_Proyectos'),
+			'_periodos' => array(self::BELONGS_TO, 'Periodos', 'idPeriodo'),
 		);
 	}
 
@@ -65,8 +67,9 @@ class EstadoProyecto extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'idtbl_estadoproyecto' => 'Idtbl Estadoproyecto',
-			'nombre' => 'Nombre',
+			'idtbl_historialperiodoproyecto' => 'Idtbl Historialperiodoproyecto',
+			'idtbl_Proyectos' => 'Idtbl Proyectos',
+			'idPeriodo' => 'Id Periodo',
 		);
 	}
 
@@ -81,8 +84,9 @@ class EstadoProyecto extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('idtbl_estadoproyecto',$this->idtbl_estadoproyecto);
-		$criteria->compare('nombre',$this->nombre,true);
+		$criteria->compare('idtbl_historialperiodoproyecto',$this->idtbl_historialperiodoproyecto);
+		$criteria->compare('idtbl_Proyectos',$this->idtbl_Proyectos);
+		$criteria->compare('idPeriodo',$this->idPeriodo);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

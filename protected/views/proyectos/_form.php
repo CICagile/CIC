@@ -26,7 +26,7 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($modelproyectos,'nombre'); ?>
-		<?php echo $form->textArea($modelproyectos,'nombre',array('size'=>60,'maxlength'=>500)); ?>
+		<?php echo $form->textArea($modelproyectos,'nombre',array('size'=>60,'maxlength'=>500, 'style' => 'width:100%; heigth:100%;')); ?>
 		<?php echo $form->error($modelproyectos,'nombre'); ?>
 	</div>		
         
@@ -91,27 +91,12 @@
 		<?php echo $form->error($modelproyectos,'idtbl_adscrito'); ?>
 	</div>  
         
-        <div class="row">
-		<?php echo $form->labelEx($modelproyectos,'idtbl_estadoproyecto'); ?>
-		<?php echo $form->dropDownList($modelproyectos, 'idtbl_estadoproyecto',
-                        CHtml::listData(EstadoProyecto::model()->findAll(), 'idtbl_estadoproyecto', 'nombre'), array('empty'=>'Elija el estado del proyecto', 'id'=>'estadoproyecto')) ?>
-		<?php echo $form->error($modelproyectos,'idtbl_estadoproyecto'); ?>
-	</div>
-        
         <div class="row buttons">
 		<?php echo CHtml::submitButton($modelproyectos->isNewRecord ? 'Crear' : 'Guardar'); ?>
 	</div>
 
 <?php $this->endWidget(); ?>
         
-<?php if($modelproyectos->hasErrors()):?>
-{
-    <script type="text/javascript">
-        alert(' '.<?php echo var_dump($model->getErrors());?>);
-    </script>
-}
-<?php endif;?>
-
 </div><!-- form -->
 
 <script type="text/javascript">
