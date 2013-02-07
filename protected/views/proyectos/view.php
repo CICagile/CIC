@@ -47,10 +47,10 @@ $columns = array (
     ),
     array(
         'class'=>'CButtonColumn',
+        'template'=>'{view}{update}',
         'viewButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("id"=>$data["carnet"]))',
-        'updateButtonUrl'=>'Yii::app()->controller->createUrl("Proyectos/actualizarInfoAsistentes", array("id"=>"'.$model->idtbl_Proyectos.'"))',
-        'deleteButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("id"=>$data["carnet"]))',),
-);
+        'updateButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/updateDP", array("id"=>$data["carnet"]))',
+));
 
 ?>
 
@@ -85,3 +85,4 @@ $columns = array (
 	'columns'=>$columns,
            )); 
 ?>
+<?php echo CHtml::button('Cambiar datos',array('submit'=>Yii::app()->controller->createUrl("Proyectos/actualizarInfoAsistentes", array("id"=>$model->idtbl_Proyectos))));?>
