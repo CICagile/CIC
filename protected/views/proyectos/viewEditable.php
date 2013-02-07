@@ -16,16 +16,6 @@ $this->menu=array(
 	array('label'=>'Manage Proyectos', 'url'=>array('admin')),*/
 );
 
-Yii::app()->clientScript->registerScript('guardar', "
-    jQuery('#commissions-grid a.pay').live('click',function() {
-        var url = $(this).attr('href');
-        $.post(url,function(res){
-            alert(res);
-        });
-        return false;
-    });
-");
-
 //Columnas de la tabla de los asistentes activos del proyecto.
 $columns = array (
     array(
@@ -51,7 +41,7 @@ $columns = array (
     array(
         'header'=>CHtml::encode('Horas'),
         'name'=>'horas',
-        'value'=>'CHtml::textField("txt-horas",$data["horas"],array("size"=>5,"maxlength"=>5))',
+        'value'=>'CHtml::textField("horas[$row]",$data["horas"],array("size"=>5,"maxlength"=>5))',
         'type'=>'raw',
     ),
     array(
@@ -66,7 +56,7 @@ $columns = array (
                 'label'=>'Guardar',
                 'imageUrl'=>Yii::app()->request->baseUrl . '/images/Save.png',
                 'url'=>'Yii::app()->createUrl("Proyectos/actualizarInfoAsistentes",
-                    array("id"=>"'.$model->idtbl_Proyectos.'","rol"=>$data["rol"],"horas"=>$data["menuId"],"fin"=>$data["fin"],"carnet"=>$data["carnet"]))',
+                    array("id"=>"'.$model->idtbl_Proyectos.'","rol"=>$data["rol"],"horas"=>$data["horas"],"fin"=>$data["fin"],"carnet"=>$data["carnet"]))',
             ),
         ),
         'viewButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("id"=>$data["carnet"]))',
@@ -99,10 +89,19 @@ $columns = array (
 
 <p></p><h3>Asistentes activos</h3>
 
+<?php $form = $this->beginWidget('CActiveForm', array(
+    'enableAjaxValidation'=>true,
+));
+?>
+
 <?php $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'asistente-grid',
 	'dataProvider'=>$dataProvider,
 	//'filter'=>$model,
 	'columns'=>$columns,
-           )); 
+           ));
 ?>
+
+<?php echo CHtml::submitButton('Guardar');?>
+
+<?php $this->endWidget(); ?>

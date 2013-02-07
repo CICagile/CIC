@@ -307,7 +307,28 @@ class Asistente  extends CModel{
                 $this->addError('cedula', 'Ya existe un asistente con la cédula ' . $this->cedula . '.');
             }//fin si el carnet es único
         }//fin si el carnet es diferente
-    }
+    }//fin validar cedula unica
+    
+    /**
+     * Cuenta las horas de asistencia que actualmente realiza este asistente en todos los proyectos.
+     * @return int Retorna el número total de horas de asistencia que hace en todos los proyectos.
+     */
+    public function contarHorasAsistenciaActuales() {
+        $select = "SELECT idtbl_Asistentes id FROM tbl_Asistentes WHERE carnet = '" . $this->carnet . "'";
+        $comando = Yii::app()->db->createCommand($select);
+        $read = $comando->query()->read();
+        $id = $read['id'];
+        $call = 'CALL verificarHorasAcumuladasProyectos(:id)';
+        $comando = Yii::app()->db->createCommand($call);
+        $comando->bindParam(':id',$id,PDO::PARAM_INT);
+        $query = $comando->query();
+        if ($query->rowCount === 1) {
+            $read = $query->read();
+            return $read['SUM(horas)'];
+        }
+        else
+            return 0;
+    }//fin contarHorasActuales
     
 }//fin clase Modelo Asistente
 

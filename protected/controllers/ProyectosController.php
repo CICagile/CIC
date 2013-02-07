@@ -56,21 +56,33 @@ class ProyectosController extends Controller {
      * @param double $pHoras Horas que el asistente debe dedicar semanalmente al proyecto.
      * @param fecha $pFin La fecha de finalización de la asistencia.
      */
-    public function actionActualizarInfoAsistentes($id, $rol = null, $horas = null, $fin = null, $carnet = null) {
+    public function actionActualizarInfoAsistentes($id) {
         $model = $this->loadModel($id);
         $asistente = new Asistente;
         $dataProvider = $asistente->buscarAsistentesActivosPorProyecto($model->idtbl_Proyectos);
         
         if (isset($_POST['horas'])) {
+            $datos_asistentes = $dataProvider->data;
             $horas = $_POST['horas'];
-            foreach ($horas as $hora)
-                print_r($hora);
+            foreach ($horas as $index=>$hora){
+                if ($horas != $datos_asistentes[$index]["horas"]){
+                    $asistente->carnet = $datos_asistentes[$index]['carnet'];
+                    $horas_totales = $asistente->contarHorasAsistenciaActuales();
+                    $horas_totales -= $datos_asistentes[$index]["horas"];
+                    $horas_totales += $hora;
+                    $asistente->horas = $horas_totales;
+                    if ($asistente->validate()) {
+                        if(!$model->CambiarHorasAsistencia($hora,$asistente->carnet))
+                                throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
+                    }//fin si los datos del asistente son validos
+                }//fin si las horas son diferentes
+            }
             /* Hacer las validaciones y cambios en este orden
              * -Fecha finalización.
              * -Horas
              * -Roles
              */
-            if(/*Hacer validaciones*/true) {
+            if(/*Hacer validaciones*/false) {
                 //Cambiar fecha finalización
                 if(/*!$model->CambiarHorasAsistencia($horas,$carnet)*/false)
                     throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
