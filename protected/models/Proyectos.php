@@ -163,6 +163,16 @@ class Proyectos extends CActiveRecord
         $dataProvider = new CArrayDataProvider($rawData, array(
             'keyField'=>'carnet',
             'id'=>'Asistentes',
+            'sort'=>array(
+                'attributes'=>array(
+                    'carnet',
+                    'nombre',
+                    'apellido1',
+                    'rol',
+                    'horas',
+                    'fin',
+                ),
+            ),
         ));
         return $dataProvider;
     }//fin validar que el carnet sea único
