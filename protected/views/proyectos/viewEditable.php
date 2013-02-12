@@ -50,15 +50,15 @@ $columns = array (
     ),
     array(
         'class'=>'CButtonColumn',
-        'template'=>'{view}{guardar}{delete}',
-        'buttons'=>array(
+        'template'=>'{view}{delete}',
+        /*'buttons'=>array(
             'guardar'=>array(
                 'label'=>'Guardar',
                 'imageUrl'=>Yii::app()->request->baseUrl . '/images/Save.png',
                 'url'=>'Yii::app()->createUrl("Proyectos/actualizarInfoAsistentes",
                     array("id"=>"'.$model->idtbl_Proyectos.'","rol"=>$data["rol"],"horas"=>$data["horas"],"fin"=>$data["fin"],"carnet"=>$data["carnet"]))',
             ),
-        ),
+        ),*/
         'viewButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("id"=>$data["carnet"]))',
         'deleteButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("id"=>$data["carnet"]))',),
 );
@@ -89,8 +89,10 @@ $columns = array (
 
 <p></p><h3>Asistentes activos</h3>
 
+<div class="form">
+
 <?php $form = $this->beginWidget('CActiveForm', array(
-    'enableAjaxValidation'=>true,
+    'enableAjaxValidation'=>false,
 ));
 ?>
 
@@ -107,3 +109,5 @@ $columns = array (
 <?php echo CHtml::submitButton('Guardar');?>
 
 <?php $this->endWidget(); ?>
+
+</div>

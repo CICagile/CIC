@@ -61,6 +61,7 @@ class ProyectosController extends Controller {
     public function actionActualizarInfoAsistentes($id) {
         $model = $this->loadModel($id);
         $asistente = new Asistente;
+        $dataProvider = null;
         $dataProvider = $model->buscarAsistentesActivosPorProyecto();
         $datos_validos = true;
         
@@ -84,6 +85,8 @@ class ProyectosController extends Controller {
             }//fin for
             if ($datos_validos)
                 $this->redirect(array('view','id'=>$id)); //Sólo llega a esta instrucción si no hay errores.
+            else
+                $dataProvider = $model->buscarAsistentesActivosPorProyecto();//vuelve a cargar los datos desde la base en caso de que algunos datos si se hayan actualizado.
             /* Hacer las validaciones y cambios en este orden
              * -Fecha finalización.
              * -Horas
