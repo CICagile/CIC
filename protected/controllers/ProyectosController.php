@@ -65,7 +65,7 @@ class ProyectosController extends Controller {
             $datos_asistentes = $dataProvider->data;
             $horas = $_POST['horas'];
             foreach ($horas as $index=>$hora){
-                if ($horas != $datos_asistentes[$index]["horas"]){
+                if ($hora != $datos_asistentes[$index]["horas"]){
                     $asistente->carnet = $datos_asistentes[$index]['carnet'];
                     $horas_totales = $asistente->contarHorasAsistenciaActuales();
                     $horas_totales -= $datos_asistentes[$index]["horas"];
