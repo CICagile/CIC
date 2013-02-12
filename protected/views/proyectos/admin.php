@@ -17,6 +17,7 @@ $this->menu=array(
     
     $this->widget('zii.widgets.grid.CGridView', array(
     'id'=>'area-grid',
+    'afterAjaxUpdate'=>'cssgrid',
     'dataProvider'=>$dataProvider,
     'columns'=>array(
                 array(
@@ -38,4 +39,26 @@ $this->menu=array(
         ),
     'filter'=>$filtersForm,
 ));
+
+
+//Esto se utiliza para mantener el estilo css de las columnas del Grid luego de un request AJAX
+$string = "'";//Esto string se utiliza para poder crear correctamente el string del Script
+Yii::app()->clientScript->registerScript('css-grid', '
+function cssgrid(id,data)
+{
+    $('.$string.'[name="FiltersForm[inicio]"]'.$string.').css({"width" : "70px"});
+    $('.$string.'[name="FiltersForm[fin]"]'.$string.').css({"width" : "70px"});
+    $('.$string.'[name="FiltersForm[codigo]"]'.$string.').css({"width" : "110px"});
+}
+
+'   
+);
 ?>
+<script type="text/javascript">
+  //Esto se utiliza para mantener el estilo css de las columnas el Grid en Load
+  $(document).ready(function() {
+    $('[name="FiltersForm[inicio]"]').css({'width' : '70px'})
+    $('[name="FiltersForm[fin]"]').css({'width' : '70px'}) 
+    $('[name="FiltersForm[codigo]"]').css({'width' : '110px'})
+  });
+</script>
