@@ -12,7 +12,7 @@ $this->menu=array(
 );
 ?>
 
-<h1>Lista de Proyectos</h1>
+<h1>Lista de Proyectos Activos</h1>
 <?php
     
     $this->widget('zii.widgets.grid.CGridView', array(
