@@ -69,9 +69,10 @@ class ProyectosController extends Controller {
             $datos_asistentes = $dataProvider->data;
             $horas = $_POST['horas'];
             $roles = $_POST['rol'];
+            $asistente->scenario = 'actInfoProy';
+            $asistente->codigo = $model->idtbl_Proyectos;
             foreach ($horas as $index=>$horas_nuevas){
                 $asistente->carnet = $datos_asistentes[$index]['carnet'];
-                $asistente->codigo = $model->idtbl_Proyectos;
                 if ($horas_nuevas != $datos_asistentes[$index]["horas"]){
                     $horas_totales = $asistente->contarHorasAsistenciaActuales();
                     $horas_totales -= $datos_asistentes[$index]["horas"];
@@ -85,6 +86,13 @@ class ProyectosController extends Controller {
                     else
                         $datos_validos = false;
                 }//fin si las horas son diferentes
+                if ($datos_asistentes[$index]["rol"] != $roles[$index]){
+                    $asistente->rol = $roles[$index];
+                    if ($asistente->validate('rol')) {
+                        if(!$asistente->cambiarRolProyecto())
+                            throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
+                    }//fin si el rol es válido
+                }//fin si el rol del asistente cambió.
             }//fin for
             if ($datos_validos)
                 $this->redirect(array('view','id'=>$id)); //Sólo llega a esta instrucción si no hay errores.

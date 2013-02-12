@@ -34,6 +34,7 @@ class Asistente  extends CModel{
             return array(
                 array('nombre, apellido1, cedula, numerocuenta, banco, cuentacliente, carnet, carrera, telefono, correo, codigo, rol, horas', 'required', 'message'=>'{attribute} no puede dejarse en blanco.', 'on'=>'nuevo'),
                 array('nombre, apellido1, cedula, numerocuenta, banco, cuentacliente, carnet, carrera, telefono, correo', 'required', 'message'=>'{attribute} no puede dejarse en blanco.', 'on'=>'actDP'),
+                array('rol,horas','required','message'=>'{attribute} no puede dejarse en blanco.','on'=>'actInfoProy'),
                 array('nombre, apellido1, apellido2, codigo', 'length', 'max'=>20),
                 array('cedula','length','min'=>9,'max'=>20),
                 array('carnet','length', 'min'=>7,'max'=>15),
@@ -334,6 +335,14 @@ class Asistente  extends CModel{
             }//fin catch
             return true;
         }//fin cambiar horas asistencia
+        
+        /**
+         * Cambia el rol que desempeña un asistente en un proyecto.
+         * @return boolean True si la operación tuvo éxito y false de lo contrario.
+         */
+        public function cambiarRolProyecto(){
+            return false;
+        }//cambia el rol del asistente en un proyecto.
     
 }//fin clase Modelo Asistente
 
