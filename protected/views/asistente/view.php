@@ -48,7 +48,10 @@ $this->widget('zii.widgets.CDetailView', array(
                 'telefono',
                 'correo'
 	),
-)); 
+));
+?>
+</br><center><h2> Proyectos en los que trabaja: </h2></center>
+<?php 
 $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'asistente-grid',
 	'dataProvider'=>$model->proyectosasistente($model->carnet),
