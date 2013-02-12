@@ -206,6 +206,7 @@ class ProyectosController extends Controller {
                 'id'=>'idtbl_Proyectos',
                 'sort'=>array(
                     'attributes'=>array(
+                        'idtbl_Proyectos',
                         'codigo',
                         'nombre',                       
                         'inicio',

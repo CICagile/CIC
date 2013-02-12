@@ -35,7 +35,13 @@ $this->menu=array(
                 array(
                       'header' => 'Fecha fin',
                       'name' => 'fin',                      
-                ),             
+                ), 
+                array(
+                    'class'=>'CButtonColumn',
+                    'viewButtonUrl'=>'Yii::app()->controller->createUrl("proyectos/ver", array("id"=>$data["idtbl_Proyectos"]))',
+                    'updateButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/updateDP", array("id"=>$data["idtbl_Proyectos"]))',
+                    'deleteButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("id"=>$data["codigo"]))',
+                ),
         ),
     'filter'=>$filtersForm,
 ));
