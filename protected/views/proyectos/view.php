@@ -86,4 +86,6 @@ $columns = array (
 	'columns'=>$columns,
            )); 
 ?>
-<?php echo CHtml::button('Cambiar datos',array('submit'=>Yii::app()->controller->createUrl("Proyectos/actualizarInfoAsistentes", array("id"=>$model->idtbl_Proyectos))));?>
+<?php if ($dataProvider->totalItemCount > 0)
+            echo CHtml::button('Cambiar datos',array('submit'=>Yii::app()->controller->createUrl("Proyectos/actualizarInfoAsistentes", array("id"=>$model->idtbl_Proyectos))));
+?>
