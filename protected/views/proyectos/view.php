@@ -80,7 +80,7 @@ $columns = array (
 
 <?php $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'asistente-grid',
-	'dataProvider'=>$asistente->buscarAsistentesActivosPorProyecto($model->idtbl_Proyectos),
+	'dataProvider'=>$model->buscarAsistentesActivosPorProyecto($model->idtbl_Proyectos),
 	//'filter'=>$model,
 	'columns'=>$columns,
            )); 
