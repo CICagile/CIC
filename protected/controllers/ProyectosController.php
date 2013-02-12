@@ -65,11 +65,13 @@ class ProyectosController extends Controller {
         $dataProvider = $model->buscarAsistentesActivosDeProyecto();
         $datos_validos = true;
         
-        if (isset($_POST['horas'])) {
+        if (isset($_POST['horas']) && isset($_POST['rol']) /*&& isset($_POST['fin'])*/) {
             $datos_asistentes = $dataProvider->data;
             $horas = $_POST['horas'];
+            $roles = $_POST['rol'];
             foreach ($horas as $index=>$horas_nuevas){
                 $asistente->carnet = $datos_asistentes[$index]['carnet'];
+                $asistente->codigo = $model->idtbl_Proyectos;
                 if ($horas_nuevas != $datos_asistentes[$index]["horas"]){
                     $horas_totales = $asistente->contarHorasAsistenciaActuales();
                     $horas_totales -= $datos_asistentes[$index]["horas"];
@@ -77,7 +79,7 @@ class ProyectosController extends Controller {
                     $asistente->horas = $horas_totales;
                     if ($asistente->validate('horas')) {
                         $asistente->horas = $horas_nuevas;
-                        if(!$asistente->CambiarHorasAsistencia($model->idtbl_Proyectos))
+                        if(!$asistente->CambiarHorasAsistencia())
                                 throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
                     }//fin si los datos del asistente son validos
                     else

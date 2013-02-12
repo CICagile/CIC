@@ -315,14 +315,14 @@ class Asistente  extends CModel{
          * @param int pID es el PK del proyecto del cual se cambian las horas
          * @return boolean Retorna true si la operación fué exitosa y false en caso contrario.
          */
-        public function cambiarHorasAsistencia($pID) {
+        public function cambiarHorasAsistencia() {
             $conexion = Yii::app()->db;
             $call = "CALL actualizarHorasAsistencia(:carnet, :pkProyecto, :horas)";
             $transaccion = Yii::app()->db->beginTransaction();
             try {
                 $comando = $conexion->createCommand($call);
                 $comando->bindParam(':carnet', $this->carnet);
-                $comando->bindParam(':pkProyecto', $pID);
+                $comando->bindParam(':pkProyecto', $this->codigo);
                 $comando->bindParam(':horas', $this->horas);
                 $comando->execute();
                 $transaccion->commit();
