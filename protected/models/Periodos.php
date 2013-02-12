@@ -8,7 +8,7 @@
  * @property string $inicio
  * @property string $fin
  *
- * The followings are the available model relations:
+ * The followings are the available model relations: 
  * @property Historialeshorasasistente[] $historialeshorasasistentes
  * @property Historialperiodosasistentesxproyecto[] $historialperiodosasistentesxproyectos
  * @property Historialroles[] $historialroles
@@ -69,8 +69,7 @@ class Periodos extends CActiveRecord
 		return array(
 			'historialeshorasasistentes' => array(self::HAS_MANY, 'Historialeshorasasistente', 'tbl_Periodos_idPeriodo'),
 			'historialperiodosasistentesxproyectos' => array(self::HAS_MANY, 'Historialperiodosasistentesxproyecto', 'tbl_Periodos_idPeriodo'),
-			'historialroles' => array(self::HAS_MANY, 'Historialroles', 'tbl_Periodos_idPeriodo'),
-			//'proyectos' => array(self::HAS_MANY, 'Proyectos', 'tbl_Periodos_idPeriodo'),
+			'historialroles' => array(self::HAS_MANY, 'Historialroles', 'tbl_Periodos_idPeriodo'),			
                         'historialperiodoproyectos' => array(self::HAS_MANY, 'Historialperiodoproyecto', 'idPeriodo'),
 		);
 	}

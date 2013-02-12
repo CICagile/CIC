@@ -13,52 +13,29 @@ $this->menu=array(
 ?>
 
 <h1>Lista de Proyectos</h1>
-
-
-
-
-<?php $this->widget('zii.widgets.grid.CGridView', array(
-	'id'=>'proyectos-grid',
-	'dataProvider'=>$model->search(),
-	'filter'=>$model,  
-        'afterAjaxUpdate'=>'cssfechas',
-	'columns'=>array(
-                'codigo',
-		'nombre',		
-		array(
-                        'name' => 'fecha_inicio_search',
-                        'value' => '$this->grid->owner->FechaMysqltoPhp($data->periodos->inicio)',                        
-                        'id' => 'fecha_ini',
+<?php
+    
+    $this->widget('zii.widgets.grid.CGridView', array(
+    'id'=>'area-grid',
+    'dataProvider'=>$dataProvider,
+    'columns'=>array(
+                array(
+                      'header' => 'Codigo',
+                      'name' => 'codigo', 
                 ),
                 array(
-                        'name' => 'fecha_fin_search',
-                        'value' => '$this->grid->owner->FechaMysqltoPhp($data->periodos->fin)',                        
-                        'id' => 'fecha_fin'
-                ),
+                      'header' => 'Nombre del Proyecto',
+                      'name' => 'nombre', 
+                ),  				
 		array(
-			'class'=>'CButtonColumn',
-		),
-	)
-    )); 
-
-//Esto se utiliza para mantener el estilo css de las columnas fechas del Grid luego de un request AJAX
-$string = "'";//Esto string se utiliza para poder crear correctamente el string del Script
-Yii::app()->clientScript->registerScript('css-fechas', '
-function cssfechas(id,data)
-{
-    $('.$string.'[name="Proyectos[fecha_inicio_search]"]'.$string.').css({"visibility": "hidden", "width" : "70px"});
-    $('.$string.'[name="Proyectos[fecha_fin_search]"]'.$string.').css({"visibility": "hidden", "width" : "70px"});
-    $('.$string.'[name="Proyectos[codigo]"]'.$string.').css({"width" : "110px"});
-}
-
-'   
-);
+                      'header' => 'Fecha inicio',
+                      'name' => 'inicio',                       
+                ),
+                array(
+                      'header' => 'Fecha fin',
+                      'name' => 'fin',                      
+                ),             
+        ),
+    'filter'=>$filtersForm,
+));
 ?>
-<script type="text/javascript">
-  //Esto se utiliza para mantener el estilo css de las columnas fechas del Grid en Load
-  $(document).ready(function() {
-    $('[name="Proyectos[fecha_inicio_search]"]').css({'visibility': 'hidden', 'width' : '70px'})
-    $('[name="Proyectos[fecha_fin_search]"]').css({'visibility': 'hidden', 'width' : '70px'}) 
-    $('[name="Proyectos[codigo]"]').css({'width' : '110px'})
-  });
-</script>

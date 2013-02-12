@@ -1,6 +1,3 @@
-
-
-
 <?php
 
 $this->breadcrumbs=array(
@@ -14,7 +11,5 @@ $this->menu=array(
 ?>
 
 <h1>Registrar Proyecto</h1>
-
-<?php // echo $this->renderPartial('_form', array('modelproyectos'=>$modelproyectos, 'modelperiodos' => $modelperiodos,)); ?>
 
 <?php echo $this->renderPartial('_formcrear', array('modelproyectos'=>$modelproyectos, 'modelperiodos' => $modelperiodos,)); ?>

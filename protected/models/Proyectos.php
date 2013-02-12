@@ -14,11 +14,10 @@
  * @property integer $estado
  *
  * The followings are the available model relations:
- * @property Personas[] $tblPersonases
  * @property Asistentes[] $tblAsistentes
  * @property Documentos[] $documentoses
  * @property Financiamientoexterno[] $financiamientoexternos
- * @property Historialperiodoproyecto[] $historialperiodoproyectos
+ * @property Periodos[] $_periodos
  * @property Presupuesto[] $presupuestos
  * @property Adscrito $idtblAdscrito
  * @property Objetivoproyecto $idtblObjetivoproyecto
@@ -39,8 +38,12 @@ class Proyectos extends CActiveRecord
         public $fecha_inicio_search;
         public $fecha_fin_search;
         
-        public $codaprobado = 0;
-        public $codampliado = 1;
+        //Las variables fecha inicio y fecha fin se utilizan para simular el periodo del proyecto.
+        public $inicio;
+        public $fin;
+        
+        public $codaprobado = "0";
+        public $codampliado = "1";
         
         public $labelaprobado = 'Aprobado';
         public $labelampliado = 'Ampliado';
@@ -99,7 +102,7 @@ class Proyectos extends CActiveRecord
 			'_tipoproyecto' => array(self::BELONGS_TO, 'Tipoproyecto', 'tipoproyecto'),
                         '_convenios' => array(self::MANY_MANY, 'Convenio', 'tbl_proyectos_convenio(idtbl_Proyectos, idtbl_convenio)'),
 			'_sectorbeneficiados' => array(self::MANY_MANY, 'Sectorbeneficiado', 'tbl_proyectos_sectorbeneficiado(idtbl_Proyectos, idtbl_sectorbeneficiado)'),
-                        '_historialperiodoproyectos' => array(self::HAS_MANY, 'Historialperiodoproyecto', 'idtbl_Proyectos'),
+                        '_periodos' => array(self::MANY_MANY, 'Periodos', 'tbl_historialproyectosperiodos(idtbl_Proyectos, idPeriodo)'),
 			
 		);
 	}
@@ -136,8 +139,7 @@ class Proyectos extends CActiveRecord
 
 		$criteria->compare('idtbl_Proyectos',$this->idtbl_Proyectos);
 		$criteria->compare('nombre',$this->nombre,true);
-		$criteria->compare('codigo',$this->codigo,true);
-		//$criteria->compare('tbl_Periodos_idPeriodo',$this->tbl_Periodos_idPeriodo);
+		$criteria->compare('codigo',$this->codigo,true);		
                 $criteria->compare( 'periodos.inicio', $this->fecha_inicio_search, true );
                 $criteria->compare( 'periodos.fin', $this->fecha_fin_search, true );
                 $criteria->compare('idtbl_objetivoproyecto',$this->idtbl_objetivoproyecto);
@@ -183,5 +185,55 @@ class Proyectos extends CActiveRecord
             }
             return true;
         }
+        
+                
+        /*Esta funcion retorna la información del proyecto
+         * y la información del periodo actual asociado al proyecto
+         */
+        public function obtenerProyectoconPeriodoActual($idproyecto){
+            
+            $connection=Yii::app()->db;
+            $sql=   "SELECT tbl_proyectos.*, tbl_periodos.inicio, tbl_periodos.fin
+                    FROM tbl_proyectos
+                    INNER JOIN tbl_historialproyectosperiodos
+                    ON (tbl_proyectos.idtbl_Proyectos = tbl_historialproyectosperiodos.idtbl_Proyectos)
+                    INNER JOIN tbl_periodos 
+                    ON (tbl_historialproyectosperiodos.idPeriodo = tbl_periodos.idPeriodo)
+                    WHERE tbl_proyectos.idtbl_Proyectos = :idproyecto
+                    ORDER BY tbl_periodos.fin DESC
+                    LIMIT 1";
+            $command=$connection->createCommand($sql);
+            $command->bindParam(":idproyecto",$idproyecto,PDO::PARAM_INT);
+            $model = $command->queryRow();
+            
+            if($model == false)
+                return null;            
+            else{
+                $this->setAttributes($model);//Asociamos los atributos reales de un Proyecto
+                $this->inicio = $model['inicio'];//Asociamos el atributos simulado inicio
+                $this->fin = $model['fin'];//Asociamos el atributos simulado fin
+                return $this; //Retornamos el objeto Proyecto
+            }                      
+        }
+        
+        public function obtenerProyectosActivos(){                    
+            
+            $connection=Yii::app()->db;
+            $sql=   "SELECT tbl_proyectos.*, DATE_FORMAT(tbl_periodos.inicio, '%d-%m-%Y') AS inicio, 
+                    DATE_FORMAT(tbl_periodos.fin, '%d-%m-%Y') AS fin
+                    FROM tbl_proyectos
+                    INNER JOIN tbl_historialproyectosperiodos
+                    ON (tbl_proyectos.idtbl_Proyectos = tbl_historialproyectosperiodos.idtbl_Proyectos)
+                    INNER JOIN tbl_periodos 
+                    ON (tbl_historialproyectosperiodos.idPeriodo = tbl_periodos.idPeriodo)
+                    WHERE tbl_periodos.fin > SYSDATE()"; 
+            $command=$connection->createCommand($sql);
+            $models = $command->queryAll();
+            
+            if(empty($models))
+                return null;
+            else
+                return $models;
 
+        }
 }
