@@ -151,14 +151,14 @@ class Proyectos extends CActiveRecord
      * Esta funcion busca en la base de datos todos los asistentes que están activos
      * en el proyecto. Un asistente se considera activo si actualmente está asociado al
      * proyecto. En otras palabras si la fecha actual se encuentra entre su fecha de inicio y su fecha de fin de la asistencia.
-     * @param int $pPKProyecto PK del proyecto sobre el cual se buscan  los asistentes.
      * @return \CArraryDataProvider Retorna un CArrayDataProvider que se usa para mostrar datos en tablas. 
      */        
     public function buscarAsistentesActivosPorProyecto() {
+        $pk = $this->idtbl_Proyectos;
         $call = 'CALL buscarAsistentesActivosDeProyecto(:pk)';
         $conexion = Yii::app()->db;
         $comando = $conexion->createCommand($call);
-        $comando->bindParam(':pk',$this->idtbl_Proyectos,PDO::PARAM_INT);
+        $comando->bindParam(':pk',$pk,PDO::PARAM_INT);
         $rawData = $comando->queryAll();
         $dataProvider = new CArrayDataProvider($rawData, array(
             'keyField'=>'carnet',
