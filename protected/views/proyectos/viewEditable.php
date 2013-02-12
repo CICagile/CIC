@@ -94,6 +94,8 @@ $columns = array (
 ));
 ?>
 
+<?php echo $form->errorSummary(array($model,$asistente),'Se han detectado los siguientes errores:'); ?>
+
 <?php $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'asistente-grid',
 	'dataProvider'=>$dataProvider,
