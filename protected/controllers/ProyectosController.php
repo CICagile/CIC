@@ -73,6 +73,8 @@ class ProyectosController extends Controller {
             $asistente->codigo = $model->idtbl_Proyectos;
             foreach ($horas as $index=>$horas_nuevas){
                 $asistente->carnet = $datos_asistentes[$index]['carnet'];
+                $asistente->horas = $datos_asistentes[$index]['horas'];
+                $asistente->rol = $datos_asistentes[$index]['rol'];
                 if ($horas_nuevas != $datos_asistentes[$index]["horas"]){
                     $horas_totales = $asistente->contarHorasAsistenciaActuales();
                     $horas_totales -= $datos_asistentes[$index]["horas"];
@@ -83,21 +85,22 @@ class ProyectosController extends Controller {
                         if(!$asistente->CambiarHorasAsistencia())
                                 throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
                     }//fin si los datos del asistente son validos
-                    else
-                        $datos_validos = false;
+                    else $datos_validos = false;
                 }//fin si las horas son diferentes
                 if ($datos_asistentes[$index]["rol"] != $roles[$index]){
+                    echo ' entro ';
                     $asistente->rol = $roles[$index];
                     if ($asistente->validate('rol')) {
                         if(!$asistente->cambiarRolProyecto())
                             throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
                     }//fin si el rol es válido
+                    else $datos_validos = false;
                 }//fin si el rol del asistente cambió.
             }//fin for
-            if ($datos_validos)
+            /*if ($datos_validos)
                 $this->redirect(array('view','id'=>$id)); //Sólo llega a esta instrucción si no hay errores.
             else
-                $dataProvider = $model->buscarAsistentesActivosDeProyecto();//vuelve a cargar los datos desde la base en caso de que algunos datos si se hayan actualizado.
+                $dataProvider = $model->buscarAsistentesActivosDeProyecto();*///vuelve a cargar los datos desde la base en caso de que algunos datos si se hayan actualizado.
             /* Hacer las validaciones y cambios en este orden
              * -Fecha finalización.
              * -Horas
@@ -550,7 +553,9 @@ controllers.ProyectosController");
             return true;
     }
     
-    protected function existeAsistenteProyecto($pcarne, $idproyecto) {        
+    protected function existeAsistenteProyecto($pcarne, $idproyecto) {
+        /* Esta versión no valida si el asistente está activo por lo que no deja asociar a un asistente
+         * que alguna vez estuvo activo, luego inactivo y luego se quiere reintegrar al proyecto.*/
         $asistente = Asistentes::model()->findByAttributes(array('carnet' => $pcarne));        
         $proyectosasistente = $asistente->proyectos;
         $res = false;
@@ -561,7 +566,11 @@ controllers.ProyectosController");
                 $res = true;
             }
         }
-        return $res;            
+        return $res;
+        /*---------->Otra versión<-----------
+        $model = new Proyecto;
+        $model->idtbl_Proyectos = $idproyecto;
+        $model->buscarAsistentesActivosDeProyecto();*/
     }
 
     protected function validarFechaRangoAsistenciaProyecto($pfecha, $pidproyecto) {

@@ -319,7 +319,7 @@ class Asistente  extends CModel{
         public function cambiarHorasAsistencia() {
             $conexion = Yii::app()->db;
             $call = "CALL actualizarHorasAsistencia(:carnet, :pkProyecto, :horas)";
-            $transaccion = Yii::app()->db->beginTransaction();
+            $transaccion = $conexion->beginTransaction();
             try {
                 $comando = $conexion->createCommand($call);
                 $comando->bindParam(':carnet', $this->carnet);
@@ -329,7 +329,7 @@ class Asistente  extends CModel{
                 $transaccion->commit();
             }//fin try
             catch (Exception $e) {
-                Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Proyectos");
+                Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
                 $transaccion->rollback();
                 return false;
             }//fin catch
@@ -341,7 +341,23 @@ class Asistente  extends CModel{
          * @return boolean True si la operación tuvo éxito y false de lo contrario.
          */
         public function cambiarRolProyecto(){
-            return false;
+            $conexion = Yii::app()->db;
+            $call = 'CALL actualizarRolAsistente(:pkProyecto, :carnet, :rol)';
+            $transaccion = $conexion->beginTransaction();
+            try {
+                $comando = $conexion->createCommand($call);
+                $comando->bindParam(':pkProyecto', $this->codigo, PDO::PARAM_INT);
+                $comando->bindParam(':carnet', $this->carnet, PDO::PARAM_STR);
+                $comando->bindParam(':rol', $this->rol, PDO::PARAM_STR);
+                $comando->execute();
+                $transaccion->commit();
+            }//fin try
+            catch (Exception $e) {
+                Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
+                $transaccion->rollback();
+                return false;
+            }//fin catch
+            return true;
         }//cambia el rol del asistente en un proyecto.
     
 }//fin clase Modelo Asistente
