@@ -48,7 +48,7 @@ class ProyectosController extends Controller {
         $this->render('view', array(
             'model' => $model,
             'asistente' => new Asistente,
-            'dataProvider' => $model->buscarAsistentesActivosPorProyecto(),
+            'dataProvider' => $model->buscarAsistentesActivosDeProyecto(),
         ));
     }
     
@@ -62,21 +62,22 @@ class ProyectosController extends Controller {
         $model = $this->loadModel($id);
         $asistente = new Asistente;
         $dataProvider = null;
-        $dataProvider = $model->buscarAsistentesActivosPorProyecto();
+        $dataProvider = $model->buscarAsistentesActivosDeProyecto();
         $datos_validos = true;
         
         if (isset($_POST['horas'])) {
             $datos_asistentes = $dataProvider->data;
             $horas = $_POST['horas'];
-            foreach ($horas as $index=>$hora){
-                if ($hora != $datos_asistentes[$index]["horas"]){
-                    $asistente->carnet = $datos_asistentes[$index]['carnet'];
+            foreach ($horas as $index=>$horas_nuevas){
+                $asistente->carnet = $datos_asistentes[$index]['carnet'];
+                if ($horas_nuevas != $datos_asistentes[$index]["horas"]){
                     $horas_totales = $asistente->contarHorasAsistenciaActuales();
                     $horas_totales -= $datos_asistentes[$index]["horas"];
-                    $horas_totales += $hora;
+                    $horas_totales += $horas_nuevas;
                     $asistente->horas = $horas_totales;
                     if ($asistente->validate('horas')) {
-                        if(!$model->CambiarHorasAsistencia($hora,$asistente->carnet))
+                        $asistente->horas = $horas_nuevas;
+                        if(!$asistente->CambiarHorasAsistencia($model->idtbl_Proyectos))
                                 throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
                     }//fin si los datos del asistente son validos
                     else
@@ -86,7 +87,7 @@ class ProyectosController extends Controller {
             if ($datos_validos)
                 $this->redirect(array('view','id'=>$id)); //Sólo llega a esta instrucción si no hay errores.
             else
-                $dataProvider = $model->buscarAsistentesActivosPorProyecto();//vuelve a cargar los datos desde la base en caso de que algunos datos si se hayan actualizado.
+                $dataProvider = $model->buscarAsistentesActivosDeProyecto();//vuelve a cargar los datos desde la base en caso de que algunos datos si se hayan actualizado.
             /* Hacer las validaciones y cambios en este orden
              * -Fecha finalización.
              * -Horas

@@ -120,40 +120,13 @@ class Proyectos extends CActiveRecord
             return true;
         }
         
-        /**
-         * Llama al stored procedure encargado de actualizar las horas que un asistente con cierto carnet cumple semanalmente en este proyecto.
-         * @param double $pHoras Cantidad de horas que el estudiante cumple semanalmente.
-         * @param string $pCarnet Carnet del estudiante al que se le cambia las horas de asistencia.
-         * @return boolean Retorna true si la operación fué exitosa y false de lo contrario.
-         */
-        public function cambiarHorasAsistencia($pHoras,$pCarnet) {
-            $id = $this->idtbl_Proyectos;
-            $conexion = Yii::app()->db;
-            $call = "CALL actualizarHorasAsistencia(:carnet, :pkProyecto, :horas)";
-            $transaccion = Yii::app()->db->beginTransaction();
-            try {
-                $comando = $conexion->createCommand($call);
-                $comando->bindParam(':carnet', $pCarnet);
-                $comando->bindParam(':pkProyecto', $id);
-                $comando->bindParam(':horas', $pHoras);
-                $comando->execute();
-                $transaccion->commit();
-            }//fin try
-            catch (Exception $e) {
-                Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Proyectos");
-                $transaccion->rollback();
-                return false;
-            }//fin catch
-            return true;
-        }//fin cambiar horas asistencia
-        
     /**
      * Esta funcion busca en la base de datos todos los asistentes que están activos
      * en el proyecto. Un asistente se considera activo si actualmente está asociado al
      * proyecto. En otras palabras si la fecha actual se encuentra entre su fecha de inicio y su fecha de fin de la asistencia.
-     * @return \CArraryDataProvider Retorna un CArrayDataProvider que se usa para mostrar datos en tablas. 
+     * @return CArraryDataProvider Retorna un CArrayDataProvider que se usa para mostrar datos en tablas. 
      */        
-    public function buscarAsistentesActivosPorProyecto() {
+    public function buscarAsistentesActivosDeProyecto() {
         $pk = $this->idtbl_Proyectos;
         $call = 'CALL buscarAsistentesActivosDeProyecto(:pk)';
         $conexion = Yii::app()->db;

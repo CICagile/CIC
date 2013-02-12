@@ -310,6 +310,31 @@ class Asistente  extends CModel{
             return 0;
     }//fin contarHorasActuales
     
+    /**
+         * Llama al stored procedure encargado de actualizar las horas que un asistente con cierto carnet cumple semanalmente en este proyecto.
+         * @param int pID es el PK del proyecto del cual se cambian las horas
+         * @return boolean Retorna true si la operación fué exitosa y false en caso contrario.
+         */
+        public function cambiarHorasAsistencia($pID) {
+            $conexion = Yii::app()->db;
+            $call = "CALL actualizarHorasAsistencia(:carnet, :pkProyecto, :horas)";
+            $transaccion = Yii::app()->db->beginTransaction();
+            try {
+                $comando = $conexion->createCommand($call);
+                $comando->bindParam(':carnet', $this->carnet);
+                $comando->bindParam(':pkProyecto', $pID);
+                $comando->bindParam(':horas', $this->horas);
+                $comando->execute();
+                $transaccion->commit();
+            }//fin try
+            catch (Exception $e) {
+                Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Proyectos");
+                $transaccion->rollback();
+                return false;
+            }//fin catch
+            return true;
+        }//fin cambiar horas asistencia
+    
 }//fin clase Modelo Asistente
 
 ?>
