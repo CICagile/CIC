@@ -170,7 +170,7 @@ class Proyectos extends CActiveRecord
                     'apellido1',
                     'rol',
                     'horas',
-                    'fin',
+                    //'fin', LA TABLA NO RECONOCE QUE ES UNA FECHA Y NO HACE UN BUEN ORDENAMIENTO
                 ),
             ),
         ));
