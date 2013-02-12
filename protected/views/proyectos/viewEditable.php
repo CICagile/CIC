@@ -37,6 +37,9 @@ $columns = array (
     array(
         'header'=>CHtml::encode($asistente->getAttributeLabel('rol')),
         'name'=>'rol',
+        'value'=>'CHtml::dropDownList("rol[$row]", $data["rol"],
+            CHtml::listData(RolAsistente::model()->findAll(), "nombre", "nombre"), array("empty"=>"Elija un rol"))',
+        'type'=>'raw',
     ),
     array(
         'header'=>CHtml::encode('Horas'),
