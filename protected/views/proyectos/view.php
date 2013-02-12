@@ -2,6 +2,7 @@
 /* @var $this ProyectosController */
 /* @var $model Proyectos */
 /* @var $asistente Asistente */
+/* @var $dataProvider CArrayDataProvider */
 $this->breadcrumbs=array(
 	'Proyectos'=>array('index'),
 	$model->codigo,
@@ -80,7 +81,7 @@ $columns = array (
 
 <?php $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'asistente-grid',
-	'dataProvider'=>$model->buscarAsistentesActivosPorProyecto($model->idtbl_Proyectos),
+	'dataProvider'=>$dataProvider,
 	//'filter'=>$model,
 	'columns'=>$columns,
            )); 

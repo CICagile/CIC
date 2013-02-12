@@ -44,9 +44,11 @@ class ProyectosController extends Controller {
      * @param integer $id the ID of the model to be displayed
      */
     public function actionView($id) {
+        $model = $this->loadModel($id);
         $this->render('view', array(
-            'model' => $this->loadModel($id),
+            'model' => $model,
             'asistente' => new Asistente,
+            'dataProvider' => $model->buscarAsistentesActivosPorProyecto(),
         ));
     }
     
@@ -59,7 +61,8 @@ class ProyectosController extends Controller {
     public function actionActualizarInfoAsistentes($id) {
         $model = $this->loadModel($id);
         $asistente = new Asistente;
-        $dataProvider = $asistente->buscarAsistentesActivosPorProyecto($model->idtbl_Proyectos);
+        $dataProvider = $model->buscarAsistentesActivosPorProyecto();
+        $datos_validos = true;
         
         if (isset($_POST['horas'])) {
             $datos_asistentes = $dataProvider->data;
@@ -71,12 +74,16 @@ class ProyectosController extends Controller {
                     $horas_totales -= $datos_asistentes[$index]["horas"];
                     $horas_totales += $hora;
                     $asistente->horas = $horas_totales;
-                    if ($asistente->validate()) {
+                    if ($asistente->validate('horas')) {
                         if(!$model->CambiarHorasAsistencia($hora,$asistente->carnet))
                                 throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
                     }//fin si los datos del asistente son validos
+                    else
+                        $datos_validos = false;
                 }//fin si las horas son diferentes
-            }
+            }//fin for
+            if ($datos_validos)
+                $this->redirect(array('view','id'=>$id)); //Sólo llega a esta instrucción si no hay errores.
             /* Hacer las validaciones y cambios en este orden
              * -Fecha finalización.
              * -Horas
