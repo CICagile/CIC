@@ -65,16 +65,16 @@ class ProyectosController extends Controller {
         $dataProvider = $model->buscarAsistentesActivosDeProyecto();
         $datos_validos = true;
         
-        if (isset($_POST['horas']) && isset($_POST['rol']) /*&& isset($_POST['fin'])*/) {
+        if (isset($_POST['horas']) /*&& isset($_POST['rol']) /*&& isset($_POST['fin'])*/) {
             $datos_asistentes = $dataProvider->data;
             $horas = $_POST['horas'];
-            $roles = $_POST['rol'];
+            /*$roles = $_POST['rol'];*/
             $asistente->scenario = 'actInfoProy';
             $asistente->codigo = $model->idtbl_Proyectos;
             foreach ($horas as $index=>$horas_nuevas){
                 $asistente->carnet = $datos_asistentes[$index]['carnet'];
                 $asistente->horas = $datos_asistentes[$index]['horas'];
-                $asistente->rol = $datos_asistentes[$index]['rol'];
+                //$asistente->rol = $datos_asistentes[$index]['rol'];
                 if ($horas_nuevas != $datos_asistentes[$index]["horas"]){
                     $horas_totales = $asistente->contarHorasAsistenciaActuales();
                     $horas_totales -= $datos_asistentes[$index]["horas"];
@@ -87,7 +87,7 @@ class ProyectosController extends Controller {
                     }//fin si los datos del asistente son validos
                     else $datos_validos = false;
                 }//fin si las horas son diferentes
-                if ($datos_asistentes[$index]["rol"] != $roles[$index]){
+                /*if ($datos_asistentes[$index]["rol"] != $roles[$index]){
                     echo ' entro ';
                     $asistente->rol = $roles[$index];
                     if ($asistente->validate('rol')) {
@@ -95,7 +95,7 @@ class ProyectosController extends Controller {
                             throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
                     }//fin si el rol es válido
                     else $datos_validos = false;
-                }//fin si el rol del asistente cambió.
+                }//fin si el rol del asistente cambió.*/
             }//fin for
             /*if ($datos_validos)
                 $this->redirect(array('view','id'=>$id)); //Sólo llega a esta instrucción si no hay errores.
