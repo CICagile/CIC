@@ -215,6 +215,4 @@ class Proyectos extends CActiveRecord
         ));
         return $dataProvider;
     }//fin validar que el carnet sea único
-
-        }
 }
