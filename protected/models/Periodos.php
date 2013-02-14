@@ -112,7 +112,10 @@ class Periodos extends CActiveRecord
          */
         public function validarFechaFinAsistencia($pCodProyecto){
             
-          $select = "SELECT DATE_FORMAT(P.fin, '%d-%m-%Y') fin FROM tbl_Proyectos Pr INNER JOIN tbl_Periodos P ON Pr.tbl_Periodos_idPeriodo = P.idPeriodo WHERE Pr.codigo = :codigo";
+          $select = "SELECT DATE_FORMAT(P.fin, '%d-%m-%Y') fin FROM tbl_Proyectos Pr
+		INNER JOIN tbl_historialproyectosperiodos HPP ON PR.idtbl_Proyectos = HPP.idtbl_historialproyectosperiodos
+		INNER JOIN tbl_Periodos P ON HPP.idPeriodo = P.idPeriodo
+		WHERE Pr.codigo = :codigo AND P.inicio <= SYSDATE() AND P.fin > SYSDATE();";
           $comando = Yii::app()->db->createCommand($select);
           $comando->bindParam(':codigo',$pCodProyecto,PDO::PARAM_STR);
           $query = $comando->query();
@@ -129,7 +132,10 @@ class Periodos extends CActiveRecord
      */
     public function validarFechaInicioAsistencia($pCodProyecto){
             
-          $select = "SELECT DATE_FORMAT(P.inicio, '%d-%m-%Y') inicio FROM tbl_Proyectos Pr INNER JOIN tbl_Periodos P ON Pr.tbl_Periodos_idPeriodo = P.idPeriodo WHERE Pr.codigo = :codigo";
+          $select = "SELECT DATE_FORMAT(P.inicio, '%d-%m-%Y') inicio FROM tbl_Proyectos Pr
+		INNER JOIN tbl_historialproyectosperiodos HPP ON PR.idtbl_Proyectos = HPP.idtbl_historialproyectosperiodos
+		INNER JOIN tbl_Periodos P ON HPP.idPeriodo = P.idPeriodo
+		WHERE Pr.codigo = :codigo AND P.inicio <= SYSDATE() AND P.fin > SYSDATE();";
           $comando = Yii::app()->db->createCommand($select);
           $comando->bindParam(':codigo',$pCodProyecto,PDO::PARAM_STR);
           $query = $comando->query();
