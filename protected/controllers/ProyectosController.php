@@ -2,6 +2,8 @@
 
 class ProyectosController extends Controller {
 
+    
+      
     /**
      * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
      * using two-column layout. See 'protected/views/layouts/column2.php'.
@@ -39,9 +41,8 @@ class ProyectosController extends Controller {
         );
     }
 
-    /**
-     * Displays a particular model.
-     * @param integer $id the ID of the model to be displayed
+    /*
+     * Muestra el detalle del proyecto
      */
     public function actionView($id) {
         $model = $this->loadModel($id);
@@ -144,73 +145,97 @@ class ProyectosController extends Controller {
             return $fecha;
     }
 
-    /**
-     * Creates a new model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+    /*
+     * Crea un proyecto
      */
-    public function actionCreate() {
-        
+    public function actionCrear(){
         $modelproyectos = new Proyectos;
-        $modelperiodos = new Periodos;   
+        $modelperiodos = new Periodos; 
+        
+         if (isset($_POST['ajax']) && $_POST['ajax'] === 'proyectos-formcrear') {
+            echo CActiveForm::validate(array($modelproyectos,$modelperiodos));
+            Yii::app()->end();
+        }
+        
+        if (isset($_POST['Periodos']) && isset($_POST['Proyectos'])) {
+
+        $modelperiodos->attributes = $_POST['Periodos'];
+        $modelproyectos->attributes = $_POST['Proyectos']; 
+
+        if ($modelperiodos->validate() && $modelproyectos->validate()) {
+
+            $modelperiodos->inicio = $this->FechaPhptoMysql($modelperiodos->inicio);
+            $modelperiodos->fin = $this->FechaPhptoMysql($modelperiodos->fin);
+
+            $transaction = Yii::app()->db->beginTransaction();
+
+            $resultado = $modelperiodos->save(false); //Guardo el periodo sin validar, ya que lo valide con anterioridad                                                           
+
+            //El proyecto cuando se crea por Default es aprobado -> 0           
+            $resultado = $resultado ? $modelproyectos->save() : $resultado;
+
+            if($resultado){//Si se guarda bien el proyecto
+
+                //Guardo el historial de periodos del proyecto
+                $historialproyectoperiodo = new HistorialProyectosPeriodo();
+                $historialproyectoperiodo->idPeriodo = $modelperiodos->idPeriodo;
+                $historialproyectoperiodo->idtbl_Proyectos = $modelproyectos->idtbl_Proyectos;
+
+                $resultado = $resultado ? $historialproyectoperiodo->save() : $resultado;                   
+
+                if ($resultado) {//Si se guarda bien el historial de periodos del proyecto
+                    $transaction->commit();
+                    Yii::log("Creación exitosa del proyecto con el código: " . $modelproyectos->codigo, "info", "application.
+    controllers.ProyectosController");
+                    $this->redirect(array('admin'));
+                } else {
+                    $transaction->rollBack();
+                    Yii::log("Rollback al intentar crear el proyecto con el código: " . $modelproyectos->codigo, "warning", "application.
+    controllers.ProyectosController");
+                    throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
+                }
+            }else {
+                    $transaction->rollBack();
+                    Yii::log("Rollback al intentar crear el proyecto con el código: " . $modelproyectos->codigo, "warning", "application.
+    controllers.ProyectosController");
+                    throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
+                }
+            }
+     }
+        
+    $this->render('crear', array(
+        'modelproyectos' => $modelproyectos,
+        'modelperiodos' => $modelperiodos,
+    ));
+}
+
+     /*
+     * Actualizar un proyecto
+     */
+    public function actionActualizar($id){
+         $modelproyectos = $this->loadModel($id);
+         $historial = $modelproyectos->obtenerPeriodoActualProyecto();
+    }
+
+    public function actionUpdate($id) {
+        $modelproyectos = $this->loadModel($id);
+        $modelperiodos = $modelproyectos->periodos;
         
         $this->performAjaxValidation(array($modelproyectos,$modelperiodos));
-
-        if (isset($_POST['Periodos']) && isset($_POST['Proyectos'])) {           
+        
+        if (isset($_POST['Periodos']) && isset($_POST['Proyectos'])) { 
             
             $modelperiodos->attributes = $_POST['Periodos'];
             $modelproyectos->attributes = $_POST['Proyectos']; 
             
             if ($modelperiodos->validate() && $modelproyectos->validate()) {
-
-                $modelperiodos->inicio = $this->FechaPhptoMysql($modelperiodos->inicio);
-                $modelperiodos->fin = $this->FechaPhptoMysql($modelperiodos->fin);
-
-                $transaction = Yii::app()->db->beginTransaction();
-
-                $resultado = $modelperiodos->save(false); //Guardo el periodo sin validar, ya que lo valide con anterioridad                                                           
-
                 
-                $modelproyectos->tbl_Periodos_idPeriodo = $modelperiodos->idPeriodo;
-
-                $resultado = $resultado ? $modelproyectos->save() : $resultado;
-                if ($resultado) {
-                    $transaction->commit();
-                    Yii::log("Creación exitosa del proyecto con el código: " . $modelproyectos->codigo, "info", "application.
-controllers.ProyectosController");
-                    $this->redirect(array('view', 'id' => $modelproyectos->idtbl_Proyectos));
-                } else {
-                    $transaction->rollBack();
-                    Yii::log("Rollback al intentar crear el proyecto con el código: " . $modelproyectos->codigo, "warning", "application.
-controllers.ProyectosController");
-                    throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
-                }
             }
         }
-
-        $this->render('create', array(
-            'modelproyectos' => $modelproyectos,
-            'modelperiodos' => $modelperiodos,
-        ));
-    }
-
-    /**
-     * Updates a particular model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id the ID of the model to be updated
-     */
-    public function actionUpdate($id) {
-        $modelproyectos = $this->loadModel($id);
-        $modelperiodos = $proyecto->periodos;
-
-        // Uncomment the following line if AJAX validation is needed
-        $this->performAjaxValidation(array($modelproyectos, $modelperiodos));
-
-        if (isset($_POST['Proyectos'])) {
-            $model->attributes = $_POST['Proyectos'];
-            if ($model->save())
-                $this->redirect(array('view', 'id' => $model->idtbl_Proyectos));
-        }
-
+        
+        $modelperiodos->inicio = $this->FechaMysqltoPhp($modelperiodos->inicio);
+        $modelperiodos->fin = $this->FechaMysqltoPhp($modelperiodos->fin);
+        
         $this->render('update', array(
             'modelproyectos' => $modelproyectos,
             'modelperiodos' => $modelperiodos,
@@ -231,27 +256,42 @@ controllers.ProyectosController");
     }
 
     /**
-     * Lists all models.
-     */
-    public function actionIndex() {
-        $dataProvider = new CActiveDataProvider('Proyectos');
-        $this->render('index', array(
-            'dataProvider' => $dataProvider,
-        ));
-    }
-
-    /**
      * Manages all models.
      */
     public function actionAdmin() {
-        $model = new Proyectos('search');
-        $model->unsetAttributes();  // clear any default values
-        if (isset($_GET['Proyectos']))
-            $model->attributes = $_GET['Proyectos'];
-
-        $this->render('admin', array(
-            'model' => $model,
-        ));
+        // Create filter model and set properties
+        $filtersForm=new FiltersForm;
+        $dataProvider=new CArrayDataProvider(array());
+        
+        if (isset($_GET['FiltersForm']))
+            $filtersForm->filters=$_GET['FiltersForm'];
+        
+        $modelos = Proyectos::model()->obtenerProyectosActivos();
+       
+        if(!$modelos==null){
+            $filteredData=$filtersForm->filter($modelos);
+            $dataProvider=new CArrayDataProvider($filteredData, array(
+                'keyField'=>'idtbl_Proyectos',
+                'id'=>'idtbl_Proyectos',
+                'sort'=>array(
+                    'attributes'=>array(
+                        'idtbl_Proyectos',
+                        'codigo',
+                        'nombre',                       
+                        'inicio',
+                        'fin',
+                    ),
+                ),
+                'pagination'=>array(
+                    'pageSize'=>10,
+                ),
+            ));
+        }
+           // Render
+            $this->render('admin', array(
+                'filtersForm' => $filtersForm,
+                'dataProvider' => $dataProvider,
+            ));
     }
 
     /**

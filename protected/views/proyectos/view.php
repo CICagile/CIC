@@ -4,12 +4,12 @@
 /* @var $asistente Asistente */
 /* @var $dataProvider CArrayDataProvider */
 $this->breadcrumbs=array(
-	'Proyectos'=>array('index'),
+	'Proyectos'=>array('admin'),
 	$model->codigo,
 );
 
 $this->menu=array(
-	array('label'=>'Ver Proyectos', 'url'=>array('index')),
+	array('label'=>'Ver Proyectos', 'url'=>array('admin')),
 	array('label'=>'Nuevo Proyecto', 'url'=>array('create')),        
 	array('label'=>'Agregar asistente', 'url'=>array('agregarasistente', 'id'=>$model->idtbl_Proyectos)),
 	/*array('label'=>'Delete Proyectos', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->idtbl_Proyectos),'confirm'=>'Are you sure you want to delete this item?')),
@@ -70,8 +70,11 @@ $columns = array (
                 array(
                         'label' => $model->periodos->getAttributeLabel('fin'),
                         'value' => $this->FechaMysqltoPhp($model->periodos->fin),
-                )
-                
+                ),
+                '_tipoproyecto.nombre',
+                '_estadoproyecto.nombre',
+                '_objetivoproyecto.nombre',
+                '_adscrito.nombre'             
 	),
 )); 
       

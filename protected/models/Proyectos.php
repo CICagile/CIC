@@ -7,11 +7,26 @@
  * @property integer $idtbl_Proyectos
  * @property string $nombre
  * @property string $codigo
- * @property integer $tbl_Periodos_idPeriodo
+
+ * @property integer $idtbl_objetivoproyecto
+ * @property integer $tipoproyecto
+ * @property integer $idtbl_adscrito
+ * @property integer $estado
  *
  * The followings are the available model relations:
- * @property Personas[] $tblPersonases
- * @property Periodos $tblPeriodosIdPeriodo
+ * @property Asistentes[] $tblAsistentes
+ * @property Documentos[] $documentoses
+ * @property Financiamientoexterno[] $financiamientoexternos
+ * @property Periodos[] $_periodos
+ * @property Presupuesto[] $presupuestos
+ * @property Adscrito $idtblAdscrito
+ * @property Objetivoproyecto $idtblObjetivoproyecto
+ * @property Tipoproyecto $tipoproyecto0
+ * @property Convenio[] $tblConvenios
+ * @property Sectorbeneficiado[] $tblSectorbeneficiados
+ * 
+ * Para estado del proyecto 0 es Aprobado, 1 Ampliado
+ * 
  */
 class Proyectos extends CActiveRecord
 {
@@ -20,6 +35,19 @@ class Proyectos extends CActiveRecord
 	 * @param string $className active record class name.
 	 * @return Proyectos the static model class
 	 */
+        public $fecha_inicio_search;
+        public $fecha_fin_search;
+        
+        //Las variables fecha inicio y fecha fin se utilizan para simular el periodo del proyecto.
+        public $inicio;
+        public $fin;
+        
+        public $codaprobado = "0";
+        public $codampliado = "1";
+        
+        public $labelaprobado = 'Aprobado';
+        public $labelampliado = 'Ampliado';
+    
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
@@ -41,14 +69,19 @@ class Proyectos extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-                        array('nombre, codigo','required', 'message' => '{attribute} es requerido.'),
+                        array('nombre, codigo, idtbl_objetivoproyecto, tipoproyecto, idtbl_adscrito, estado', 'required', 'message' => '{attribute} es requerido.'),
                         //array('nombre', 'unique', 'className' => 'Proyectos', 'message' => 'Ya existe un proyecto con ese nombre.'),
-                        array('codigo', 'unique', 'className' => 'Proyectos', 'message' => 'Ya existe un proyecto con ese código.'),			
+                        array('codigo', 'unique', 'className' => 'Proyectos', 'message' => 'Ya existe un proyecto con ese código.'),
+                        
+                        
+			array('idtbl_objetivoproyecto, tipoproyecto, idtbl_adscrito, estado', 'numerical', 'integerOnly'=>true),
+                    
 			array('nombre', 'length', 'min'=>3, 'max'=>500, 'tooShort'=> 'El {attribute} debe ser mayor a {min} caracteres.', 'tooLong' => 'El {attribute} debe ser menor a {max} caracteres.'),
 			array('codigo', 'length', 'min'=>2, 'max'=>20, 'tooShort'=> 'El {attribute} debe ser mayor a {min} caracteres.', 'tooLong' => 'El {attribute} debe ser menor a {max} caracteres.'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('idtbl_Proyectos, nombre, codigo, tbl_Periodos_idPeriodo', 'safe', 'on'=>'search'),
+			//array('idtbl_Proyectos, nombre, codigo, tbl_Periodos_idPeriodo', 'safe', 'on'=>'search'),
+                        array('idtbl_Proyectos, nombre, codigo, $fecha_inicio_search, $fecha_fin_search, estado', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -60,8 +93,17 @@ class Proyectos extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'tblPersonases' => array(self::MANY_MANY, 'Personas', 'tbl_profesoresproyectos(tbl_Proyectos_idtbl_Proyectos, tbl_Personas_idtbl_Personas)'),
-			'periodos' => array(self::BELONGS_TO, 'Periodos', 'tbl_Periodos_idPeriodo'),
+			'_asistentes' => array(self::MANY_MANY, 'Asistentes', 'tbl_asistentes_has_tbl_proyectos(idtbl_Proyectos, idtbl_Asistentes)'),
+			'_documentos' => array(self::HAS_MANY, 'Documentos', 'idtbl_Proyectos'),
+			'_financiamientoexterno' => array(self::HAS_MANY, 'Financiamientoexterno', 'idtbl_Proyectos'),
+			'_presupuestos' => array(self::HAS_MANY, 'Presupuesto', 'idtbl_Proyectos'),
+			'_adscrito' => array(self::BELONGS_TO, 'Adscrito', 'idtbl_adscrito'),			
+			'_objetivoproyecto' => array(self::BELONGS_TO, 'Objetivoproyecto', 'idtbl_objetivoproyecto'),			
+			'_tipoproyecto' => array(self::BELONGS_TO, 'Tipoproyecto', 'tipoproyecto'),
+                        '_convenios' => array(self::MANY_MANY, 'Convenio', 'tbl_proyectos_convenio(idtbl_Proyectos, idtbl_convenio)'),
+			'_sectorbeneficiados' => array(self::MANY_MANY, 'Sectorbeneficiado', 'tbl_proyectos_sectorbeneficiado(idtbl_Proyectos, idtbl_sectorbeneficiado)'),
+                        '_periodos' => array(self::MANY_MANY, 'Periodos', 'tbl_historialproyectosperiodos(idtbl_Proyectos, idPeriodo)'),
+			
 		);
 	}
 
@@ -73,8 +115,13 @@ class Proyectos extends CActiveRecord
 		return array(
 			'idtbl_Proyectos' => 'Id proyecto',
 			'nombre' => 'Nombre del proyecto',
-			'codigo' => 'Código del proyecto',
-			'tbl_Periodos_idPeriodo' => 'Id periodo',
+			'codigo' => 'Código del proyecto',			
+                        'fecha_inicio_search' => 'Fecha Inicio',
+                        'fecha_fin_search' => 'Fecha Final',
+                        'idtbl_objetivoproyecto' => 'Objetivo del proyecto',
+                        'tipoproyecto' => 'Tipo proyecto',
+                        'idtbl_adscrito' => 'Adscrito a',
+			'estado' => 'Estado del proyecto',                    
 		);
 	}
 
@@ -88,14 +135,33 @@ class Proyectos extends CActiveRecord
 		// should not be searched.
 
 		$criteria=new CDbCriteria;
+                $criteria->with = array( 'periodos' );
 
 		$criteria->compare('idtbl_Proyectos',$this->idtbl_Proyectos);
 		$criteria->compare('nombre',$this->nombre,true);
-		$criteria->compare('codigo',$this->codigo,true);
-		$criteria->compare('tbl_Periodos_idPeriodo',$this->tbl_Periodos_idPeriodo);
+		$criteria->compare('codigo',$this->codigo,true);		
+                $criteria->compare( 'periodos.inicio', $this->fecha_inicio_search, true );
+                $criteria->compare( 'periodos.fin', $this->fecha_fin_search, true );
+                $criteria->compare('idtbl_objetivoproyecto',$this->idtbl_objetivoproyecto);
+		$criteria->compare('tipoproyecto',$this->tipoproyecto);
+		$criteria->compare('idtbl_adscrito',$this->idtbl_adscrito);
+		$criteria->compare('estado',$this->estado, true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+                        'sort'=>array(
+                        'attributes'=>array(
+                            'fecha_inicio_search'=>array(
+                                'asc'=>'periodos.inicio',
+                                'desc'=>'periodos.inicio DESC',
+                            ),
+                            'fecha_fin_search'=>array(
+                                'asc'=>'periodos.fin',
+                                'desc'=>'periodos.fin DESC',
+                            ),
+                            '*',
+                        ),
+                    ),
 		));
 	}
         
@@ -150,4 +216,5 @@ class Proyectos extends CActiveRecord
         return $dataProvider;
     }//fin validar que el carnet sea único
 
+        }
 }

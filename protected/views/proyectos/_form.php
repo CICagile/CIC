@@ -26,7 +26,7 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($modelproyectos,'nombre'); ?>
-		<?php echo $form->textArea($modelproyectos,'nombre',array('size'=>60,'maxlength'=>500)); ?>
+		<?php echo $form->textArea($modelproyectos,'nombre',array('size'=>60,'maxlength'=>500, 'style' => 'width:100%; heigth:100%;')); ?>
 		<?php echo $form->error($modelproyectos,'nombre'); ?>
 	</div>		
         
@@ -70,10 +70,43 @@
 		
 	</div>
 
-	<div class="row buttons">
+	<div class="row">
+		<?php echo $form->labelEx($modelproyectos,'tipoproyecto'); ?>
+		<?php echo $form->dropDownList($modelproyectos, 'tipoproyecto',
+                        CHtml::listData(TipoProyecto::model()->findAll(), 'idtbl_tipoproyecto', 'nombre'), array('empty'=>'Elija el tipo de proyecto', 'id'=>'tipoproyecto')) ?>		 
+		<?php echo $form->error($modelproyectos,'tipoproyecto'); ?>
+	</div>        
+        
+        <div class="row">
+		<?php echo $form->labelEx($modelproyectos,'idtbl_objetivoproyecto'); ?>
+		<?php echo $form->dropDownList($modelproyectos, 'idtbl_objetivoproyecto',
+                        CHtml::listData(ObjetivoProyecto::model()->findAll(), 'idtbl_objetivoproyecto', 'nombre'), array('empty'=>'Elija el objetivo del proyecto', 'id'=>'objetivoproyecto')) ?>
+		<?php echo $form->error($modelproyectos,'idtbl_objetivoproyecto'); ?>
+	</div>
+        
+        <div class="row">
+		<?php echo $form->labelEx($modelproyectos,'idtbl_adscrito'); ?>
+		<?php echo $form->dropDownList($modelproyectos, 'idtbl_adscrito',
+                        CHtml::listData(Adscrito::model()->findAll(), 'idtbl_adscrito', 'nombre'), array('empty'=>'Elija la adscripción del proyecto', 'id'=>'adscritoproyecto')) ?>
+		<?php echo $form->error($modelproyectos,'idtbl_adscrito'); ?>
+	</div>  
+        
+        <div class="row buttons">
 		<?php echo CHtml::submitButton($modelproyectos->isNewRecord ? 'Crear' : 'Guardar'); ?>
 	</div>
 
 <?php $this->endWidget(); ?>
-
+        
 </div><!-- form -->
+
+<script type="text/javascript">
+$("#tipoproyecto").change(function() {
+            $("#Proyectos_tipoproyecto_em_").html('');            
+            $("#Proyectos_tipoproyecto_em_").css('display', 'none');
+            
+            if($(this).val()== ""){
+                $("#Proyectos_tipoproyecto_em_").html('Debe seleccionar el tipo de proyecto.');
+                $("#Proyectos_tipoproyecto_em_").css('display', '');
+            }
+});
+</script>
