@@ -26,7 +26,7 @@ class ProyectosController extends Controller {
     public function accessRules() {
         return array(            
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('view','ActualizarInfoAsistentes','index','create', 'update', 'agregarasistente', 'AsistenteAutoComplete', 'ValidarAgregarAsistente'),
+                'actions' => array('ver','ActualizarInfoAsistentes','crear', 'actualizar', 'agregarasistente', 'AsistenteAutoComplete', 'ValidarAgregarAsistente'),
                 'users' => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -42,8 +42,11 @@ class ProyectosController extends Controller {
     /*
      * Muestra el detalle del proyecto
      */
-    public function actionView($id) {
-        $model = $this->loadModel($id);
+    public function actionVer($id) {
+        $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
+        if ($model === null)
+            throw new CHttpException(404, 'La página solicitado no se ha encontrado.');
+        else
         $this->render('view', array(
             'model' => $model,
             'asistente' => new Asistente,

@@ -214,5 +214,55 @@ class Proyectos extends CActiveRecord
             ),
         ));
         return $dataProvider;
-    }//fin validar que el carnet sea único
-}
+    }//fin buscar asistentes activos del proyecto
+    
+    /*Esta funcion retorna la información del proyecto
+         * y la información del periodo actual asociado al proyecto
+         */
+        public function obtenerProyectoconPeriodoActual($idproyecto){
+            
+            $connection=Yii::app()->db;
+            $sql=   "SELECT tbl_proyectos.*, tbl_periodos.inicio, tbl_periodos.fin
+                    FROM tbl_proyectos
+                    INNER JOIN tbl_historialproyectosperiodos
+                    ON (tbl_proyectos.idtbl_Proyectos = tbl_historialproyectosperiodos.idtbl_Proyectos)
+                    INNER JOIN tbl_periodos 
+                    ON (tbl_historialproyectosperiodos.idPeriodo = tbl_periodos.idPeriodo)
+                    WHERE tbl_proyectos.idtbl_Proyectos = :idproyecto
+                    ORDER BY tbl_periodos.fin DESC
+                    LIMIT 1";
+            $command=$connection->createCommand($sql);
+            $command->bindParam(":idproyecto",$idproyecto,PDO::PARAM_INT);
+            $model = $command->queryRow();
+            
+            if($model == false)
+                return null;            
+            else{
+                $this->setAttributes($model);//Asociamos los atributos reales de un Proyecto
+                $this->inicio = $model['inicio'];//Asociamos el atributos simulado inicio
+                $this->fin = $model['fin'];//Asociamos el atributos simulado fin
+                return $this; //Retornamos el objeto Proyecto
+            }                      
+        }
+        
+        public function obtenerProyectosActivos(){                    
+            
+            $connection=Yii::app()->db;
+            $sql=   "SELECT tbl_proyectos.*, DATE_FORMAT(tbl_periodos.inicio, '%d-%m-%Y') AS inicio, 
+                    DATE_FORMAT(tbl_periodos.fin, '%d-%m-%Y') AS fin
+                    FROM tbl_proyectos
+                    INNER JOIN tbl_historialproyectosperiodos
+                    ON (tbl_proyectos.idtbl_Proyectos = tbl_historialproyectosperiodos.idtbl_Proyectos)
+                    INNER JOIN tbl_periodos 
+                    ON (tbl_historialproyectosperiodos.idPeriodo = tbl_periodos.idPeriodo)
+                    WHERE tbl_periodos.fin > SYSDATE()"; 
+            $command=$connection->createCommand($sql);
+            $models = $command->queryAll();
+            
+            if(empty($models))
+                return null;
+            else
+                return $models;
+
+        }
+}//fin modelo proyectos
