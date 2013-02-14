@@ -126,30 +126,62 @@ class Asistente  extends CModel{
         );
     }
     //Función que llama a un store procedure para ver todos los asistentes y 
-    // es invocado en la vista de admin. 
-    public function search()
-	{
+    // maneja el filtro  
+    public function search(){
+           $filtersForm=new FiltersForm;
+            if (isset($_GET['FiltersForm']))
+                $filtersForm->filters=$_GET['FiltersForm'];
            $call = 'CALL verAsistentes()';
            $rawData=Yii::app()->db->createCommand($call)->queryAll();
-           $dataProvider= new CArrayDataProvider($rawData, array(
-            'keyField'=>'carnet',
-            'id'=>'user',
-            'sort'=>array(
-            'attributes'=>array(
-            'carnet',
-             'nombre',
-             'apellido1',
-             'apellido2',
-             'telefono',
-             'correo',
-             ),
-             ),
-            'pagination'=>array(
-            'pageSize'=>10,
-              ),
+           $filteredData=$filtersForm->filter($rawData);
+           $dataProvider=new CArrayDataProvider($filteredData, array(
+                'keyField'=>'carnet',
+                'id'=>'user',
+                'sort'=>array(
+                    'attributes'=>array(
+                        'carnet',
+                        'nombre',
+                        'apellido1',
+                        'apellido2',
+                        'telefono',
+                        'correo',
+                    ),
+                ),
+                'pagination'=>array(
+                    'pageSize'=>10,
+                ),
             ));
             return $dataProvider;
-            }
+    }
+    /*Metodo que llama a un store procedure que lista todos los proyectos a los que pertenece un asistente.*/
+    public function proyectosasistente(){
+           $call = 'CALL verProyectosporAsistente(:carnetbuscado)';
+           $comand=Yii::app()->db->createCommand($call);
+           $comand->bindParam(':carnetbuscado', $this->carnet, PDO::PARAM_STR);
+           $rawdata=$comand->queryAll();
+           $dataProvider=new CArrayDataProvider($rawdata, array(
+                'keyField'=>'codigo',
+                'id'=>'user',
+                'sort'=>array(
+                    'attributes'=>array(
+                        'idtbl_proyectos',
+                        'codigo',
+                        'nombre',
+                        'horas',
+                    ),
+                ),
+                'pagination'=>array(
+                'pageSize'=>10,
+                ),
+            ));
+            return $dataProvider;
+    }
+    
+    
+           
+            
+
+		
     
     public function __get($name)
     {

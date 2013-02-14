@@ -8,6 +8,7 @@ class AsistenteController extends Controller
 	 */
 	public $layout='//layouts/column2';
 
+        
 	/**
 	 * @return array action filters
 	 */
@@ -180,15 +181,11 @@ class AsistenteController extends Controller
 	/**
 	 * Manages all models.
 	 */
-	public function actionAdmin()
-	{
-		$model=new Asistente('search');
-		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['Asistente']))
-			$model->attributes=$_GET['Asistente'];
-		$this->render('admin',array(
-			'model'=>$model,
-		));
+	public function actionAdmin(){
+                $filtersForm=new FiltersForm;
+                $this->render('admin',array(
+                    'filtersForm' => $filtersForm,
+                ));
 	}
 
 	/**
@@ -198,8 +195,7 @@ class AsistenteController extends Controller
 	 */
 	public function loadModel($id)
 	{
-		//$model=Persona::model()->findByPk($id);
-                $model = new Asistente;
+		$model = new Asistente;
                 $atributos = $model->buscarAsistentePorCarnet($id);
 		if($atributos===null)
 			throw new CHttpException(404,'No se encontro el carnet ' . $id);

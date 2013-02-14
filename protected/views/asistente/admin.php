@@ -9,7 +9,7 @@ $this->menu=array(
 	array('label'=>'Registrar nuevo asistente', 'url'=>array('create')),
 	
 );
-//columnas que se mostrarán en el CGridView
+//Arreglo con las columnas que se mostrarán en el CGridView
 $columns = array(
     array(
         'header'=>CHtml::encode('Carnet'),
@@ -56,20 +56,12 @@ Yii::app()->clientScript->registerScript('search', "$('.search-button').click(fu
 ");
 ?>
 
-<h1>Búsqueda</h1>
-
-<p>
-
-</p>
-
-<?php /*echo CHtml::link('Advanced Search','#',array('class'=>'search-button')); */?>
-<div class="search-form" style="display:none">
-<?php ?>
-</div><!-- search-form -->
+<h1>Lista de Asistentes</h1>
 
 <?php $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'asistente-grid',
 	'dataProvider'=>$model->search(),
-	//'filter'=>$model,
+	'filter'=>$filtersForm,
 	'columns'=>$columns,
-           )); ?>
+       )); 
+?>
