@@ -3,12 +3,12 @@
 /* @var $model Asistente */
 
 $this->breadcrumbs=array(
-	'Asistentes'=>array('index'),
+	'Asistentes'=>array('admin'),
 	'Modificar datos personales',
 );
 
 $this->menu=array(
-	array('label'=>'Registrar nuevo asistente', 'url'=>array('create')),
+        array('label'=>'Ver Asistentes', 'url'=>array('admin')),	
 );
 ?>
 

@@ -8,7 +8,8 @@ $this->pageTitle=Yii::app()->name;
 <h3>Elija una categoría:</h3>
 
 <ul>
-    <li><?php echo CHtml::link('Asistentes',array('asistente/admin')) ?></li>
+    <li><?php echo CHtml::link('Módulo de Proyectos',array('proyectos/admin')) ?></li>
     <p></p>
-    <li><?php echo CHtml::link('Proyectos',array('proyectos/admin')) ?></li>    
+    <li><?php echo CHtml::link('Módulo de Asistentes',array('asistente/admin')) ?></li>    
+       
 </ul>

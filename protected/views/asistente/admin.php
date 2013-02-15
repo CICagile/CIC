@@ -1,8 +1,8 @@
 <?php
 $model = new Asistente();
 $this->breadcrumbs=array(
-	'Asistente'=>array('index'),
-	'Búsqueda',
+	'Asistentes'=>array('admin'),
+	'Lista de Asistentes',
 );
 
 $this->menu=array(
@@ -37,9 +37,12 @@ $columns = array(
     ),
     array(
         'class'=>'CButtonColumn',
+        'template'=>'{view}{update}',
         'viewButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("id"=>$data["carnet"]))',
+        'viewButtonLabel' => 'Ver información detallada del asistente.',
         'updateButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/updateDP", array("id"=>$data["carnet"]))',
-        'deleteButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("id"=>$data["carnet"]))',),
+        'updateButtonLabel' => 'Actualizar información del asistente.',
+    ),
    );
 
 Yii::app()->clientScript->registerScript('search', "$('.search-button').click(function()
