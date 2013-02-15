@@ -231,14 +231,14 @@ class ProyectosController extends Controller {
      * @param integer the ID of the model to be loaded
      */
     public function loadModel($id) {
-        $model = Proyectos::model()->findByPk($id);
+        $model = Proyectos::model()->findByPk($id);                
         if ($model === null)
             throw new CHttpException(404, 'La página solicitado no se ha encontrado.');
         return $model;
     }
 
-    public function actionAgregarAsistente($id) {
-        $model = $this->loadModel($id);
+    public function actionAgregarAsistente($id) {  
+        $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
       
         if (isset($_POST['Proyectos'])) {
             
@@ -411,7 +411,12 @@ class ProyectosController extends Controller {
         $response = array();
         $fecha = trim($pfecha);
         $codigo = trim($pidproyecto);
-        if (!$this->validarFechaRangoAsistenciaProyecto($fecha, $codigo)) {
+        if($fecha == '') {
+               $response = array(
+                'ok' => false,
+                'msg' => "La fecha de inicio no puede estar en blanco.");
+        } 
+        else if(!$this->validarFechaRangoAsistenciaProyecto($fecha, $codigo)) {
             $response = array(
                 'ok' => false,
                 'msg' => "La fecha de inicio asistencia seleccionada no cumple con el periodo del proyecto.");
@@ -539,11 +544,11 @@ class ProyectosController extends Controller {
     }
 
     protected function validarFechaRangoAsistenciaProyecto($pfecha, $pidproyecto) {
-        $proyecto = $this->loadModel($pidproyecto);
+        $proyecto = Proyectos::model()->obtenerProyectoconPeriodoActual($pidproyecto);        
         $fecha = $this->FechaPhptoMysql($pfecha);
 
-        $proyectoini = $proyecto->periodos->inicio;
-        $proyectofin = $proyecto->periodos->fin;
+        $proyectoini = $proyecto->inicio;
+        $proyectofin = $proyecto->fin;
 
         if (strtotime($proyectoini) > strtotime($fecha)) {
             return false;
