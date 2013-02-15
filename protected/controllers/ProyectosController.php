@@ -43,12 +43,11 @@ class ProyectosController extends Controller {
      * Muestra el detalle del proyecto
      */
     public function actionVer($id) {
-        $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
-        $model->idtbl_Proyectos = $id;
+        $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);        
         if ($model === null)
             throw new CHttpException(404, 'La página solicitado no se ha encontrado.');
         else
-        $this->render('view', array(
+        $this->render('ver', array(
             'model' => $model,
             'asistente' => new Asistente,
             'dataProvider' => $model->buscarAsistentesActivosDeProyecto(),
@@ -62,8 +61,7 @@ class ProyectosController extends Controller {
      * @param fecha $pFin La fecha de finalización de la asistencia.
      */
     public function actionActualizarInfoAsistentes($id) {
-        $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
-        $model->idtbl_Proyectos = $id;
+        $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);        
         $asistente = new Asistente;
         $dataProvider = $model->buscarAsistentesActivosDeProyecto();
         $datos_validos = true;
@@ -309,7 +307,7 @@ class ProyectosController extends Controller {
     }
 
     public function actionAgregarAsistente($id) {
-        $model = $this->loadModel($id);
+        $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
       
         if (isset($_POST['Proyectos'])) {
             
@@ -482,7 +480,12 @@ class ProyectosController extends Controller {
         $response = array();
         $fecha = trim($pfecha);
         $codigo = trim($pidproyecto);
-        if (!$this->validarFechaRangoAsistenciaProyecto($fecha, $codigo)) {
+        if($fecha == '') {
+               $response = array(
+                'ok' => false,
+                'msg' => "La fecha de inicio no puede estar en blanco.");
+        } 
+        else if (!$this->validarFechaRangoAsistenciaProyecto($fecha, $codigo)) {
             $response = array(
                 'ok' => false,
                 'msg' => "La fecha de inicio asistencia seleccionada no cumple con el periodo del proyecto.");
@@ -596,31 +599,43 @@ class ProyectosController extends Controller {
     }
     
     protected function existeAsistenteProyecto($pcarne, $idproyecto) {
-        /* Esta versión no valida si el asistente está activo por lo que no deja asociar a un asistente
-         * que alguna vez estuvo activo, luego inactivo y luego se quiere reintegrar al proyecto.*/
-        $asistente = Asistentes::model()->findByAttributes(array('carnet' => $pcarne));        
-        $proyectosasistente = $asistente->proyectos;
+        
         $res = false;
-        foreach ($proyectosasistente as $proy)
+        $model = new Proyectos();
+        $model->idtbl_Proyectos = $idproyecto;
+        $arraydataprovider = $model->buscarAsistentesActivosDeProyecto();
+        $asistentes = $arraydataprovider->rawData;
+        
+        foreach ($asistentes as $asistente)
         {
-            if($proy->idtbl_Proyectos == $idproyecto)
+            if($asistente['carnet'] == $pcarne)
             {
                 $res = true;
             }
         }
-        return $res;
-        /*---------->Otra versión<-----------
-        $model = new Proyecto;
-        $model->idtbl_Proyectos = $idproyecto;
-        $model->buscarAsistentesActivosDeProyecto();*/
+        
+        return $res;  
+        
+        /* Esta versión no valida si el asistente está activo por lo que no deja asociar a un asistente
+         * que alguna vez estuvo activo, luego inactivo y luego se quiere reintegrar al proyecto.*/
+//        $asistente = Asistentes::model()->findByAttributes(array('carnet' => $pcarne));        
+//        $proyectosasistente = $asistente->proyectos;
+//        $res = false;
+//        foreach ($proyectosasistente as $proy)
+//        {
+//            if($proy->idtbl_Proyectos == $idproyecto)
+//            {
+//                $res = true;
+//            }
+//        }             
     }
 
     protected function validarFechaRangoAsistenciaProyecto($pfecha, $pidproyecto) {
-        $proyecto = $this->loadModel($pidproyecto);
+        $proyecto = Proyectos::model()->obtenerProyectoconPeriodoActual($pidproyecto);
         $fecha = $this->FechaPhptoMysql($pfecha);
 
-        $proyectoini = $proyecto->periodos->inicio;
-        $proyectofin = $proyecto->periodos->fin;
+        $proyectoini = $proyecto->inicio;
+        $proyectofin = $proyecto->fin;
 
         if (strtotime($proyectoini) > strtotime($fecha)) {
             return false;
