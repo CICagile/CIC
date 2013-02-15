@@ -4,16 +4,15 @@
 
 $this->breadcrumbs=array(
 	'Proyectos'=>array('admin'),
-	'Lista de Proyectos',
+	'Lista de Proyectos Antiguos',
 );
 
-$this->menu=array(	
-	array('label'=>'Crear Proyecto', 'url'=>array('crear')),
+$this->menu=array(
+        array('label'=>'Ver Proyectos Actuales', 'url'=>array('admin')),	
 );
 ?>
 
-<h1>Lista de Proyectos Activos</h1>
-<p>¿Buscando proyectos antiguos? <?php echo CHtml::link('Ver aquí',array('proyectos/adminantiguos')); ?></p>
+<h1>Lista de Proyectos Antiguos</h1>
 <?php
     
     $this->widget('zii.widgets.grid.CGridView', array(
@@ -38,22 +37,15 @@ $this->menu=array(
                       'name' => 'fin',                      
                 ), 
                 array(
+                      'header' => 'Estado',
+                      'name' => 'estado',
+                      'value' => '$data["estado"] == 0 ? "Aprobado" : "Ampliado" ',
+                ), 
+                array(
                     'class'=>'CButtonColumn',
-                    'template'=>'{view}{update}{agregarasistente}',
+                    'template'=>'{view}',
                     'viewButtonUrl'=>'Yii::app()->controller->createUrl("proyectos/ver", array("id"=>$data["idtbl_Proyectos"]))',
-                    'viewButtonLabel' => 'Ver información detallada del proyecto.',
-                    'updateButtonUrl'=>'Yii::app()->controller->createUrl("proyectos/actualizar", array("id"=>$data["idtbl_Proyectos"]))',
-                    'updateButtonLabel' => 'Actualizar información del proyecto.',
-                    'buttons'=>array
-                    (
-                        'agregarasistente' => array
-                        (
-                            'label'=>'Agregar un asistente al proyecto.',
-                            'imageUrl'=>Yii::app()->request->baseUrl.'/images/page_portrait_shot.png',
-                            'url'=>'Yii::app()->createUrl("proyectos/agregarasistente", array("id"=>$data["idtbl_Proyectos"]))',
-                        ),                        
-                    ),
-                    
+                    'viewButtonLabel' => 'Ver información detallada del proyecto.',                   
                 ),
         ),
     'filter'=>$filtersForm,

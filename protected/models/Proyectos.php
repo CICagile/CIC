@@ -263,4 +263,24 @@ class Proyectos extends CActiveRecord
                 return $models;
 
         }
+        
+        public function obtenerProyectosAntiguos(){                    
+            
+            $connection=Yii::app()->db;
+            $sql=   "SELECT tbl_proyectos.*, DATE_FORMAT(P.inicio, '%d-%m-%Y') AS inicio, DATE_FORMAT(P.fin, '%d-%m-%Y') AS fin
+                    from tbl_historialproyectosperiodos
+                    inner join (SELECT tbl_periodos.* FROM tbl_periodos WHERE fin < SYSDATE() ORDER BY fin DESC) P
+                    ON tbl_historialproyectosperiodos.idPeriodo = P.idPeriodo
+                    INNER JOIN tbl_proyectos
+                    ON tbl_historialproyectosperiodos.idtbl_Proyectos = tbl_proyectos.idtbl_Proyectos
+                    GROUP BY tbl_proyectos.idtbl_Proyectos"; 
+            $command=$connection->createCommand($sql);
+            $models = $command->queryAll();
+            
+            if(empty($models))
+                return null;
+            else
+                return $models;
+
+        }
 }//fin modelo proyectos

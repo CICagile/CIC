@@ -26,7 +26,7 @@ class ProyectosController extends Controller {
     public function accessRules() {
         return array(            
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('ver','ActualizarInfoAsistentes','crear', 'actualizar', 'agregarasistente', 'AsistenteAutoComplete', 'ValidarAgregarAsistente'),
+                'actions' => array('ver','ActualizarInfoAsistentes','crear', 'actualizar', 'agregarasistente', 'AsistenteAutoComplete', 'ValidarAgregarAsistente', 'adminantiguos'),
                 'users' => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -302,6 +302,45 @@ class ProyectosController extends Controller {
             ));
     }
 
+    
+    
+    public function actionAdminAntiguos() {
+        // Create filter model and set properties
+        $filtersForm=new FiltersForm;
+        $dataProvider=new CArrayDataProvider(array());
+        
+        if (isset($_GET['FiltersForm']))
+            $filtersForm->filters=$_GET['FiltersForm'];
+        
+        $modelos = Proyectos::model()->obtenerProyectosAntiguos();
+       
+        if(!$modelos==null){
+            $filteredData=$filtersForm->filter($modelos);
+            $dataProvider=new CArrayDataProvider($filteredData, array(
+                'keyField'=>'idtbl_Proyectos',
+                'id'=>'idtbl_Proyectos',
+                'sort'=>array(
+                    'attributes'=>array(
+                        'idtbl_Proyectos',
+                        'codigo',
+                        'nombre',                       
+                        'inicio',
+                        'fin',
+                        'estado',
+                    ),
+                ),
+                'pagination'=>array(
+                    'pageSize'=>10,
+                ),
+            ));
+        }
+           // Render
+            $this->render('adminantiguos', array(
+                'filtersForm' => $filtersForm,
+                'dataProvider' => $dataProvider,
+            ));
+    }
+    
     /**
      * Returns the data model based on the primary key given in the GET variable.
      * If the data model is not found, an HTTP exception will be raised.

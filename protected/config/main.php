@@ -61,22 +61,22 @@ return array(
 //		),
             
             
-                'db'=>array(
-			'connectionString' => 'mysql:host=172.19.16.219;dbname=db_cic',
-			'emulatePrepare' => true,
-			'username' => 'CIC',
-			'password' => 'Cicagile004',
-			'charset' => 'utf8',
-		),
-            
-            
 //                'db'=>array(
-//			'connectionString' => 'mysql:host=localhost;dbname=db_cic',
+//			'connectionString' => 'mysql:host=172.19.16.219;dbname=db_cic',
 //			'emulatePrepare' => true,
-//			'username' => 'root',
-//			'password' => 'CICagile004',
+//			'username' => 'CIC',
+//			'password' => 'Cicagile004',
 //			'charset' => 'utf8',
 //		),
+            
+            
+                'db'=>array(
+			'connectionString' => 'mysql:host=localhost;dbname=db_cic',
+			'emulatePrepare' => true,
+			'username' => 'root',
+			'password' => 'CICagile004',
+			'charset' => 'utf8',
+		),
 		
 		'errorHandler'=>array(
 			// use 'site/error' action to display errors
