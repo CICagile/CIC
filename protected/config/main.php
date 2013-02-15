@@ -68,6 +68,15 @@ return array(
 			'password' => 'Cicagile004',
 			'charset' => 'utf8',
 		),
+            
+            
+//                'db'=>array(
+//			'connectionString' => 'mysql:host=localhost;dbname=db_cic',
+//			'emulatePrepare' => true,
+//			'username' => 'root',
+//			'password' => 'CICagile004',
+//			'charset' => 'utf8',
+//		),
 		
 		'errorHandler'=>array(
 			// use 'site/error' action to display errors

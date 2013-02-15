@@ -5,7 +5,7 @@
 
 
 $this->breadcrumbs=array(
-	'Proyectos'=>array('index'),
+	'Proyectos'=>array('admin'),
 	'Agregar Asistente',
 );
 
@@ -24,8 +24,8 @@ $this->menu=array(
 )); ?>
         
     <h2>Agregar asistente al Proyecto: <?php echo $model->codigo?></h2>
-    <p>Periodo del proyecto: <?php echo $this->FechaMysqltoPhp($model->periodos->inicio)
-    .' hasta '.$this->FechaMysqltoPhp($model->periodos->fin)?></p>
+    <p>Periodo del proyecto: <?php echo $this->FechaMysqltoPhp($model->inicio)
+    .' hasta '.$this->FechaMysqltoPhp($model->fin)?></p>
    
     <p id="idproyecto" style="display:none"><?php echo $model->idtbl_Proyectos?></p>
         
@@ -119,10 +119,7 @@ $this->menu=array(
 </div><!-- form -->
 
 <script type="text/javascript">
-    $(document).ready(function() { 
-        //En el campo de fecha inicio coloco la fecha de hoy por default.
-        var d = new Date();
-        $('#inicio').val(d.getDate() + "-" + d.getMonth() + 1 + "-" + d.getFullYear());
+    $(document).ready(function() {        
         
         $('#horas').val('20');
         
@@ -289,7 +286,7 @@ $this->menu=array(
                         success: function(result) {  
                             if(result.ok){
                                 alert(result.msg);
-                                var url = "../view/" + idproyecto;    
+                                var url = "../ver/" + idproyecto;    
                                 $(location).attr('href',url);
                             }
                             else
