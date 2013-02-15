@@ -152,7 +152,9 @@ class ProyectosController extends Controller {
         $modelproyectos = new Proyectos;
         $modelperiodos = new Periodos; 
         
-         if (isset($_POST['ajax']) && $_POST['ajax'] === 'proyectos-formcrear') {
+        $modelproyectos->scenario = 'crearproyecto';//Activo el escenario para las reglas de validacion especificas
+        
+        if (isset($_POST['ajax']) && $_POST['ajax'] === 'proyectos-formcrear') {
             echo CActiveForm::validate(array($modelproyectos,$modelperiodos));
             Yii::app()->end();
         }
@@ -212,36 +214,42 @@ class ProyectosController extends Controller {
      /*
      * Actualizar un proyecto
      */
-    public function actionActualizar($id){
-         $modelproyectos = $this->loadModel($id);
-         $historial = $modelproyectos->obtenerPeriodoActualProyecto();
-    }
-
-    public function actionUpdate($id) {
-        $modelproyectos = $this->loadModel($id);
-        $modelperiodos = $modelproyectos->periodos;
+    public function actionActualizar($id){        
+        $modelproyectos = Proyectos::model()->obtenerProyectoconPeriodoActual($id);        
+        if ($modelproyectos === null)
+            throw new CHttpException(404, 'La página solicitado no se ha encontrado.');
         
-        $this->performAjaxValidation(array($modelproyectos,$modelperiodos));
+        $modelproyectos->scenario = 'actualizarproyecto';
         
-        if (isset($_POST['Periodos']) && isset($_POST['Proyectos'])) { 
+        if (isset($_POST['ajax']) && $_POST['ajax'] === 'proyectos-formactualizar') {
             
-            $modelperiodos->attributes = $_POST['Periodos'];
-            $modelproyectos->attributes = $_POST['Proyectos']; 
-            
-            if ($modelperiodos->validate() && $modelproyectos->validate()) {
-                
+            if($modelproyectos->codigo == $_POST['Proyectos']['codigo']){//Para este caso no procedo a validar el codigo del proyecto
+                echo CActiveForm::validate($modelproyectos, array('nombre', 'idtbl_objetivoproyecto', 'tipoproyecto', 'idtbl_adscrito', 'estado'));
             }
+            else
+                echo CActiveForm::validate($modelproyectos);
+            
+            Yii::app()->end();
         }
         
-        $modelperiodos->inicio = $this->FechaMysqltoPhp($modelperiodos->inicio);
-        $modelperiodos->fin = $this->FechaMysqltoPhp($modelperiodos->fin);
+        if (isset($_POST['Proyectos'])){
+            $modelproyectos->attributes = $_POST['Proyectos'];
+            $result = $modelproyectos->save(false);
+            if($result){
+                Yii::log("Cambio exitoso de la información del proyecto: " . $modelproyectos->codigo, "info", "application.
+    controllers.ProyectosController");  
+                $this->redirect(array('ver','id'=>$modelproyectos->idtbl_Proyectos));                
+            }else{
+                 throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
+            }
+            
+        }
         
-        $this->render('update', array(
-            'modelproyectos' => $modelproyectos,
-            'modelperiodos' => $modelperiodos,
+        $this->render('actualizar', array(
+            'modelproyectos' => $modelproyectos          
         ));
     }
-
+    
     /**
      * Deletes a particular model.
      * If deletion is successful, the browser will be redirected to the 'admin' page.

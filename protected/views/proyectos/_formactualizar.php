@@ -1,16 +1,13 @@
 <div class="form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'proyectos-formcrear',
+	'id'=>'proyectos-formactualizar',
         'enableAjaxValidation'=>true,  
         'clientOptions'=>array('validateOnSubmit'=>true),
 )); ?>
-        
-        <div class="errorMessage" id="formResult"></div>
-        <div id="AjaxLoader" style="display: none"><img src="<?php echo Yii::app()->request->baseUrl; ?>/images/spinner.gif"></img></div>
-        
+    
         <p class="note">Campos con <span class="required">*</span> son obligatorios.</p>
-        <?php echo $form->errorSummary(array($modelproyectos,$modelperiodos)); ?>
+        <?php echo $form->errorSummary(array($modelproyectos)); ?>
         
         <div class="row">
 		<?php echo $form->labelEx($modelproyectos,'codigo'); ?>
@@ -24,46 +21,6 @@
 		<?php echo $form->error($modelproyectos,'nombre'); ?>
 	</div>		
         
-        <div class="row">
-		<?php echo $form->labelEx($modelperiodos,'inicio'); ?>
-		<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-                        'name' => CHtml::activeName($modelperiodos, 'inicio'),
-                        'value' => $modelperiodos->attributes['inicio'],
-                        'language' => 'es',
-                        'options' => array(                            
-                            'showAnim'=>'fold',
-                            'dateFormat'=>'dd-mm-yy',
-                            'changeYear'=>true,
-                            'changeMonth'=>true,
-                        ),
-                        'htmlOptions'=>array(                            
-                            'readonly' => 'readonly'
-                        ),
-                    ));?>
-                <?php echo $form->error($modelperiodos,'inicio'); ?>
-		
-	</div>
-        
-        <div class="row">
-		<?php echo $form->labelEx($modelperiodos,'fin'); ?>
-		<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-                        'name' => CHtml::activeName($modelperiodos, 'fin'),
-                        'value' => $modelperiodos->attributes['fin'],
-                        'language' => 'es',
-                        'options' => array(                            
-                            'showAnim'=>'fold',
-                            'dateFormat'=>'dd-mm-yy',
-                            'changeYear'=>true,
-                            'changeMonth'=>true,
-                        ),
-                        'htmlOptions'=>array(                            
-                            'readonly' => 'readonly'
-                        ),
-                    ));?>
-                <?php echo $form->error($modelperiodos,'fin'); ?>
-		
-	</div>
-
 	<div class="row">
 		<?php echo $form->labelEx($modelproyectos,'tipoproyecto'); ?>
 		<?php echo $form->dropDownList($modelproyectos, 'tipoproyecto',
@@ -86,7 +43,7 @@
 	</div>  
         
         <div class="row buttons">
-		<?php echo CHtml::submitButton('Crear'); ?>
+		<?php echo CHtml::submitButton('Guardar cambios'); ?>
 	</div>
         
         
@@ -94,4 +51,3 @@
 <?php $this->endWidget(); ?>
         
 </div><!-- form -->
-

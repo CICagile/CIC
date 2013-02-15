@@ -69,11 +69,8 @@ class Proyectos extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-                        array('nombre, codigo, idtbl_objetivoproyecto, tipoproyecto, idtbl_adscrito, estado', 'required', 'message' => '{attribute} es requerido.'),
-                        //array('nombre', 'unique', 'className' => 'Proyectos', 'message' => 'Ya existe un proyecto con ese nombre.'),
-                        array('codigo', 'unique', 'className' => 'Proyectos', 'message' => 'Ya existe un proyecto con ese código.'),
-                        
-                        
+                        array('nombre, codigo, idtbl_objetivoproyecto, tipoproyecto, idtbl_adscrito, estado', 'required', 'message' => '{attribute} es requerido.'),                        
+                        array('codigo', 'unique', 'className' => 'Proyectos', 'message' => 'Ya existe un proyecto con ese código.'),                      
 			array('idtbl_objetivoproyecto, tipoproyecto, idtbl_adscrito, estado', 'numerical', 'integerOnly'=>true),
                     
 			array('nombre', 'length', 'min'=>3, 'max'=>500, 'tooShort'=> 'El {attribute} debe ser mayor a {min} caracteres.', 'tooLong' => 'El {attribute} debe ser menor a {max} caracteres.'),
@@ -84,7 +81,7 @@ class Proyectos extends CActiveRecord
                         array('idtbl_Proyectos, nombre, codigo, $fecha_inicio_search, $fecha_fin_search, estado', 'safe', 'on'=>'search'),
 		);
 	}
-
+        
 	/**
 	 * @return array relational rules.
 	 */
