@@ -19,7 +19,7 @@ $columns = array(
         'header'=>CHtml::encode('Código'),
         'name'=>'idtbl_proyectos',
         'type'=>'raw',
-        'value'=>'CHtml::link($data["codigo"], CHtml::normalizeUrl(array("/proyectos/","view" => $data["idtbl_proyectos"])))',
+        'value'=>'CHtml::link($data["codigo"], CHtml::normalizeUrl(array("/proyectos/","ver" => $data["idtbl_proyectos"])))',
         ),
     array(
         'header'=>CHtml::encode('Nombre'),

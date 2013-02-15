@@ -44,6 +44,7 @@ class ProyectosController extends Controller {
      */
     public function actionVer($id) {
         $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
+        $model->idtbl_Proyectos = $id;
         if ($model === null)
             throw new CHttpException(404, 'La página solicitado no se ha encontrado.');
         else
@@ -61,9 +62,9 @@ class ProyectosController extends Controller {
      * @param fecha $pFin La fecha de finalización de la asistencia.
      */
     public function actionActualizarInfoAsistentes($id) {
-        $model = $this->loadModel($id);
+        $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
+        $model->idtbl_Proyectos = $id;
         $asistente = new Asistente;
-        $dataProvider = null;
         $dataProvider = $model->buscarAsistentesActivosDeProyecto();
         $datos_validos = true;
         
@@ -99,10 +100,10 @@ class ProyectosController extends Controller {
                     else $datos_validos = false;
                 }//fin si el rol del asistente cambió.*/
             }//fin for
-            /*if ($datos_validos)
-                $this->redirect(array('view','id'=>$id)); //Sólo llega a esta instrucción si no hay errores.
+            if ($datos_validos)
+                $this->redirect(array('ver','id'=>$id)); //Sólo llega a esta instrucción si no hay errores.
             else
-                $dataProvider = $model->buscarAsistentesActivosDeProyecto();*///vuelve a cargar los datos desde la base en caso de que algunos datos si se hayan actualizado.
+                $dataProvider = $model->buscarAsistentesActivosDeProyecto();//vuelve a cargar los datos desde la base en caso de que algunos datos si se hayan actualizado.
             /* Hacer las validaciones y cambios en este orden
              * -Fecha finalización.
              * -Horas
@@ -119,7 +120,7 @@ class ProyectosController extends Controller {
         }//fin si asistente se modificó.
         
         $this->render('viewEditable', array(
-            'model' => $this->loadModel($id),
+            'model' => $model,
             'asistente' => $asistente,
             'dataProvider' => $dataProvider,
         ));

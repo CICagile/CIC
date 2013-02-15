@@ -72,19 +72,24 @@ $columns = array (
 
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
-	'attributes'=>array(
-		//'idtbl_Proyectos',
+	'attributes'=>array(            
                 'codigo',
-		'nombre',		
+		'nombre',
+                array(
+                        'label' => 'Estado del proyecto',
+                        'value' => ($model->estado == $model->codaprobado)? $model->labelaprobado : $model->labelampliado,
+                ),
 		array(
-                        'label' => $model->periodos->getAttributeLabel('inicio'),
-                        'value' => $this->FechaMysqltoPhp($model->periodos->inicio),
+                        'label' => 'Fecha Inicio',
+                        'value' => $this->FechaMysqltoPhp($model->inicio),
                 ),
                 array(
-                        'label' => $model->periodos->getAttributeLabel('fin'),
-                        'value' => $this->FechaMysqltoPhp($model->periodos->fin),
-                )
-                
+                        'label' => 'Fecha finalización',
+                        'value' => $this->FechaMysqltoPhp($model->fin),
+                ),
+                '_tipoproyecto.nombre',                
+                '_objetivoproyecto.nombre',
+                '_adscrito.nombre'             
 	),
 )); 
       
