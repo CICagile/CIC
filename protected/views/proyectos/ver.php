@@ -49,7 +49,9 @@ $columns = array (
         'class'=>'CButtonColumn',
         'template'=>'{view}{update}',
         'viewButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("id"=>$data["carnet"]))',
+        'viewButtonLabel' => 'Ver información detallada del asistente',
         'updateButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/updateDP", array("id"=>$data["carnet"]))',
+        'updateButtonLabel' => 'Editar información personal del asistente',
 ));
 
 ?>
@@ -93,5 +95,5 @@ $columns = array (
            )); 
 ?>
 <?php if ($dataProvider->totalItemCount > 0)
-            echo CHtml::button('Editar información de los asistentes.',array('submit'=>Yii::app()->controller->createUrl("Proyectos/actualizarInfoAsistentes", array("id"=>$model->idtbl_Proyectos))));
+            echo CHtml::button('Editar información de los asistentes',array('submit'=>Yii::app()->controller->createUrl("Proyectos/actualizarInfoAsistentes", array("id"=>$model->idtbl_Proyectos))));
 ?>

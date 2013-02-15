@@ -53,7 +53,7 @@ $columns = array (
     ),
     array(
         'class'=>'CButtonColumn',
-        'template'=>'{view}{delete}',
+        'template'=>'{view}{update}',
         /*'buttons'=>array(
             'guardar'=>array(
                 'label'=>'Guardar',
@@ -63,7 +63,11 @@ $columns = array (
             ),
         ),*/
         'viewButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("id"=>$data["carnet"]))',
-        'deleteButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("id"=>$data["carnet"]))',),
+        'viewButtonLabel' => 'Ver información detallada del asistente',
+        'updateButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/updateDP", array("id"=>$data["carnet"]))',
+        'updateButtonLabel' => 'Editar información personal del asistente',
+        ),
+    
 );
 
 ?>
