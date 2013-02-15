@@ -9,7 +9,7 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'Ver información de asistentes', 'url'=>array('admin')),
+	array('label'=>'Ver asistentes', 'url'=>array('admin')),
 );
 ?>
 

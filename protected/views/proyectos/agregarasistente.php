@@ -10,8 +10,7 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'Ver Proyectos', 'url'=>array('admin')),
-	array('label'=>'Nuevo Proyecto', 'url'=>array('create')),       
+	array('label'=>'Ver Proyectos', 'url'=>array('admin')),	      
 	
 );
 ?>

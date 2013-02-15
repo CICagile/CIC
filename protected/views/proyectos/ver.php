@@ -9,8 +9,7 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'Ver Proyectos', 'url'=>array('admin')),
-	array('label'=>'Nuevo Proyecto', 'url'=>array('crear')),        
+	array('label'=>'Ver Proyectos', 'url'=>array('admin')),	       
 	array('label'=>'Agregar asistente', 'url'=>array('agregarasistente', 'id'=>$model->idtbl_Proyectos)),
 );
 
