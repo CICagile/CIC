@@ -518,7 +518,11 @@ class ProyectosController extends Controller {
         } else if ($this->convertirStringNumerico($horas) < MIN_VALUE || $this->convertirStringNumerico($horas) > MAX_VALUE) {
             $response = array(
                 'ok' => false,
-                'msg' => "La cantidad de horas semanales debe estar en un rango de 1-20 horas.");           
+                'msg' => "La cantidad de horas semanales debe estar en un rango de 1-20 horas.");
+        } else if (!$this->validarMediaHora($horas)) {
+            $response = array(
+                'ok' => false,
+                'msg' => "Solo puede ingresar horas completas o con media hora.");                
         }else if(!is_null($pcarne)){//Esta validacion solo se ejecuta en submit action del form
             if ($this->validarCantidadHorasAcumuladas($horas, $pcarne)> MAX_VALUE) {
             $response = array(
@@ -713,6 +717,13 @@ class ProyectosController extends Controller {
             return (float) $pstring;
         else
             return (int) $pstring;
+    }
+    
+    protected function validarMediaHora($pnumber){
+         if(preg_match("/^[0-9]+(\.5)?$/", $pnumber))
+            return true;
+        else
+            return false;
     }
     
     protected function validarCantidadHorasAcumuladas($phoras, $pcarne){
