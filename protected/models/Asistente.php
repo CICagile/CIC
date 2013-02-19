@@ -211,9 +211,9 @@ class Asistente  extends CModel{
             return;
         $criteria = new CDbCriteria;
         $criteria->alias = "pr";
-                $criteria->join = 'INNER JOIN tbl_HistorialProyectosPeriodos HPP ON pr.idtbl_Proyectos = HPP.idtbl_Proyectos
-                                   INNER JOIN tbl_Periodos P ON HPP.idPeriodo = P.idPeriodo';
-                $criteria->condition = "pr.codigo = '" . $this->codigo . "' AND p.inicio <= SYSDATE() AND p.fin > SYSDATE()";
+        $criteria->join = 'INNER JOIN tbl_HistorialProyectosPeriodos HPP ON pr.idtbl_Proyectos = HPP.idtbl_Proyectos
+                           INNER JOIN tbl_Periodos P ON HPP.idPeriodo = P.idPeriodo';
+        $criteria->condition = "pr.codigo = '" . $this->codigo . "' AND p.inicio <= SYSDATE() AND p.fin > SYSDATE()";
         if (!Proyectos::model()->exists($criteria)) {
             $this->addError('codigo', $this->getAttributeLabel('codigo') . ' no fue encontrado en la base de datos o no se encuentra activo.');
         }//fin si el código existe en la base de datos
