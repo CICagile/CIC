@@ -44,7 +44,7 @@ $this->menu=array(
                 array(
                     'class'=>'CButtonColumn',
                     'template'=>'{view}',
-                    'viewButtonUrl'=>'Yii::app()->controller->createUrl("proyectos/ver", array("id"=>$data["idtbl_Proyectos"]))',
+                    'viewButtonUrl'=>'Yii::app()->controller->createUrl("proyectos/verantiguos", array("id"=>$data["idtbl_Proyectos"]))',
                     'viewButtonLabel' => 'Ver información detallada del proyecto.',                   
                 ),
         ),

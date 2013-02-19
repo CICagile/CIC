@@ -26,7 +26,7 @@ class ProyectosController extends Controller {
     public function accessRules() {
         return array(            
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('ver','ActualizarInfoAsistentes','crear', 'actualizar', 'agregarasistente', 'AsistenteAutoComplete', 'ValidarAgregarAsistente', 'adminantiguos'),
+                'actions' => array('ver','ActualizarInfoAsistentes','crear', 'actualizar', 'agregarasistente', 'AsistenteAutoComplete', 'ValidarAgregarAsistente', 'adminantiguos', 'verantiguos'),
                 'users' => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -40,7 +40,7 @@ class ProyectosController extends Controller {
     }
 
     /*
-     * Muestra el detalle del proyecto
+     * Muestra el detalle de un proyecto activo
      */
     public function actionVer($id) {
         $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);        
@@ -48,6 +48,21 @@ class ProyectosController extends Controller {
             throw new CHttpException(404, 'La página solicitado no se ha encontrado.');
         else
         $this->render('ver', array(
+            'model' => $model,
+            'asistente' => new Asistente,
+            'dataProvider' => $model->buscarAsistentesActivosDeProyecto(),
+        ));
+    }
+    
+    /*
+     * Muestra el detalle de un proyecto antiguo
+     */
+    public function actionVerAntiguos($id) {
+        $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);        
+        if ($model === null)
+            throw new CHttpException(404, 'La página solicitado no se ha encontrado.');
+        else
+        $this->render('verantiguos', array(
             'model' => $model,
             'asistente' => new Asistente,
             'dataProvider' => $model->buscarAsistentesActivosDeProyecto(),
