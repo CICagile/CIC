@@ -8,7 +8,7 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-        array('label'=>'Ver Proyectos Actuales', 'url'=>array('admin')),	
+        array('label'=>'Ver Proyectos Activos', 'url'=>array('admin')),	
 );
 ?>
 
