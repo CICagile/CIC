@@ -50,8 +50,11 @@ class AsistenteController extends Controller
         {
             if (isset($_GET['term'])) {
                 $criteria = new CDbCriteria;
-                $criteria->alias = "proyecto";
-                $criteria->condition = "proyecto.codigo like '" . $_GET['term'] . "%'";
+                $criteria->alias = "pr";
+                $criteria->select = 'pr.nombre nombre, pr.codigo codigo, pr.idtbl_proyectos idtbl_Proyectos';
+                $criteria->join = 'INNER JOIN tbl_HistorialProyectosPeriodos HPP ON pr.idtbl_Proyectos = HPP.idtbl_Proyectos
+                                   INNER JOIN tbl_Periodos P ON HPP.idPeriodo = P.idPeriodo';
+                $criteria->condition = "pr.codigo LIKE '" . $_GET['term'] . "%' AND p.inicio <= SYSDATE() AND p.fin > SYSDATE()";
                 
                 $dataProvider = new CActiveDataProvider(get_class(Proyectos::model()), array(
                     'criteria'=>$criteria,
