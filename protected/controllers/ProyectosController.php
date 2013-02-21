@@ -70,6 +70,36 @@ class ProyectosController extends Controller {
     }
     
     /**
+     * Valida que las horas nuevas cumplan con que sean numéricas y que el asistente no sobrepase
+     * las horas acumuladas establecidas. Si las horas son válidas el modelo queda con las horas nuevas
+     * y si no son válidas el modelo queda con las horas anteriores.
+     * @param string $pHorasAnteriores Las horas que el asistente tiene registradas antes del cambio.
+     * @param string $pHorasNuevas Las horas que el usuario quiere asignarle al asistente.
+     * @param Asistente $pAsistente El modelo del asistente que representa al asistente al que se le realiza el cambio.
+     * @return boolean Retorna true si los datos son válidos y false de lo contrario.
+     */
+    private function validarActualizacionDeHoras($pHorasAnteriores, $pHorasNuevas, $pAsistente){
+        $horas_totales = $pAsistente->contarHorasAsistenciaActuales();
+        $horas_totales -= $pHorasAnteriores;
+        $horas_totales += $pHorasNuevas;
+        $pAsistente->horas = $horas_totales;
+        if ($pAsistente->validate('horas')) {
+            $pAsistente->horas = $pHorasNuevas;
+            if ($pAsistente->validate('horas')) {
+                return true;
+            }//fin si las horas totales y las horas nuevas son válidas.
+            else {
+                $pAsistente->horas = $pHorasAnteriores;
+                return false;
+            }//fin si no son válidas
+        }//fin si las horas totales son válidas
+        else {
+            $pAsistente->horas = $pHorasAnteriores;
+            return false;
+        }//fin si las horas totales no son válidas
+    }// fin validación de las nuevas horas ingresadas
+    
+    /**
      * Verifica que los nuevos datos de los asistentes sean válidos y guarda los cambios.
      * @param string $pRol El rol del asistente en el proyecto
      * @param double $pHoras Horas que el asistente debe dedicar semanalmente al proyecto.
@@ -89,20 +119,13 @@ class ProyectosController extends Controller {
             $asistente->codigo = $model->idtbl_Proyectos;
             foreach ($horas as $index=>$horas_nuevas){
                 $asistente->carnet = $datos_asistentes[$index]['carnet'];
-                $asistente->horas = $horas_nuevas;
                 //$asistente->rol = $datos_asistentes[$index]['rol'];
                 if ($horas_nuevas != $datos_asistentes[$index]["horas"]){
-                    $asistente->validate('horas');  //valida el valor del primer dato
-                    $asistente->horas = $datos_asistentes[$index]['horas'];
-                    $horas_totales = $asistente->contarHorasAsistenciaActuales();
-                    $horas_totales -= $datos_asistentes[$index]["horas"];
-                    $horas_totales += $horas_nuevas;
-                    $asistente->horas = $horas_totales;
-                    if ($asistente->validate('horas',false)) {  //valida la cantidad del total de horas
-                        $asistente->horas = $horas_nuevas;
+                    $horas_validas = $this->validarActualizacionDeHoras($datos_asistentes[$index]["horas"], $horas_nuevas, $asistente);
+                    if ($horas_validas) {
                         if(!$asistente->CambiarHorasAsistencia())
                                 throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
-                    }//fin si los datos del asistente son validos
+                    }//fin si las horas del asistente son validas
                     else $datos_validos = false;
                 }//fin si las horas son diferentes
                 /*if ($datos_asistentes[$index]["rol"] != $roles[$index]){
