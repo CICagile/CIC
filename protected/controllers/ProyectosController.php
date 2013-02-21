@@ -83,9 +83,9 @@ class ProyectosController extends Controller {
         $horas_totales -= $pHorasAnteriores;
         $horas_totales += $pHorasNuevas;
         $pAsistente->horas = $horas_totales;
-        if ($pAsistente->validate('horas')) {
+        if ($pAsistente->validate('horas',null)) {
             $pAsistente->horas = $pHorasNuevas;
-            if ($pAsistente->validate('horas')) {
+            if ($pAsistente->validate('horas',null)) {
                 return true;
             }//fin si las horas totales y las horas nuevas son válidas.
             else {
@@ -111,32 +111,32 @@ class ProyectosController extends Controller {
         $dataProvider = $model->buscarAsistentesActivosDeProyecto();
         $datos_validos = true;
         
-        if (isset($_POST['horas']) /*&& isset($_POST['rol']) /*&& isset($_POST['fin'])*/) {
+        if (isset($_POST['horas']) && isset($_POST['rol']) /*&& isset($_POST['fin'])*/) {
             $datos_asistentes = $dataProvider->data;
             $horas = $_POST['horas'];
-            /*$roles = $_POST['rol'];*/
+            $roles = $_POST['rol'];
             $asistente->scenario = 'actInfoProy';
             $asistente->codigo = $model->idtbl_Proyectos;
             foreach ($horas as $index=>$horas_nuevas){
                 $asistente->carnet = $datos_asistentes[$index]['carnet'];
-                //$asistente->rol = $datos_asistentes[$index]['rol'];
-                if ($horas_nuevas != $datos_asistentes[$index]["horas"]){
-                    $horas_validas = $this->validarActualizacionDeHoras($datos_asistentes[$index]["horas"], $horas_nuevas, $asistente);
+                $asistente->rol = $datos_asistentes[$index]['rol'];
+                $asistente->horas = $datos_asistentes[$index]['horas'];
+                if ($horas_nuevas != $asistente->horas){
+                    $horas_validas = $this->validarActualizacionDeHoras($asistente->horas, $horas_nuevas, $asistente);
                     if ($horas_validas) {
                         if(!$asistente->CambiarHorasAsistencia())
                                 throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
                     }//fin si las horas del asistente son validas
                     else $datos_validos = false;
                 }//fin si las horas son diferentes
-                /*if ($datos_asistentes[$index]["rol"] != $roles[$index]){
-                    echo ' entro ';
+                if ($asistente->rol != $roles[$index]){
                     $asistente->rol = $roles[$index];
-                    if ($asistente->validate('rol')) {
+                    if ($asistente->validate('rol',null)) {
                         if(!$asistente->cambiarRolProyecto())
                             throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
                     }//fin si el rol es válido
                     else $datos_validos = false;
-                }//fin si el rol del asistente cambió.*/
+                }//fin si el rol del asistente cambió.
             }//fin for
             if ($datos_validos)
                 $this->redirect(array('ver','id'=>$id)); //Sólo llega a esta instrucción si no hay errores.
