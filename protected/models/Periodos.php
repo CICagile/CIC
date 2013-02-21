@@ -45,12 +45,23 @@ class Periodos extends CActiveRecord
                         array('inicio', 'date', 'format'=> 'dd-MM-yyyy'),
                         array('fin', 'date', 'format'=> 'dd-MM-yyyy'),
                         array('fin','compare', 'compareAttribute' => 'inicio', 'operator' => '!=', 'message' => 'La {attribute} debe ser distinto a la fecha de inicio.'),                       
+                        array('fin', 'validarFinEnFuturo', 'on'=>'cambiarAsistencia'),
                         array('fin', 'ValidadorFechaMayor'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('idPeriodo, inicio, fin', 'safe', 'on'=>'search'),
 		);
 	}       
+        
+        /**
+         * Verifica que la fecha fin del periodo no corresponda a una fecha anterior o igual a la fecha del servidor.
+         */
+        public function validarFinEnFuturo($attribute, $params) {
+            if(isset($params['on']) && $params['on'] != $this->scenario)
+            return;
+            if (strtotime($this->fin) <= date('d-m-Y'))
+                $this->addError($attribute,  $this->getAttributeLabel($attribute) . ' no puede ser menor o igual a la fecha de hoy.');
+        }//fin validar fin en futuro
         
         public function ValidadorFechaMayor($attribute, $params)
         {
