@@ -44,7 +44,7 @@ $columns = array (
     array(
         'header'=>CHtml::encode('Horas'),
         'name'=>'horas',
-        'value'=>'CHtml::textField("horas[$row]",$data["horas"],array("size"=>5,"maxlength"=>5))',
+        'value'=>'CHtml::textField("horas[$row]",$data["horas"],array("size"=>4,"maxlength"=>4))',
         'type'=>'raw',
     ),
     array(
