@@ -34,7 +34,7 @@ class Asistente  extends CModel{
             return array(
                 array('nombre, apellido1, cedula, numerocuenta, banco, cuentacliente, carnet, carrera, telefono, correo, codigo, rol, horas', 'required', 'message'=>'{attribute} no puede dejarse en blanco.', 'on'=>'nuevo'),
                 array('nombre, apellido1, cedula, numerocuenta, banco, cuentacliente, carnet, carrera, telefono, correo', 'required', 'message'=>'{attribute} no puede dejarse en blanco.', 'on'=>'actDP'),
-                array('horas','required','message'=>'{attribute} no puede dejarse en blanco.','on'=>'actInfoProy'),
+                array('horas, rol','required','message'=>'{attribute} no puede dejarse en blanco.','on'=>'actInfoProy'),
                 array('nombre, apellido1, apellido2, codigo', 'length', 'max'=>20),
                 array('cedula','length','min'=>9,'max'=>20),
                 array('carnet','length', 'min'=>7,'max'=>15),
