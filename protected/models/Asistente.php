@@ -388,6 +388,32 @@ class Asistente  extends CModel{
             }//fin catch
             return true;
         }//cambia el rol del asistente en un proyecto.
+        
+        /**
+         * Cambia la fecha del fin de la asistencia por la que especifique el usuario. Los periodos de rol, horas y asistencia
+         * son afectados en la base de datos.
+         * @param string $pFecha Fecha nueva del fin de la asistencia.
+         * @return boolean Retorna true si la transacción tuvo éxito o false de lo contrario.
+         */
+        public function cambiarFinAsistencia($pFecha) {
+            $conexion = Yii::app()->db;
+            $call = 'CALL actualizarFinAsistencia(:pk, :carnet, :fecha)';
+            $transaccion = $conexion->beginTransaction();
+            try {
+                $comando = $conexion->createCommand($call);
+                $comando->bindParam(':pk', $this->codigo, PDO::PARAM_INT);
+                $comando->bindParam(':carnet', $this->carnet, PDO::PARAM_STR);
+                $comando->bindParam(':fecha', $pFecha, PDO::PARAM_STR);
+                $comando->execute();
+                $transaccion->commit();
+            }//fin try
+            catch (Exception $e) {
+                Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
+                $transaccion->rollback();
+                return false;
+            }//fin catch
+            return true;
+        }//fin cambiar fecha del fin de la asistencia
     
 }//fin clase Modelo Asistente
 
