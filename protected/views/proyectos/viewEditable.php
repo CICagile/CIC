@@ -2,6 +2,7 @@
 /* @var $this ProyectosController */
 /* @var $model Proyectos */
 /* @var $asistente Asistente */
+/* @var $asistencia Periodos */
 
 $this->breadcrumbs=array(
 	'Proyectos'=>array('admin'),
@@ -50,6 +51,20 @@ $columns = array (
     array(
         'header'=>CHtml::encode('Fin de la asistencia'),
         'name'=>'fin',
+        'value'=>'$this->widget("zii.widgets.jui.CJuiDatePicker", array(
+                        "name" => CHtml::activeName($asistencia, "fin"),
+                        "value" => $asistencia->attributes["fin"],
+                        "language" => "es",
+                        "options" => array(                            
+                            "showAnim"=>"fold",
+                            "dateFormat"=>"dd-mm-yy",
+                            "changeYear"=>true,
+                            "changeMonth"=>true,
+                        ),
+                        "htmlOptions"=>array(                            
+                            "readonly" => "readonly"
+                        ),',
+        'type'=>'raw',
     ),
     array(
         'class'=>'CButtonColumn',
@@ -108,7 +123,7 @@ $columns = array (
 ));
 ?>
 
-<?php echo $form->errorSummary(array($model,$asistente),'Se han detectado los siguientes errores:'); ?>
+<?php echo $form->errorSummary(array($model,$asistente,$asistencia),'Se han detectado los siguientes errores:'); ?>
 
 <?php $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'asistente-grid',
