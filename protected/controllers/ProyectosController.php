@@ -89,14 +89,16 @@ class ProyectosController extends Controller {
             $asistente->codigo = $model->idtbl_Proyectos;
             foreach ($horas as $index=>$horas_nuevas){
                 $asistente->carnet = $datos_asistentes[$index]['carnet'];
-                $asistente->horas = $datos_asistentes[$index]['horas'];
+                $asistente->horas = $horas_nuevas;
                 //$asistente->rol = $datos_asistentes[$index]['rol'];
                 if ($horas_nuevas != $datos_asistentes[$index]["horas"]){
+                    $asistente->validate('horas');  //valida el valor del primer dato
+                    $asistente->horas = $datos_asistentes[$index]['horas'];
                     $horas_totales = $asistente->contarHorasAsistenciaActuales();
                     $horas_totales -= $datos_asistentes[$index]["horas"];
                     $horas_totales += $horas_nuevas;
                     $asistente->horas = $horas_totales;
-                    if ($asistente->validate('horas')) {
+                    if ($asistente->validate('horas',false)) {  //valida la cantidad del total de horas
                         $asistente->horas = $horas_nuevas;
                         if(!$asistente->CambiarHorasAsistencia())
                                 throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
