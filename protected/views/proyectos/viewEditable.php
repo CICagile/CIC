@@ -4,12 +4,12 @@
 /* @var $asistente Asistente */
 
 $this->breadcrumbs=array(
-	'Proyectos'=>array('index'),
+	'Proyectos'=>array('admin'),
 	$model->codigo,
 );
 
 $this->menu=array(
-	array('label'=>'Ver Proyectos', 'url'=>array('index')),
+	array('label'=>'Ver Proyectos', 'url'=>array('admin')),
 	array('label'=>'Nuevo Proyecto', 'url'=>array('create')),        
 	array('label'=>'Agregar asistente', 'url'=>array('agregarasistente', 'id'=>$model->idtbl_Proyectos)),
 	/*array('label'=>'Delete Proyectos', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->idtbl_Proyectos),'confirm'=>'Are you sure you want to delete this item?')),
