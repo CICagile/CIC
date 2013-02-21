@@ -79,6 +79,7 @@ class Proyectos extends CActiveRecord
 			// Please remove those attributes that should not be searched.
 			//array('idtbl_Proyectos, nombre, codigo, tbl_Periodos_idPeriodo', 'safe', 'on'=>'search'),
                         array('idtbl_Proyectos, nombre, codigo, $fecha_inicio_search, $fecha_fin_search, estado', 'safe', 'on'=>'search'),
+                        array('idtbl_Proyectos, inicio, fin', 'safe', 'on'=>'cargarModelo'),
 		);
 	}
         
@@ -236,8 +237,8 @@ class Proyectos extends CActiveRecord
             if($model == false)
                 return null;            
             else{
+                $this->scenario = 'cargarModelo';
                 $this->setAttributes($model);//Asociamos los atributos reales de un Proyecto
-                $this->idtbl_Proyectos = $model['idtbl_Proyectos'];//Se asocia este atributo de manera manual porque setAttributes no asocia atributos no seguros. 
                 $this->inicio = $model['inicio'];//Asociamos el atributos simulado inicio
                 $this->fin = $model['fin'];//Asociamos el atributos simulado fin
                 return $this; //Retornamos el objeto Proyecto
