@@ -200,6 +200,7 @@ class Proyectos extends CActiveRecord
             'keyField'=>'carnet',
             'id'=>'Asistentes',
             'sort'=>array(
+                'defaultOrder'=>'apellido1 ASC',
                 'attributes'=>array(
                     'carnet',
                     'nombre',
