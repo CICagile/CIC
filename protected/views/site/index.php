@@ -16,7 +16,7 @@ $this->pageTitle=Yii::app()->name;
         <ul>
             <li><?php echo CHtml::link('Objetivos de Proyecto',array('objetivoproyecto/admin')) ?></li>
             <li><?php echo CHtml::link('Adscripción de Proyectos',array('adscrito/admin')) ?></li>
-            <li><?php echo CHtml::link('Tipos de Proyectos',array('tipoproyecto/admin')) ?></li>
+            <li><?php echo CHtml::link('Tipo de Proyectos',array('tipoproyecto/admin')) ?></li>
         </ul>
     </li>
 </ul>
