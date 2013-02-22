@@ -56,7 +56,7 @@ class AdscritoController extends Controller
 		{
 			$model->attributes=$_POST['Adscrito'];
 			if($model->save())
-				$this->redirect('admin');
+				$this->redirect('../admin');
 		}
 
 		$this->render('create',array(
@@ -80,7 +80,7 @@ class AdscritoController extends Controller
 		{
 			$model->attributes=$_POST['Adscrito'];
 			if($model->save())
-				$this->redirect('admin');
+				$this->redirect('../admin');
 		}
 
 		$this->render('update',array(
