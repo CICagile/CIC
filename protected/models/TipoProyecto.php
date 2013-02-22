@@ -38,8 +38,10 @@ class TipoProyecto extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('nombre', 'required'),
+			array('idtbl_tipoproyecto, nombre', 'required'),
 			array('nombre', 'length', 'max'=>45),
+                        array('idtbl_tipoproyecto', 'numerical', 'integerOnly'=>true),
+                        array('nombre', 'unique', 'className' => 'TipoProyecto', 'caseSensitive' => true, 'message' => 'Ya existe esa adscripción.'), 
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('idtbl_tipoproyecto, nombre', 'safe', 'on'=>'search'),
