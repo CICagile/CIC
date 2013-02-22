@@ -43,9 +43,18 @@ $this->menu=array(
                 ), 
                 array(
                     'class'=>'CButtonColumn',
-                    'template'=>'{view}',
+                    'template'=>'{view}{ampliar}',
                     'viewButtonUrl'=>'Yii::app()->controller->createUrl("proyectos/verantiguos", array("id"=>$data["idtbl_Proyectos"]))',
-                    'viewButtonLabel' => 'Ver información detallada del proyecto.',                   
+                    'viewButtonLabel' => 'Ver información detallada del proyecto.',  
+                    'buttons'=>array
+                    (                        
+                        'ampliar' => array
+                        (
+                            'label'=>'Ampliar el proyecto.',
+                            'imageUrl'=>Yii::app()->request->baseUrl.'/images/time_add.png',
+                            'url'=>'Yii::app()->createUrl("proyectos/ampliarproyecto", array("id"=>$data["idtbl_Proyectos"]))',
+                        ),  
+                    ),
                 ),
         ),
     'filter'=>$filtersForm,
@@ -60,6 +69,7 @@ function cssgrid(id,data)
     $('.$string.'[name="FiltersForm[inicio]"]'.$string.').css({"width" : "70px"});
     $('.$string.'[name="FiltersForm[fin]"]'.$string.').css({"width" : "70px"});
     $('.$string.'[name="FiltersForm[codigo]"]'.$string.').css({"width" : "110px"});
+    $(".filters > td:last").css({"width" : "65px"});
 }
 
 '   
@@ -71,6 +81,7 @@ function cssgrid(id,data)
     $('[name="FiltersForm[inicio]"]').css({'width' : '70px'})
     $('[name="FiltersForm[fin]"]').css({'width' : '70px'}) 
     $('[name="FiltersForm[codigo]"]').css({'width' : '110px'})
+    $('.filters > td:last').css({'width' : '65px'})
     
     
     $('.delete').click(function(e){

@@ -26,7 +26,8 @@ class ProyectosController extends Controller {
     public function accessRules() {
         return array(            
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('ver','ActualizarInfoAsistentes','crear', 'actualizar', 'agregarasistente', 'AsistenteAutoComplete', 'ValidarAgregarAsistente', 'adminantiguos', 'verantiguos'),
+                'actions' => array('ver','ActualizarInfoAsistentes','crear', 'actualizar', 'agregarasistente', 'AsistenteAutoComplete',
+                                    'ValidarAgregarAsistente', 'adminantiguos', 'verantiguos', 'ampliarproyecto'),
                 'users' => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -354,6 +355,16 @@ class ProyectosController extends Controller {
                 'filtersForm' => $filtersForm,
                 'dataProvider' => $dataProvider,
             ));
+    }
+    
+    public function actionAmpliarProyecto($id){
+        $modelproyectos = Proyectos::model()->obtenerProyectoconPeriodoActual($id);        
+        if ($modelproyectos === null)
+            throw new CHttpException(404, 'La página solicitado no se ha encontrado.');
+        
+        $this->render('ampliar', array(
+            'modelproyectos' => $modelproyectos          
+        ));
     }
     
     /**
