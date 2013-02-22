@@ -3,16 +3,15 @@
 /* @var $model ObjetivoProyecto */
 
 $this->breadcrumbs=array(
-	'Objetivo Proyectos'=>array('index'),
-	'Create',
+	'Objetivo para proyectos'=>array('admin'),
+	'Crear',
 );
 
-$this->menu=array(
-	array('label'=>'List ObjetivoProyecto', 'url'=>array('index')),
-	array('label'=>'Manage ObjetivoProyecto', 'url'=>array('admin')),
+$this->menu=array(	
+	array('label'=>'Ver opciones de objetivos para proyectos', 'url'=>array('admin')),
 );
 ?>
 
-<h1>Create ObjetivoProyecto</h1>
+<h3>Crear nueva opción de objetivo para proyectos</h3>
 
 <?php echo $this->renderPartial('_form', array('model'=>$model)); ?>

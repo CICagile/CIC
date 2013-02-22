@@ -3,19 +3,15 @@
 /* @var $model ObjetivoProyecto */
 
 $this->breadcrumbs=array(
-	'Objetivo Proyectos'=>array('index'),
-	$model->idtbl_objetivoproyecto=>array('view','id'=>$model->idtbl_objetivoproyecto),
-	'Update',
+	'Objetivo para proyectos'=>array('admin'),
+	'Modificar',
 );
 
 $this->menu=array(
-	array('label'=>'List ObjetivoProyecto', 'url'=>array('index')),
-	array('label'=>'Create ObjetivoProyecto', 'url'=>array('create')),
-	array('label'=>'View ObjetivoProyecto', 'url'=>array('view', 'id'=>$model->idtbl_objetivoproyecto)),
-	array('label'=>'Manage ObjetivoProyecto', 'url'=>array('admin')),
+	array('label'=>'Ver opciones de objetivos para proyectos', 'url'=>array('admin')),
 );
 ?>
 
-<h1>Update ObjetivoProyecto <?php echo $model->idtbl_objetivoproyecto; ?></h1>
+<h3>Modificar opción de objetivo para proyecto</h3>
 
 <?php echo $this->renderPartial('_form', array('model'=>$model)); ?>

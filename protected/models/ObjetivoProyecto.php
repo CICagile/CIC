@@ -38,8 +38,10 @@ class ObjetivoProyecto extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('nombre', 'required'),
+			array('nombre, idtbl_objetivoproyecto', 'required'),
 			array('nombre', 'length', 'max'=>250),
+                        array('nombre', 'unique', 'className' => 'ObjetivoProyecto', 'caseSensitive' => true, 'message' => 'Ya existe ese objetivo del proyecto.'), 
+                        array('idtbl_objetivoproyecto', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('idtbl_objetivoproyecto, nombre', 'safe', 'on'=>'search'),

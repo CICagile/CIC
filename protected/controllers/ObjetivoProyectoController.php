@@ -26,13 +26,9 @@ class ObjetivoProyectoController extends Controller
 	 */
 	public function accessRules()
 	{
-		return array(
-			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view'),
-				'users'=>array('*'),
-			),
+		return array(			
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update'),
+				'actions'=>array('admin', 'create','update'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -45,17 +41,7 @@ class ObjetivoProyectoController extends Controller
 		);
 	}
 
-	/**
-	 * Displays a particular model.
-	 * @param integer $id the ID of the model to be displayed
-	 */
-	public function actionView($id)
-	{
-		$this->render('view',array(
-			'model'=>$this->loadModel($id),
-		));
-	}
-
+	
 	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
@@ -65,13 +51,13 @@ class ObjetivoProyectoController extends Controller
 		$model=new ObjetivoProyecto;
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['ObjetivoProyecto']))
 		{
 			$model->attributes=$_POST['ObjetivoProyecto'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->idtbl_objetivoproyecto));
+				$this->redirect('../admin');
 		}
 
 		$this->render('create',array(
@@ -89,13 +75,13 @@ class ObjetivoProyectoController extends Controller
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['ObjetivoProyecto']))
 		{
 			$model->attributes=$_POST['ObjetivoProyecto'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->idtbl_objetivoproyecto));
+				$this->redirect('../admin');
 		}
 
 		$this->render('update',array(
@@ -115,17 +101,6 @@ class ObjetivoProyectoController extends Controller
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
-	}
-
-	/**
-	 * Lists all models.
-	 */
-	public function actionIndex()
-	{
-		$dataProvider=new CActiveDataProvider('ObjetivoProyecto');
-		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
-		));
 	}
 
 	/**
