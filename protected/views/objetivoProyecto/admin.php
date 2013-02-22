@@ -3,7 +3,7 @@
 /* @var $model ObjetivoProyecto */
 
 $this->breadcrumbs=array(
-	'Objetivos para proyectos'=>array('admin'),
+	'Objetivos de Proyectos'=>array('admin'),
 	'Opciones',
 );
 
