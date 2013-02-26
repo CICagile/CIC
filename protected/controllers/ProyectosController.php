@@ -133,9 +133,8 @@ class ProyectosController extends Controller {
      */
     public function actionActualizarInfoAsistentes($id) {
         $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
-        $asistente = new Asistente;
         $dataProvider = $model->buscarAsistentesActivosDeProyecto();
-        $asistencia = new Periodos('cambiarAsistencia');
+        $errores = array();
         $datos_validos = true;
         
         if (isset($_POST['horas']) && isset($_POST['rol']) && isset($_POST['fin'])) {
@@ -143,9 +142,11 @@ class ProyectosController extends Controller {
             $horas = $_POST['horas'];
             $roles = $_POST['rol'];
             $fechas_fin = $_POST['fin'];
-            $asistente->scenario = 'actInfoProy';
-            $asistente->codigo = $model->idtbl_Proyectos;
             foreach ($horas as $index=>$horas_nuevas){
+                $asistente = new Asistente;
+                $asistente->scenario = 'actInfoProy';
+                $asistente->codigo = $model->idtbl_Proyectos;
+                $asistencia = new Periodos('cambiarAsistencia');
                 $asistencia->inicio = $datos_asistentes[$index]['inicio_asistencia'];
                 $asistencia->fin = $datos_asistentes[$index]['fin'];
                 $asistente->carnet = $datos_asistentes[$index]['carnet'];
@@ -154,10 +155,10 @@ class ProyectosController extends Controller {
                 if($asistencia->fin != $fechas_fin[$index]){
                     $fin_correcto = $this->validarActualizacionFechaFin($asistencia, $fechas_fin[$index], $model);
                     if ($fin_correcto) {
-                        if ($asistente->cambiarFinAsistencia($asistencia->fin))
+                        if (!$asistente->cambiarFinAsistencia($asistencia->fin))
                             throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
                     }//fin si los datos son válidos
-                    else $datos_validos = false;
+                    else {array_push($errores,$asistencia); $datos_validos = false;}
                 }//fin si cambio la fecha del final de la asistencia
                 if ($horas_nuevas != $asistente->horas){
                     $horas_validas = $this->validarActualizacionDeHoras($asistente->horas, $horas_nuevas, $asistente);
@@ -175,18 +176,21 @@ class ProyectosController extends Controller {
                     }//fin si el rol es válido
                     else $datos_validos = false;
                 }//fin si el rol del asistente cambió.
+                if ($asistente->hasErrors())
+                    array_push ($errores, $asistente);
             }//fin for
             if ($datos_validos)
                 $this->redirect(array('ver','id'=>$id)); //Sólo llega a esta instrucción si no hay errores en los datos.
-            else
-                $dataProvider = $model->buscarAsistentesActivosDeProyecto();//vuelve a cargar los datos desde la base en caso de que algunos datos si se hayan actualizado.
+            else{
+                $dataProvider = $model->buscarAsistentesActivosDeProyecto();//vuelve a cargar los datos desde la base en caso de que algunos datos sí se hayan actualizado.
+                print_r($errores);}
         }//fin si asistente se modificó.
         
         $this->render('viewEditable', array(
             'model' => $model,
-            'asistente' => $asistente,
+            'asistente' => new Asistente,
             'dataProvider' => $dataProvider,
-            'asistencia' => $asistencia,
+            'errores' => $errores,
         ));
     }//fin actualizar informacion de los assitentes activos del proyecto.
 

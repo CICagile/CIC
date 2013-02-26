@@ -2,7 +2,7 @@
 /* @var $this ProyectosController */
 /* @var $model Proyectos */
 /* @var $asistente Asistente */
-/* @var $asistencia Periodos */
+/* @var $errores array */
 
 $this->breadcrumbs=array(
 	'Proyectos'=>array('admin'),
@@ -53,7 +53,7 @@ $columns = array (
         'name'=>'fin',
         'type'=>'raw',
         'value'=>'$this->grid->widget("zii.widgets.jui.CJuiDatePicker", array(
-                        "name" => "fin",
+                        "name" => "fin[$row]",
                         "value" => $data["fin"],
                         "language" => "es",
                         "options" => array(                            
@@ -123,7 +123,7 @@ $columns = array (
 ));
 ?>
 
-<?php echo $form->errorSummary(array($model,$asistente,$asistencia),'Se han detectado los siguientes errores:'); ?>
+<?php echo $form->errorSummary($errores,'Se han detectado los siguientes errores:'); ?>
 
 <?php $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'asistente-grid',
