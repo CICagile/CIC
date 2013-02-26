@@ -51,9 +51,10 @@ $columns = array (
     array(
         'header'=>CHtml::encode('Fin de la asistencia'),
         'name'=>'fin',
-        'value'=>'$this->widget("zii.widgets.jui.CJuiDatePicker", array(
-                        "name" => CHtml::activeName($asistencia, "fin"),
-                        "value" => $asistencia->attributes["fin"],
+        'type'=>'raw',
+        'value'=>'$this->grid->widget("zii.widgets.jui.CJuiDatePicker", array(
+                        "name" => "Fin de la asistencia",
+                        "value" => $data["fin"],
                         "language" => "es",
                         "options" => array(                            
                             "showAnim"=>"fold",
@@ -63,8 +64,7 @@ $columns = array (
                         ),
                         "htmlOptions"=>array(                            
                             "readonly" => "readonly"
-                        ),',
-        'type'=>'raw',
+                        ),),true)',
     ),
     array(
         'class'=>'CButtonColumn',
