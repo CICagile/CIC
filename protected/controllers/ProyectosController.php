@@ -181,9 +181,8 @@ class ProyectosController extends Controller {
             }//fin for
             if ($datos_validos)
                 $this->redirect(array('ver','id'=>$id)); //Sólo llega a esta instrucción si no hay errores en los datos.
-            else{
+            else
                 $dataProvider = $model->buscarAsistentesActivosDeProyecto();//vuelve a cargar los datos desde la base en caso de que algunos datos sí se hayan actualizado.
-                print_r($errores);}
         }//fin si asistente se modificó.
         
         $this->render('viewEditable', array(
