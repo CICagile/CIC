@@ -39,6 +39,7 @@ class Proyectos extends CActiveRecord
         public $fecha_fin_search;
         
         //Las variables fecha inicio y fecha fin se utilizan para simular el periodo del proyecto.
+        public $idperiodo;
         public $inicio;
         public $fin;
         
@@ -219,7 +220,7 @@ class Proyectos extends CActiveRecord
         public function obtenerProyectoconPeriodoActual($idproyecto){
             
             $connection=Yii::app()->db;
-            $sql=   "SELECT tbl_proyectos.*, tbl_periodos.inicio, tbl_periodos.fin
+            $sql=   "SELECT tbl_proyectos.*, tbl_periodos.idPeriodo, tbl_periodos.inicio, tbl_periodos.fin
                     FROM tbl_proyectos
                     INNER JOIN tbl_historialproyectosperiodos
                     ON (tbl_proyectos.idtbl_Proyectos = tbl_historialproyectosperiodos.idtbl_Proyectos)
@@ -237,6 +238,7 @@ class Proyectos extends CActiveRecord
             else{
                 $this->setAttributes($model);//Asociamos los atributos reales de un Proyecto
                 $this->idtbl_Proyectos = $model['idtbl_Proyectos'];//Se asocia este atributo de manera manual porque setAttributes no asocia atributos no seguros. 
+                $this->idperiodo = $model['idPeriodo'];
                 $this->inicio = $model['inicio'];//Asociamos el atributos simulado inicio
                 $this->fin = $model['fin'];//Asociamos el atributos simulado fin
                 return $this; //Retornamos el objeto Proyecto

@@ -36,7 +36,7 @@ $this->menu=array(
 <br/>
 <div class="form"> 
 <?php
-echo CHtml::beginForm();
+echo CHtml::beginForm('', 'post', array('id'=>'form-ampliar'));
 ?>
 <fieldset>
 <div class="row">
@@ -59,10 +59,28 @@ $this->widget('zii.widgets.jui.CJuiDatePicker', array(
                 ));              
 ?>
 </div>
-
+<div class="errorMessage" id="ampliacion_error"></div>
 <div class="row buttons">
+
 <?php
-echo CHtml::SubmitButton('Ampliar Proyecto'); 
+echo CHtml::ajaxSubmitButton('Ampliar Proyecto', '', array(
+    'type'=>'POST',
+    'dataType'=>'json',
+    'beforeSend' => 'function(data){
+                  $("#ampliacion_error").html("");                 
+            }',
+    'data'=>array('ampliacion'=>'js:$("#fecha_ampliacion").val()'),
+    'success' => 'js:function(data){
+               if(data.ok){
+                   $("#ampliacion_error").html("");
+                   alert(data.msg);
+                   var url = "../admin/";    
+                   $(location).attr("href",url);
+                }else{                  
+                   $("#ampliacion_error").html(data.msg);
+                }
+              }', 
+), array('id' => 'btn_ampliar')); 
 echo CHtml::endForm();
 ?>
 </div>
@@ -85,5 +103,5 @@ echo CHtml::endForm();
           $( "#fecha_ampliacion" ).datepicker( "option", "minDate", new Date(ano, mes, dia) );  
           $( "#fecha_ampliacion" ).datepicker("show"); 
       });
-  }); 
+  });  
 </script>
