@@ -414,6 +414,16 @@ class Asistente  extends CModel{
             }//fin catch
             return true;
         }//fin cambiar fecha del fin de la asistencia
+        
+        /**
+         * Este método retorna una instancia del modelo para cuando se ocupe
+         * acceder a sus propiedades. Por ejemplo, para conseguir el string
+         * de los labels de los atributos.
+         * @return \Asistente Una instancia del modelo asistente.
+         */
+        public static function model(){
+            return new Asistente;
+        }//fin model
     
 }//fin clase Modelo Asistente
 
