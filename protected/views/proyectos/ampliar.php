@@ -1,6 +1,4 @@
-
 <?php
-Yii::app()->clientScript->registerCoreScript('jquery');
 $this->breadcrumbs=array(
 	'Proyectos'=>array('admin'),
 	'Ampliar proyecto',
@@ -40,13 +38,25 @@ $this->menu=array(
 <?php
 echo CHtml::beginForm();
 ?>
-
+<fieldset>
 <div class="row">
       
 <?php
 echo CHtml::label('Fecha de ampliación', 'fecha_ampliacion');
 
-echo CHtml::textField('fecha_ampliacion', '', array('id'=>'fecha_ampliacion'))
+$this->widget('zii.widgets.jui.CJuiDatePicker', array(
+                    'name' => 'fecha_ampliacion',
+                    'id'  => 'fecha_ampliacion',
+                    'language' => 'es',
+                    'options' => array(   
+                        'dateFormat'=>'dd-mm-yy',
+                        'changeYear'=>true,
+                        'changeMonth'=>true,                       
+                    ),
+                    'htmlOptions'=>array(                            
+                        'readonly' => 'readonly'
+                    ),
+                ));              
 ?>
 </div>
 
@@ -56,27 +66,24 @@ echo CHtml::SubmitButton('Ampliar Proyecto');
 echo CHtml::endForm();
 ?>
 </div>
+</fieldset>
 </div>
 
 
 <script type="text/javascript">
   //Esto se utiliza para que el calendario inicie a partir de la fecha de finalizacion del proyecto,
   //y además permitir seleccionar solo fechas despues de esa fecha.
-  $(document).ready(function() {      
-      var fecha_fin = $('.detail-view > tbody > tr:last > td').text();
-      var fecha_array = $('.detail-view > tbody > tr:last > td').text().match(/(\d+)/g);
+  $(document).ready(function() {
       
-      var dia = parseInt(fecha_array[0]);
-      var mes = parseInt(fecha_array[1]);
-      var ano = parseInt(fecha_array[2]);
+        var fecha_fin_array = $('.detail-view > tbody > tr:last > td').text().match(/(\d+)/g);
+
+        var dia = (parseInt(fecha_fin_array[0])+1).toString(); //Se suma un dia para evitar que seleccione el actual
+        var mes = (parseInt(fecha_fin_array[1])-1).toString(); //El mes en JS empieza en 0 por lo tanto siempre se debe restar -1
+        var ano = fecha_fin_array[2].toString();
       
-        
-        $( "#fecha_ampliacion" ).datepicker({
-        defaultDate: "+1w",
-        changeMonth: true,
-        numberOfMonths: 3      
-              
-        });
-  });
- 
+      $("#fecha_ampliacion").click(function(){
+          $( "#fecha_ampliacion" ).datepicker( "option", "minDate", new Date(ano, mes, dia) );  
+          $( "#fecha_ampliacion" ).datepicker("show"); 
+      });
+  }); 
 </script>
