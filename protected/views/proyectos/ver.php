@@ -1,7 +1,6 @@
 <?php
 /* @var $this ProyectosController */
 /* @var $model Proyectos */
-/* @var $asistente Asistente */
 /* @var $dataProvider CArrayDataProvider */
 $this->breadcrumbs=array(
 	'Proyectos'=>array('admin'),
@@ -18,23 +17,23 @@ $this->menu=array(
 //Columnas de la tabla de los asistentes activos del proyecto.
 $columns = array (
     array(
-        'header'=>CHtml::encode($asistente->getAttributeLabel('carnet')),
+        'header'=>CHtml::encode(Asistente::model()->getAttributeLabel('carnet')),
         'name'=>'carnet',
     ),
     array(
-        'header'=>CHtml::encode($asistente->getAttributeLabel('nombre')),
+        'header'=>CHtml::encode(Asistente::model()->getAttributeLabel('nombre')),
         'name'=>'nombre',
     ),
     array(
-        'header'=>CHtml::encode($asistente->getAttributeLabel('apellido1')),
+        'header'=>CHtml::encode(Asistente::model()->getAttributeLabel('apellido1')),
         'name'=>'apellido1',
     ),
     array(
-        'header'=>CHtml::encode($asistente->getAttributeLabel('apellido2')),
+        'header'=>CHtml::encode(Asistente::model()->getAttributeLabel('apellido2')),
         'name'=>'apellido2',
     ),
     array(
-        'header'=>CHtml::encode($asistente->getAttributeLabel('rol')),
+        'header'=>CHtml::encode(Asistente::model()->getAttributeLabel('rol')),
         'name'=>'rol',
     ),
     array(
