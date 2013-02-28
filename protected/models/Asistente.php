@@ -424,6 +424,36 @@ class Asistente  extends CModel{
         public static function model(){
             return new Asistente;
         }//fin model
+        
+        /**
+        * Valida que las horas nuevas cumplan con que sean numéricas y que el asistente no sobrepase
+        * las horas acumuladas establecidas. Si las horas son válidas el modelo queda con las horas nuevas
+        * y si no son válidas el modelo queda con las horas anteriores.
+        * @param string $pHorasNuevas Las horas que el usuario quiere asignarle al asistente.
+        * @param Asistente $this El modelo del asistente que representa al asistente al que se le realiza el cambio.
+        * @return boolean Retorna true si los datos son válidos y false de lo contrario.
+        */
+        public function validarActualizacionDeHoras($pHorasNuevas){
+            $horas_anteriores = $this->horas;
+            $horas_totales = $this->contarHorasAsistenciaActuales();
+            $horas_totales -= $horas_anteriores;
+            $horas_totales += $pHorasNuevas;
+            $this->horas = $horas_totales;
+            if ($this->validate('horas',false)) {
+                $this->horas = $pHorasNuevas;
+                if ($this->validate('horas',false)) {
+                    return true;
+                }//fin si las horas totales y las horas nuevas son válidas.
+                else {
+                    $this->horas = $horas_anteriores;
+                    return false;
+                }//fin si no son válidas
+            }//fin si las horas totales son válidas
+            else {
+                $this->horas = $horas_anteriores;
+                return false;
+            }//fin si las horas totales no son válidas
+        }// fin validación de las nuevas horas ingresadas
     
 }//fin clase Modelo Asistente
 

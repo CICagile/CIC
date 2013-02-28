@@ -156,5 +156,31 @@ class Periodos extends CActiveRecord
               $this->addError('inicio', "" . $this->getAttributeLabel('inicio') . " no se encuentra dentro del periodo del proyecto.");
           }//fin si el proyecto termina antes que la asistencia
     }//fin validar fecha fin asistencia
+    
+    /**
+        * Valida que la nueva fecha de fin de asistencia se encuentre dentro del periodo del proyecto. Si es válido la fecha de la asistencia
+        * se cambia y si no es válido se mantienen las fechas originales de la asistencia.
+        * @param Periodos $this Periodo de la asistencia actual.
+        * @param string $pFinNuevo nueva fecha de fin de asistencia.
+        * @param Proyectos $pProyecto Modelo del proyecto al que pertenece el asistente.
+        * @return boolean Retorna true si los datos son válidos o false de lo contrario.
+        */
+        public function validarActualizacionFechaFinAsistencia($pFinNuevo,$pProyecto){
+        $fin_anterior = $this->fin;
+        $this->fin =$pFinNuevo;
+        if ($this->validate()) {
+            if (strtotime($this->fin) <= strtotime($pProyecto->fin) && strtotime($this->fin) > strtotime($pProyecto->inicio))
+                return true;
+            else {
+                $this->addError('fin',$this->getAttributeLabel('fin') . ' no se encuentra dentro del período del proyecto.');
+                $this->fin = $fin_anterior;
+                return false;
+            }//fin si la fecha nueva no corresponde dentro del proyecto
+        }//fin si la nueva fecha es válida
+        else {
+            $this->fin = $fin_anterior;
+            return false;
+        }//fin si la nueva fecha no es válida
+        }//fin validación de la fin nueva del asitente
         
 }
