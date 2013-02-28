@@ -91,7 +91,7 @@ class ProyectosController extends Controller {
      */
     private function actualizarHorasAsistencia($pAsistente, $pHoras) {
         if ($pAsistente->validarActualizacionDeHoras($pHoras)) {
-            if (!$pAsistente->cambiarRolProyecto())
+            if (!$pAsistente->cambiarHorasAsistencia())
                 throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
         }//fin si las horas nuevas son válidas
     }//fin actualizar horas asistencia
