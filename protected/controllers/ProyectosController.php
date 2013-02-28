@@ -132,9 +132,9 @@ class ProyectosController extends Controller {
     private function cargarDatosActualizablesAsistente($pDatos) {
         $asistente = new Asistente;
         $asistente->scenario = 'actInfoProy';
-        $asistente->carnet = $datos['carnet'];
-        $asistente->rol = $datos['rol'];
-        $asistente->horas = $datos['horas'];
+        $asistente->carnet = $pDatos['carnet'];
+        $asistente->rol = $pDatos['rol'];
+        $asistente->horas = $pDatos['horas'];
         return $asistente;
     }//fin cargar datos actualizables del asistente
     
@@ -186,7 +186,7 @@ class ProyectosController extends Controller {
             if ($asistente->hasErrors())
                 array_push ($pErrores, $asistente);
         }//fin for
-        return respuesta;
+        return $respuesta;
     }//fin actualizar cada asistente
     
     /**
