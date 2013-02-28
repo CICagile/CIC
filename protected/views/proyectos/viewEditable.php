@@ -122,7 +122,10 @@ $columns = array (
 ));
 ?>
 
-<?php echo $form->errorSummary($errores,'Se han detectado los siguientes errores:'); ?>
+<?php foreach ($errores as $error) {
+    echo $form->errorSummary($error,'Se han detectado los siguientes errores con el asistente ' . $error['Asistente']->nombre . ' ' . $error['Asistente']->apellido1 .' (' . $error['Asistente']->carnet . ') :');
+}//fin for
+?>
 
 <?php $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'asistente-grid',
