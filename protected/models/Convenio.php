@@ -40,9 +40,7 @@ class Convenio extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('nombre', 'required'),
-			array('nombre', 'length', 'max'=>250),
-			// The following rule is used by search().
-			// Please remove those attributes that should not be searched.
+			array('nombre', 'length', 'min'=>3, 'max'=>250, 'tooShort'=> 'El {attribute} debe ser mayor a {min} caracteres.', 'tooLong' => 'El {attribute} debe ser menor a {max} caracteres.'),
 			array('idtbl_convenio, nombre', 'safe', 'on'=>'search'),
 		);
 	}

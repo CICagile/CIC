@@ -47,11 +47,21 @@ $columns = array (
     ),
     array(
         'class'=>'CButtonColumn',
-        'template'=>'{view}{update}',
+        'template'=>'{view}{update}{desvincularasistente}',
         'viewButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("id"=>$data["carnet"]))',
         'viewButtonLabel' => 'Ver información detallada del asistente',
         'updateButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/updateDP", array("id"=>$data["carnet"]))',
         'updateButtonLabel' => 'Editar información personal del asistente',
+          'buttons'=>array
+                    (
+                        'desvincularasistente' => array
+                        (
+                            'label'=>'Desvincular un asistente de un proyecto.',
+                            'imageUrl'=>Yii::app()->request->baseUrl.'/images/desvincularuser.jpg',
+                            //'click'=>'Yii::app()->createUrl("proyectos/ver", array("id"=>$data["carnet"]))',
+                          
+                        ),                        
+                    ),
 ));
 
 ?>
