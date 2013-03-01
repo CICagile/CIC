@@ -100,6 +100,7 @@ echo CHtml::endForm();
         var ano = fecha_fin_array[2].toString();
       
       $("#fecha_ampliacion").click(function(){
+          $("#ampliacion_error").html("");
           $( "#fecha_ampliacion" ).datepicker( "option", "minDate", new Date(ano, mes, dia) );  
           $( "#fecha_ampliacion" ).datepicker("show"); 
       });
