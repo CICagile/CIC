@@ -98,7 +98,7 @@
         
         <div class="row">
 		<?php echo $form->labelEx($model,'horas'); ?>
-		<?php echo $form->textField($model,'horas',array('size'=>5,'maxlength'=>5)); ?>
+		<?php echo $form->textField($model,'horas',array('size'=>4,'maxlength'=>4)); ?>
 		<?php echo $form->error($model,'horas'); ?>
 	</div>
         
