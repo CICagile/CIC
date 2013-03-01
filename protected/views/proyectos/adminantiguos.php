@@ -37,11 +37,6 @@ $this->menu=array(
                       'name' => 'fin',                      
                 ), 
                 array(
-                      'header' => 'Estado',
-                      'name' => 'estado',
-                      'value' => '$data["estado"] == 0 ? "Aprobado" : "Ampliado" ',
-                ), 
-                array(
                     'class'=>'CButtonColumn',
                     'template'=>'{view}{ampliar}',
                     'viewButtonUrl'=>'Yii::app()->controller->createUrl("proyectos/verantiguos", array("id"=>$data["idtbl_Proyectos"]))',
