@@ -239,9 +239,8 @@ class Proyectos extends CActiveRecord
                 return null;            
             else{
                 $this->scenario = 'cargarModelo';
-                $this->setAttributes($model);//Asociamos los atributos reales de un Proyecto
-                $this->idtbl_Proyectos = $model['idtbl_Proyectos'];//Se asocia este atributo de manera manual porque setAttributes no asocia atributos no seguros. 
-                $this->idperiodo = $model['idPeriodo'];
+                $this->setAttributes($model);//Asociamos los atributos reales de un Proyecto                 
+                $this->idperiodo = $model['idPeriodo'];//Asociamos el atributo simulado idperiodo
                 $this->inicio = $model['inicio'];//Asociamos el atributos simulado inicio
                 $this->fin = $model['fin'];//Asociamos el atributos simulado fin
                 return $this; //Retornamos el objeto Proyecto
