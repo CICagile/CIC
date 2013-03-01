@@ -35,12 +35,7 @@ $this->menu=array(
                 array(
                       'header' => 'Fecha fin',
                       'name' => 'fin',                      
-                ), 
-                array(
-                      'header' => 'Estado',
-                      'name' => 'estado',
-                      'value' => '$data["estado"] == 0 ? "Aprobado" : "Ampliado" ',
-                ), 
+                ),
                 array(
                     'class'=>'CButtonColumn',
                     'template'=>'{view}',
