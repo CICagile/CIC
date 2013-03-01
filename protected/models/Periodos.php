@@ -45,12 +45,23 @@ class Periodos extends CActiveRecord
                         array('inicio', 'date', 'format'=> 'dd-MM-yyyy'),
                         array('fin', 'date', 'format'=> 'dd-MM-yyyy'),
                         array('fin','compare', 'compareAttribute' => 'inicio', 'operator' => '!=', 'message' => 'La {attribute} debe ser distinto a la fecha de inicio.'),                       
+                        array('fin', 'validarFinEnFuturo', 'on'=>'cambiarAsistencia'),
                         array('fin', 'ValidadorFechaMayor'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('idPeriodo, inicio, fin', 'safe', 'on'=>'search'),
 		);
 	}       
+        
+        /**
+         * Verifica que la fecha fin del periodo no corresponda a una fecha anterior o igual a la fecha del servidor.
+         */
+        public function validarFinEnFuturo($attribute, $params) {
+            if(isset($params['on']) && $params['on'] != $this->scenario)
+            return;
+            if (strtotime($this->fin) <= date('d-m-Y'))
+                $this->addError($attribute,  $this->getAttributeLabel($attribute) . ' no puede ser menor o igual a la fecha de hoy.');
+        }//fin validar fin en futuro
         
         public function ValidadorFechaMayor($attribute, $params)
         {
@@ -145,5 +156,31 @@ class Periodos extends CActiveRecord
               $this->addError('inicio', "" . $this->getAttributeLabel('inicio') . " no se encuentra dentro del periodo del proyecto.");
           }//fin si el proyecto termina antes que la asistencia
     }//fin validar fecha fin asistencia
+    
+    /**
+        * Valida que la nueva fecha de fin de asistencia se encuentre dentro del periodo del proyecto. Si es válido la fecha de la asistencia
+        * se cambia y si no es válido se mantienen las fechas originales de la asistencia.
+        * @param Periodos $this Periodo de la asistencia actual.
+        * @param string $pFinNuevo nueva fecha de fin de asistencia.
+        * @param Proyectos $pProyecto Modelo del proyecto al que pertenece el asistente.
+        * @return boolean Retorna true si los datos son válidos o false de lo contrario.
+        */
+        public function validarActualizacionFechaFinAsistencia($pFinNuevo,$pProyecto){
+        $fin_anterior = $this->fin;
+        $this->fin =$pFinNuevo;
+        if ($this->validate()) {
+            if (strtotime($this->fin) <= strtotime($pProyecto->fin) && strtotime($this->fin) > strtotime($pProyecto->inicio))
+                return true;
+            else {
+                $this->addError('fin',$this->getAttributeLabel('fin') . ' no se encuentra dentro del período del proyecto.');
+                $this->fin = $fin_anterior;
+                return false;
+            }//fin si la fecha nueva no corresponde dentro del proyecto
+        }//fin si la nueva fecha es válida
+        else {
+            $this->fin = $fin_anterior;
+            return false;
+        }//fin si la nueva fecha no es válida
+        }//fin validación de la fin nueva del asitente
         
 }

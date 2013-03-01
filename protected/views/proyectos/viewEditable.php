@@ -1,15 +1,15 @@
 <?php
 /* @var $this ProyectosController */
 /* @var $model Proyectos */
-/* @var $asistente Asistente */
+/* @var $errores array */
 
 $this->breadcrumbs=array(
-	'Proyectos'=>array('index'),
+	'Proyectos'=>array('admin'),
 	$model->codigo,
 );
 
 $this->menu=array(
-	array('label'=>'Ver Proyectos', 'url'=>array('index')),
+	array('label'=>'Ver Proyectos', 'url'=>array('admin')),
 	array('label'=>'Nuevo Proyecto', 'url'=>array('create')),        
 	array('label'=>'Agregar asistente', 'url'=>array('agregarasistente', 'id'=>$model->idtbl_Proyectos)),
 	/*array('label'=>'Delete Proyectos', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->idtbl_Proyectos),'confirm'=>'Are you sure you want to delete this item?')),
@@ -19,37 +19,51 @@ $this->menu=array(
 //Columnas de la tabla de los asistentes activos del proyecto.
 $columns = array (
     array(
-        'header'=>CHtml::encode($asistente->getAttributeLabel('carnet')),
+        'header'=>CHtml::encode(Asistente::model()->getAttributeLabel('carnet')),
         'name'=>'carnet',
     ),
     array(
-        'header'=>CHtml::encode($asistente->getAttributeLabel('nombre')),
+        'header'=>CHtml::encode(Asistente::model()->getAttributeLabel('nombre')),
         'name'=>'nombre',
     ),
     array(
-        'header'=>CHtml::encode($asistente->getAttributeLabel('apellido1')),
+        'header'=>CHtml::encode(Asistente::model()->getAttributeLabel('apellido1')),
         'name'=>'apellido1',
     ),
     array(
-        'header'=>CHtml::encode($asistente->getAttributeLabel('apellido2')),
+        'header'=>CHtml::encode(Asistente::model()->getAttributeLabel('apellido2')),
         'name'=>'apellido2',
     ),
     array(
-        'header'=>CHtml::encode($asistente->getAttributeLabel('rol')),
+        'header'=>CHtml::encode(Asistente::model()->getAttributeLabel('rol')),
         'name'=>'rol',
-        /*'value'=>'CHtml::dropDownList("rol[$row]", $data["rol"],
+        'value'=>'CHtml::dropDownList("rol[$row]", $data["rol"],
             CHtml::listData(RolAsistente::model()->findAll(), "nombre", "nombre"), array("empty"=>"Elija un rol"))',
-        'type'=>'raw',*/
+        'type'=>'raw',
     ),
     array(
         'header'=>CHtml::encode('Horas'),
         'name'=>'horas',
-        'value'=>'CHtml::textField("horas[$row]",$data["horas"],array("size"=>5,"maxlength"=>5))',
+        'value'=>'CHtml::textField("horas[$row]",$data["horas"],array("size"=>4,"maxlength"=>4))',
         'type'=>'raw',
     ),
     array(
         'header'=>CHtml::encode('Fin de la asistencia'),
         'name'=>'fin',
+        'type'=>'raw',
+        'value'=>'$this->grid->widget("zii.widgets.jui.CJuiDatePicker", array(
+                        "name" => "fin[$row]",
+                        "value" => $data["fin"],
+                        "language" => "es",
+                        "options" => array(                            
+                            "showAnim"=>"fold",
+                            "dateFormat"=>"dd-mm-yy",
+                            "changeYear"=>true,
+                            "changeMonth"=>true,
+                        ),
+                        "htmlOptions"=>array(                            
+                            "readonly" => "readonly"
+                        ),),true)',
     ),
     array(
         'class'=>'CButtonColumn',
@@ -108,7 +122,10 @@ $columns = array (
 ));
 ?>
 
-<?php echo $form->errorSummary(array($model,$asistente),'Se han detectado los siguientes errores:'); ?>
+<?php foreach ($errores as $error) {
+    echo $form->errorSummary($error,'Se han detectado los siguientes errores con el asistente ' . $error['Asistente']->nombre . ' ' . $error['Asistente']->apellido1 .' (' . $error['Asistente']->carnet . ') :');
+}//fin for
+?>
 
 <?php $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'asistente-grid',

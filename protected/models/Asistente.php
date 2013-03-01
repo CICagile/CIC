@@ -34,7 +34,7 @@ class Asistente  extends CModel{
             return array(
                 array('nombre, apellido1, cedula, numerocuenta, banco, cuentacliente, carnet, carrera, telefono, correo, codigo, rol, horas', 'required', 'message'=>'{attribute} no puede dejarse en blanco.', 'on'=>'nuevo'),
                 array('nombre, apellido1, cedula, numerocuenta, banco, cuentacliente, carnet, carrera, telefono, correo', 'required', 'message'=>'{attribute} no puede dejarse en blanco.', 'on'=>'actDP'),
-                array('horas','required','message'=>'{attribute} no puede dejarse en blanco.','on'=>'actInfoProy'),
+                array('horas, rol','required','message'=>'{attribute} no puede dejarse en blanco.','on'=>'actInfoProy'),
                 array('nombre, apellido1, apellido2, codigo', 'length', 'max'=>20),
                 array('cedula','length','min'=>9,'max'=>20),
                 array('carnet','length', 'min'=>7,'max'=>15),
@@ -44,6 +44,7 @@ class Asistente  extends CModel{
                 array('banco', 'length', 'max'=>70),
                 array('cuentacliente', 'length', 'min'=>17, 'max'=>17),
                 array('telefono, cedula, cuentacliente, carnet', 'match', 'pattern'=>'/^[\p{N}]+$/u', 'message'=>'{attribute} sólo puede estar compuesto por dígitos.'),
+                array('horas', 'match', 'pattern'=>'/^[0-9]+(.(5?)(0*))?$/', 'message'=>'{attribute} no son válidas.'),
                 array('horas', 'numerical', 'max'=>20, 'min'=>1, 'tooBig'=>'Se permite un máximo de {max} horas de asistencia', 'tooSmall'=>'Se permite un mínimo de {min} horas.'),
                 array('correo', 'email', 'message'=>'Dirección de correo inválida'),
                 array('nombre, apellido1, apellido2, ', 'match', 'pattern'=>'/^[\p{L} ]+$/u'),
@@ -387,6 +388,72 @@ class Asistente  extends CModel{
             }//fin catch
             return true;
         }//cambia el rol del asistente en un proyecto.
+        
+        /**
+         * Cambia la fecha del fin de la asistencia por la que especifique el usuario. Los periodos de rol, horas y asistencia
+         * son afectados en la base de datos.
+         * @param string $pFecha Fecha nueva del fin de la asistencia.
+         * @return boolean Retorna true si la transacción tuvo éxito o false de lo contrario.
+         */
+        public function cambiarFinAsistencia($pFecha) {
+            $conexion = Yii::app()->db;
+            $call = 'CALL actualizarFinAsistencia(:pk, :carnet, :fecha)';
+            $transaccion = $conexion->beginTransaction();
+            try {
+                $comando = $conexion->createCommand($call);
+                $comando->bindParam(':pk', $this->codigo, PDO::PARAM_INT);
+                $comando->bindParam(':carnet', $this->carnet, PDO::PARAM_STR);
+                $comando->bindParam(':fecha', $pFecha, PDO::PARAM_STR);
+                $comando->execute();
+                $transaccion->commit();
+            }//fin try
+            catch (Exception $e) {
+                Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
+                $transaccion->rollback();
+                return false;
+            }//fin catch
+            return true;
+        }//fin cambiar fecha del fin de la asistencia
+        
+        /**
+         * Este método retorna una instancia del modelo para cuando se ocupe
+         * acceder a sus propiedades. Por ejemplo, para conseguir el string
+         * de los labels de los atributos.
+         * @return \Asistente Una instancia del modelo asistente.
+         */
+        public static function model(){
+            return new Asistente;
+        }//fin model
+        
+        /**
+        * Valida que las horas nuevas cumplan con que sean numéricas y que el asistente no sobrepase
+        * las horas acumuladas establecidas. Si las horas son válidas el modelo queda con las horas nuevas
+        * y si no son válidas el modelo queda con las horas anteriores.
+        * @param string $pHorasNuevas Las horas que el usuario quiere asignarle al asistente.
+        * @param Asistente $this El modelo del asistente que representa al asistente al que se le realiza el cambio.
+        * @return boolean Retorna true si los datos son válidos y false de lo contrario.
+        */
+        public function validarActualizacionDeHoras($pHorasNuevas){
+            $horas_anteriores = $this->horas;
+            $horas_totales = $this->contarHorasAsistenciaActuales();
+            $horas_totales -= $horas_anteriores;
+            $horas_totales += $pHorasNuevas;
+            $this->horas = $horas_totales;
+            if ($this->validate('horas',false)) {
+                $this->horas = $pHorasNuevas;
+                if ($this->validate('horas',false)) {
+                    return true;
+                }//fin si las horas totales y las horas nuevas son válidas.
+                else {
+                    $this->horas = $horas_anteriores;
+                    return false;
+                }//fin si no son válidas
+            }//fin si las horas totales son válidas
+            else {
+                $this->horas = $horas_anteriores;
+                return false;
+            }//fin si las horas totales no son válidas
+        }// fin validación de las nuevas horas ingresadas
     
 }//fin clase Modelo Asistente
 
