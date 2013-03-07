@@ -57,7 +57,7 @@ class ObjetivoProyectoController extends Controller
 		{
 			$model->attributes=$_POST['ObjetivoProyecto'];
 			if($model->save())
-				$this->redirect('../admin');
+				$this->redirect('../ObjetivoProyecto/admin');
 		}
 
 		$this->render('create',array(
