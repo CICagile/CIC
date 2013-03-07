@@ -154,7 +154,7 @@ class AsistenteController extends Controller
 			if($model->validate(NULL, false)){
                                 $model->attributes = $_POST['Asistente'];
 				if ($model->actualizarDatosPersonales($id))
-                                    $this->redirect(array('index'));
+                                    $this->redirect(array('view','id'=>$model->carnet));
                                 else
                                     throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
                         }//fin si los datos son válidos
