@@ -52,7 +52,9 @@ class ConvenioController extends Controller
 	public function actionView($id)
 	{
 		$this->render('view',array(
-			'model'=>$this->loadModel($id),
+			//'model'=>$this->loadModel($id),
+                 
+                    
 		));
 	}
 
@@ -71,7 +73,7 @@ class ConvenioController extends Controller
 		{
 			$model->attributes=$_POST['Convenio'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->idtbl_convenio));
+				 $this->redirect(array('admin'));
 		}
 
 		$this->render('create',array(

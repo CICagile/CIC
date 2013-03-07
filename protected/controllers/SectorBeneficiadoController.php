@@ -52,7 +52,7 @@ class SectorBeneficiadoController extends Controller
 	public function actionView($id)
 	{
 		$this->render('view',array(
-			'model'=>$this->loadModel($id),
+			 $this->redirect(array('admin')),
 		));
 	}
 
@@ -71,7 +71,7 @@ class SectorBeneficiadoController extends Controller
 		{
 			$model->attributes=$_POST['SectorBeneficiado'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->idtbl_sectorbeneficiado));
+				$this->actionAdmin();
 		}
 
 		$this->render('create',array(
@@ -95,7 +95,7 @@ class SectorBeneficiadoController extends Controller
 		{
 			$model->attributes=$_POST['SectorBeneficiado'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->idtbl_sectorbeneficiado));
+				 $this->redirect(array('admin'));
 		}
 
 		$this->render('update',array(
