@@ -38,9 +38,7 @@ class Adscrito extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('idtbl_adscrito, nombre', 'required'),
                         array('nombre', 'unique', 'className' => 'Adscrito', 'caseSensitive' => true, 'message' => 'Ya existe esa adscripción.'), 
-			array('idtbl_adscrito', 'numerical', 'integerOnly'=>true),
 			array('nombre', 'length', 'max'=>250),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
@@ -67,7 +65,7 @@ class Adscrito extends CActiveRecord
 	{
 		return array(
 			'idtbl_adscrito' => 'Idtbl Adscrito',
-			'nombre' => 'Nombre',
+			'nombre' => 'Adscrito a',
 		);
 	}
 
