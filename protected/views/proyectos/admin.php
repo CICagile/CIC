@@ -39,7 +39,7 @@ $this->menu=array(
                 ), 
                 array(
                     'class'=>'CButtonColumn',
-                    'template'=>'{view}{update}{agregarasistente}',
+                    'template'=>'{view}{update}{agregarasistente}{ampliar}',
                     'viewButtonUrl'=>'Yii::app()->controller->createUrl("proyectos/ver", array("id"=>$data["idtbl_Proyectos"]))',
                     'viewButtonLabel' => 'Ver información detallada del proyecto.',
                     'updateButtonUrl'=>'Yii::app()->controller->createUrl("proyectos/actualizar", array("id"=>$data["idtbl_Proyectos"]))',
@@ -51,7 +51,13 @@ $this->menu=array(
                             'label'=>'Agregar un asistente al proyecto.',
                             'imageUrl'=>Yii::app()->request->baseUrl.'/images/page_portrait_shot.png',
                             'url'=>'Yii::app()->createUrl("proyectos/agregarasistente", array("id"=>$data["idtbl_Proyectos"]))',
-                        ),                        
+                        ), 
+                        'ampliar' => array
+                        (
+                            'label'=>'Ampliar el proyecto.',
+                            'imageUrl'=>Yii::app()->request->baseUrl.'/images/time_add.png',
+                            'url'=>'Yii::app()->createUrl("proyectos/ampliarproyecto", array("id"=>$data["idtbl_Proyectos"]))',
+                        ),  
                     ),
                     
                 ),
@@ -68,6 +74,7 @@ function cssgrid(id,data)
     $('.$string.'[name="FiltersForm[inicio]"]'.$string.').css({"width" : "70px"});
     $('.$string.'[name="FiltersForm[fin]"]'.$string.').css({"width" : "70px"});
     $('.$string.'[name="FiltersForm[codigo]"]'.$string.').css({"width" : "110px"});
+    $(".filters > td:last").css({"width" : "65px"});
 }
 
 '   
@@ -79,6 +86,7 @@ function cssgrid(id,data)
     $('[name="FiltersForm[inicio]"]').css({'width' : '70px'})
     $('[name="FiltersForm[fin]"]').css({'width' : '70px'}) 
     $('[name="FiltersForm[codigo]"]').css({'width' : '110px'})
+    $('.filters > td:last').css({'width' : '65px'})
     
     
     $('.delete').click(function(e){

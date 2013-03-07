@@ -26,7 +26,8 @@ class ProyectosController extends Controller {
     public function accessRules() {
         return array(            
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('ver','ActualizarInfoAsistentes','crear', 'actualizar', 'agregarasistente', 'AsistenteAutoComplete', 'ValidarAgregarAsistente', 'adminantiguos', 'verantiguos'),
+                'actions' => array('ver','ActualizarInfoAsistentes','crear', 'actualizar', 'agregarasistente', 'AsistenteAutoComplete',
+                                    'ValidarAgregarAsistente', 'adminantiguos', 'verantiguos', 'ampliarproyecto'),
                 'users' => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -353,8 +354,6 @@ class ProyectosController extends Controller {
                 'dataProvider' => $dataProvider,
             ));
     }
-
-    
     
     public function actionAdminAntiguos() {
         // Create filter model and set properties
@@ -391,6 +390,116 @@ class ProyectosController extends Controller {
                 'filtersForm' => $filtersForm,
                 'dataProvider' => $dataProvider,
             ));
+    }
+    
+    public function actionAmpliarProyecto($id){
+        $modelproyectos = Proyectos::model()->obtenerProyectoconPeriodoActual($id);        
+        if ($modelproyectos === null)
+            throw new CHttpException(404, 'La página solicitado no se ha encontrado.');
+        
+        if(Yii::app()->request->isAjaxRequest && isset($_POST["ampliacion"])){            
+            
+            if(trim($_POST["ampliacion"]) == NULL){
+                $response = array(
+                    'ok' => false, 
+                    'msg' => 'Debe seleccionar la fecha de ampliación.',
+                );
+            }else
+            {
+                $fecha_ampliacion = $_POST["ampliacion"];
+                
+                $transaction = Yii::app()->db->beginTransaction();                
+                $periodoantiguo = Periodos::model()->findByPk($modelproyectos->idperiodo);
+                $periodoantiguo->fin = date("Y-m-d");              
+                $result = $periodoantiguo->save(false);
+                
+                if($result){
+                    
+                    $periodoampliado = new Periodos();
+                    $periodoampliado->inicio = $periodoantiguo->inicio;
+                    $periodoampliado->fin = $this->FechaPhptoMysql($fecha_ampliacion);
+                    
+                    $result = $periodoampliado->save(false);
+                    
+                    if($result){
+                        
+                        $historialproyectosperiodo = new HistorialProyectosPeriodo();
+                        $historialproyectosperiodo->idtbl_Proyectos = $modelproyectos->idtbl_Proyectos;
+                        $historialproyectosperiodo->idPeriodo = $periodoampliado->idPeriodo;
+                        
+                        $result = $historialproyectosperiodo->save(false);
+                        
+                        if($result){
+                        
+                            //Cambiamos el estado del proyecto
+                            $modelproyectos->estado = $modelproyectos->codampliado;
+
+                            $result = $modelproyectos->save(false);
+
+                            if($result){
+                                $transaction->commit();
+                                Yii::log("Exito ampliando el proyecto con el codigo: ".$modelproyectos->codigo." con el periodo ".$periodoampliado->idPeriodo , "info", "application.
+                                controllers.ProyectosController");
+                                $response = array(
+                                    'ok' => true, 
+                                    'msg' => 'El proyecto se ha ampliado con éxito.',
+                                );
+                                echo CJSON::encode($response);               
+                                Yii::app()->end(); 
+                                
+                             }else{
+                                $transaction->rollBack();
+                                Yii::log("Rollback al intentar ampliar al proyecto con el codigo: " . $modelproyectos->codigo, "warning", "application.
+                                controllers.ProyectosController");
+                                $response = array(
+                                    'ok' => false, 
+                                    'msg' => 'Ha ocurrido un inconveniente al intentar ampliar el proyecto.',
+                                );
+                                echo CJSON::encode($response);               
+                                Yii::app()->end();
+                            } 
+                        }else{
+                            $transaction->rollBack();
+                            Yii::log("Rollback al intentar ampliar al proyecto con el codigo: " . $modelproyectos->codigo, "warning", "application.
+                            controllers.ProyectosController");
+                            $response = array(
+                                'ok' => false, 
+                                'msg' => 'Ha ocurrido un inconveniente al intentar ampliar el proyecto.',
+                            );
+                            echo CJSON::encode($response);               
+                            Yii::app()->end();
+                        }                        
+                   }else{
+                        $transaction->rollBack();
+                        Yii::log("Rollback al intentar ampliar al proyecto con el codigo: " . $modelproyectos->codigo, "warning", "application.
+                        controllers.ProyectosController");
+                        $response = array(
+                            'ok' => false, 
+                            'msg' => 'Ha ocurrido un inconveniente al intentar ampliar el proyecto.',
+                        );
+                        echo CJSON::encode($response);               
+                        Yii::app()->end();
+                   }
+                }else{
+                    $transaction->rollBack();
+                    Yii::log("Rollback al intentar ampliar al proyecto con el codigo: " . $modelproyectos->codigo, "warning", "application.
+                    controllers.ProyectosController");
+                    $response = array(
+                            'ok' => false, 
+                            'msg' => 'Ha ocurrido un inconveniente al intentar ampliar el proyecto.',
+                     );
+                     echo CJSON::encode($response);               
+                     Yii::app()->end();
+                }                
+            }
+            
+            echo CJSON::encode($response);               
+            Yii::app()->end();     
+        }
+        
+        $this->render('ampliar', array(
+            'modelproyectos' => $modelproyectos          
+        ));
     }
     
     /**

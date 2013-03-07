@@ -39,6 +39,7 @@ class Proyectos extends CActiveRecord
         public $fecha_fin_search;
         
         //Las variables fecha inicio y fecha fin se utilizan para simular el periodo del proyecto.
+        public $idperiodo;
         public $inicio;
         public $fin;
         
@@ -221,7 +222,7 @@ class Proyectos extends CActiveRecord
         public function obtenerProyectoconPeriodoActual($idproyecto){
             
             $connection=Yii::app()->db;
-            $sql=   "SELECT tbl_proyectos.*, tbl_periodos.inicio, tbl_periodos.fin
+            $sql=   "SELECT tbl_proyectos.*, tbl_periodos.idPeriodo, tbl_periodos.inicio, tbl_periodos.fin
                     FROM tbl_proyectos
                     INNER JOIN tbl_historialproyectosperiodos
                     ON (tbl_proyectos.idtbl_Proyectos = tbl_historialproyectosperiodos.idtbl_Proyectos)
@@ -238,7 +239,8 @@ class Proyectos extends CActiveRecord
                 return null;            
             else{
                 $this->scenario = 'cargarModelo';
-                $this->setAttributes($model);//Asociamos los atributos reales de un Proyecto
+                $this->setAttributes($model);//Asociamos los atributos reales de un Proyecto                 
+                $this->idperiodo = $model['idPeriodo'];//Asociamos el atributo simulado idperiodo
                 $this->inicio = $model['inicio'];//Asociamos el atributos simulado inicio
                 $this->fin = $model['fin'];//Asociamos el atributos simulado fin
                 return $this; //Retornamos el objeto Proyecto
@@ -269,13 +271,20 @@ class Proyectos extends CActiveRecord
         public function obtenerProyectosAntiguos(){                    
             
             $connection=Yii::app()->db;
-            $sql=   "SELECT tbl_proyectos.*, DATE_FORMAT(P.inicio, '%d-%m-%Y') AS inicio, DATE_FORMAT(P.fin, '%d-%m-%Y') AS fin
-                    from tbl_historialproyectosperiodos
-                    inner join (SELECT tbl_periodos.* FROM tbl_periodos WHERE fin < SYSDATE() ORDER BY fin DESC) P
-                    ON tbl_historialproyectosperiodos.idPeriodo = P.idPeriodo
-                    INNER JOIN tbl_proyectos
-                    ON tbl_historialproyectosperiodos.idtbl_Proyectos = tbl_proyectos.idtbl_Proyectos
-                    GROUP BY tbl_proyectos.idtbl_Proyectos"; 
+            $sql=   "SELECT idtbl_Proyectos, nombre, codigo, estado, tipoproyecto, idtbl_adscrito, idtbl_objetivoproyecto,
+                    idPeriodo, DATE_FORMAT(inicio, '%d-%m-%Y') AS inicio, DATE_FORMAT(fin, '%d-%m-%Y') AS fin 
+                    FROM(SELECT * FROM (
+                            SELECT tbl_proyectos.*, tbl_periodos.*
+                            FROM tbl_proyectos
+                            INNER JOIN tbl_historialproyectosperiodos
+                            ON (tbl_proyectos.idtbl_Proyectos = tbl_historialproyectosperiodos.idtbl_Proyectos)					
+                            INNER JOIN tbl_periodos 
+                            ON (tbl_historialproyectosperiodos.idPeriodo = tbl_periodos.idPeriodo)			
+                            ORDER BY tbl_periodos.fin desc
+                        ) AS p
+                        GROUP BY idtbl_Proyectos
+                    ) AS proyectos
+                    WHERE proyectos.fin < SYSDATE()"; 
             $command=$connection->createCommand($sql);
             $models = $command->queryAll();
             
