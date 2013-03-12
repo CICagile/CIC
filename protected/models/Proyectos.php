@@ -38,6 +38,8 @@ class Proyectos extends CActiveRecord
         public $fecha_inicio_search;
         public $fecha_fin_search;
         
+        //
+        public $idtbl_sectorbeneficiado;
         //Las variables fecha inicio y fecha fin se utilizan para simular el periodo del proyecto.
         public $idperiodo;
         public $inicio;
@@ -70,9 +72,9 @@ class Proyectos extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-                        array('nombre, codigo, idtbl_objetivoproyecto, tipoproyecto, idtbl_adscrito, estado', 'required', 'message' => '{attribute} es requerido.'),                        
+                        array('nombre, codigo, idtbl_objetivoproyecto, tipoproyecto, idtbl_adscrito, idtbl_sectorbeneficiado, estado', 'required', 'message' => '{attribute} es requerido.'),                        
                         array('codigo', 'unique', 'className' => 'Proyectos', 'message' => 'Ya existe un proyecto con ese código.'),                      
-			array('idtbl_objetivoproyecto, tipoproyecto, idtbl_adscrito, estado', 'numerical', 'integerOnly'=>true),
+			array('idtbl_objetivoproyecto, tipoproyecto, idtbl_adscrito, idtbl_sectorbeneficiado, estado', 'numerical', 'integerOnly'=>true),
                     	array('nombre', 'length', 'min'=>3, 'max'=>500, 'tooShort'=> 'El {attribute} debe ser mayor a {min} caracteres.', 'tooLong' => 'El {attribute} debe ser menor a {max} caracteres.'),
 			array('codigo', 'length', 'min'=>2, 'max'=>20, 'tooShort'=> 'El {attribute} debe ser mayor a {min} caracteres.', 'tooLong' => 'El {attribute} debe ser menor a {max} caracteres.'),
 			// The following rule is used by search().
@@ -119,7 +121,8 @@ class Proyectos extends CActiveRecord
                         'idtbl_objetivoproyecto' => 'Objetivo del proyecto',
                         'tipoproyecto' => 'Tipo proyecto',
                         'idtbl_adscrito' => 'Adscrito a',
-			'estado' => 'Estado del proyecto',                    
+			'estado' => 'Estado del proyecto',
+                        'idtbl_sectorbeneficiado' => 'Sector Beneficiado',
 		);
 	}
 

@@ -83,7 +83,15 @@
 		<?php echo $form->dropDownList($modelproyectos, 'idtbl_adscrito',
                         CHtml::listData(Adscrito::model()->findAll(), 'idtbl_adscrito', 'nombre'), array('empty'=>'Elija la adscripción del proyecto', 'id'=>'Proyectos_idtbl_adscrito')) ?>
 		<?php echo $form->error($modelproyectos,'idtbl_adscrito'); ?>
-	</div>  
+	</div>
+        
+        <div class="row">
+		<?php echo $form->labelEx($modelproyectos,'idtbl_sectorbeneficiado'); ?>
+		<?php echo $form->dropDownList($modelproyectos, 'idtbl_sectorbeneficiado',
+                        CHtml::listData(SectorBeneficiado::model()->findAll(), 'idtbl_sectorbeneficiado', 'nombre'), 
+                        array('empty'=>'Elija el sector beneficiado', 'id'=>'Proyectos_idtbl_sectorbeneficiado')) ?>
+		<?php echo $form->error($modelproyectos,'idtbl_sectorbeneficiado'); ?>
+	</div>
         
         <div class="row buttons">
 		<?php echo CHtml::submitButton('Crear'); ?>
