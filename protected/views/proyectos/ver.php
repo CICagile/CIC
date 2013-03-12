@@ -86,7 +86,8 @@ $columns = array (
                 ),
                 '_tipoproyecto.nombre',                
                 '_objetivoproyecto.nombre',
-                '_adscrito.nombre'             
+                '_adscrito.nombre',
+                'idtbl_sectorbeneficiado',
 	),
 )); 
       

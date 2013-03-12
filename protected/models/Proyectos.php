@@ -40,6 +40,7 @@ class Proyectos extends CActiveRecord
         
         //
         public $idtbl_sectorbeneficiado;
+        public $tblSectorbeneficiados;
         //Las variables fecha inicio y fecha fin se utilizan para simular el periodo del proyecto.
         public $idperiodo;
         public $inicio;
@@ -55,6 +56,10 @@ class Proyectos extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+        
+        public function __construct(){
+            $tblSectorbeneficiados = new SectorBeneficiado;
+        }
 
 	/**
 	 * @return string the associated database table name
