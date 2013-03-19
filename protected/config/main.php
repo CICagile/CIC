@@ -53,6 +53,7 @@ return array(
 		// uncomment the following to use a MySQL database
 		
 		'db'=>array(
+                       // 'connectionString' => 'mysql:host=169.254.150.189;dbname=db_cic',
 			'connectionString' => 'mysql:host=172.19.16.219;dbname=db_cic',
 			'emulatePrepare' => true,
 			'username' => 'CIC',
