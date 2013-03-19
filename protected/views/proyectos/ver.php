@@ -83,7 +83,11 @@ $columns = array (
                 array(
                         'label' => 'Fecha finalización',
                         'value' => $this->FechaMysqltoPhp($model->fin),
-                ),
+                ),//-
+            array(
+                'label' => 'Sector beneficiado',
+                'value' => 'nada', //$this->getBenefited(1),
+            ),//-
                 '_tipoproyecto.nombre',                
                 '_objetivoproyecto.nombre',
                 '_adscrito.nombre',
@@ -106,4 +110,9 @@ $columns = array (
 ?>
 <?php if ($dataProvider->totalItemCount > 0)
             echo CHtml::button('Editar información de los asistentes',array('submit'=>Yii::app()->controller->createUrl("Proyectos/actualizarInfoAsistentes", array("id"=>$model->idtbl_Proyectos))));
+?>
+
+
+<?php
+//print_r($this->getBenefited(1));
 ?>

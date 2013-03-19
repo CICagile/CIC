@@ -912,5 +912,16 @@ class ProyectosController extends Controller {
             Yii::app()->end();
         }
     }
-
+    
+    
+    //-
+    public function getBenefited($pProjectId){
+        
+       
+        //$sectorBeneficiado->idtbl_sectorbeneficiado = $pProjectId;
+        //return $sectorBeneficiado->search();
+        
+        return SectorBeneficiado::getBenefitedSectorByProjectId($pProjectId);
+    }
+    //-
 }

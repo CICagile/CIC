@@ -22,6 +22,11 @@ class SectorBeneficiado extends CActiveRecord
 		return parent::model($className);
 	}
 
+        
+        public function __toString() {
+            return 'nombre';
+        }
+        
 	/**
 	 * @return string the associated database table name
 	 */
@@ -85,4 +90,25 @@ class SectorBeneficiado extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+        
+        // <editor-fold defaultstate="collapsed" desc="Data fetching functions">
+        
+        /*
+         * Retrieves a list of "SectorBeneficiado" rows from tbl_sectorbeneficiado, according to a project id
+         * @param $pProjectId Integer: the project's primary key
+         * @returns an array which contains the list of "SectorBeneficiado"
+         */
+        
+        //-
+        public static function getBenefitedSectorByProjectId($pProjectId){
+            $criteria = new CDbCriteria;
+            $criteria->select='t.nombre';
+            $criteria->condition='idtbl_sectorbeneficiado=:postID';
+            $criteria->params=array(':postID'=>$pProjectId);
+            return SectorBeneficiado::model()->find($criteria);
+        }
+        //-
+        
+        // </editor-fold>
+
 }
