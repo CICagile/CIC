@@ -65,7 +65,7 @@ $columns = array (
 		'nombre',
                 array(
                         'label' => 'Estado del proyecto',
-                        'value' => ($model->estado == $model->codaprobado)? $model->labelaprobado : $model->labelampliado,
+                        'value' => ($model->estado == $model->CODIGO_APROBADO)? $model->LABEL_APROBADO : $model->LABEL_AMPLIADO,
                 ),
 		array(
                         'label' => 'Fecha Inicio',
