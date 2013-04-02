@@ -87,22 +87,23 @@
 		<?php echo $form->error($modelproyectos,'idtbl_adscrito'); ?>
 	</div>
         
+        <?php /*
         <div class="row">
 		<?php echo $form->labelEx($modelproyectos,'idtbl_sectorbeneficiado'); ?>
 		<?php echo $form->dropDownList($modelproyectos, 'idtbl_sectorbeneficiado',
                         CHtml::listData(SectorBeneficiado::model()->findAll(), 'idtbl_sectorbeneficiado', 'nombre'), 
                         array('empty'=>'Elija el sector beneficiado', 'id'=>'Proyectos_idtbl_sectorbeneficiado')) ?>
 		<?php echo $form->error($modelproyectos,'idtbl_sectorbeneficiado'); ?>
-	</div>
+	</div> */?>
         
         <div class="row">
             <?php echo $form->labelEx($modelproyectos, 'idtbl_sectorbeneficiado'); ?>
             <div class="row"><?php echo $BENEFIT_MULTIPLE_CHOICE; ?></div>
             <?php
             $data = CHtml::listData(SectorBeneficiado::model()->findAll(), 'idtbl_sectorbeneficiado', 'nombre');
-            asort($data); //ordena los resultados alfabéticamente
+            //asort($data); //ordena los resultados alfabéticamente
             $htmlOptions = array('size' => '5', 'multiple' => 'multiple');
-            echo $form->ListBox($modelproyectos, 'idtbl_sectorbeneficiado', $data, $htmlOptions);
+            echo $form->dropDownList($modelproyectos, 'idtbl_sectorbeneficiado', $data, $htmlOptions);
             ?>
             <?php echo $form->error($modelproyectos, 'idtbl_sectorbeneficiado'); ?>
         </div>

@@ -48,11 +48,6 @@ class Proyectos extends CActiveRecord {
     public $LABEL_APROBADO = 'Aprobado';
     public $LABEL_AMPLIADO = 'Ampliado';
 
-    /* public $CODIGO_APROBADO = "0";
-      public $CODIGO_AMPLIADO = "1";
-      public $LABEL_APROBADO = 'Aprobado';
-      public $LABEL_AMPLIADO = 'Ampliado'; */
-
     public static function model($className = __CLASS__) {
         return parent::model($className);
     }
@@ -73,7 +68,7 @@ class Proyectos extends CActiveRecord {
         return array(
             array('nombre, codigo, idtbl_objetivoproyecto, tipoproyecto, idtbl_adscrito, idtbl_sectorbeneficiado, estado', 'required', 'message' => '{attribute} es requerido.'),
             array('codigo', 'unique', 'className' => 'Proyectos', 'message' => 'Ya existe un proyecto con ese código.'),
-            array('idtbl_objetivoproyecto, tipoproyecto, idtbl_adscrito, idtbl_sectorbeneficiado, estado', 'numerical', 'integerOnly' => true),
+            array('idtbl_objetivoproyecto, tipoproyecto, idtbl_adscrito, estado', 'numerical', 'integerOnly' => true), /*removido idtbl_sectorbeneficiado,*/
             array('nombre', 'length', 'min' => 3, 'max' => 500, 'tooShort' => 'El {attribute} debe ser mayor a {min} caracteres.', 'tooLong' => 'El {attribute} debe ser menor a {max} caracteres.'),
             array('codigo', 'length', 'min' => 2, 'max' => 20, 'tooShort' => 'El {attribute} debe ser mayor a {min} caracteres.', 'tooLong' => 'El {attribute} debe ser menor a {max} caracteres.'),
             // The following rule is used by search().

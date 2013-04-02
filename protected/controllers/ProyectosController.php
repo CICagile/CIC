@@ -243,7 +243,28 @@ class ProyectosController extends Controller {
 
 
                 if ($resultado) {//Si se guarda bien el proyecto
-                    $resultadoSector = $modelProyectosXSector->saveBenefiedSector($modelproyectos->idtbl_Proyectos, $modelproyectos->idtbl_sectorbeneficiado);
+                    //$resultadoSector = $modelProyectosXSector->saveBenefiedSector($modelproyectos->idtbl_Proyectos, $modelproyectos->idtbl_sectorbeneficiado);
+                    
+                    $resultadoSector = true;
+                /*foreach($modelproyectos->idtbl_sectorbeneficiado as $sector){
+                    $is_sector_saved = $modelProyectosXSector->saveBenefiedSector($modelproyectos->idtbl_Proyectos, $sector);
+                    $resultadoSector = $is_sector_saved && $resultadoSector;}*/
+                    
+                    /*for($i=0;$i < count($_POST['Proyectos']['idtbl_sectorbeneficiado']); $i++){
+                        $is_sector_saved = $modelProyectosXSector->saveBenefiedSector(
+                                    $modelproyectos->idtbl_Proyectos, $_POST['Proyectos']['idtbl_sectorbeneficiado'][$i]);
+                        $resultadoSector = $is_sector_saved && $resultadoSector;
+                    }*/
+                    print_r($_POST['Proyectos']['idtbl_sectorbeneficiado']);
+                    foreach($_POST['Proyectos']['idtbl_sectorbeneficiado'] as $sector){
+                        $is_sector_saved = $modelProyectosXSector->saveBenefiedSector(
+                                $modelproyectos->idtbl_Proyectos,$sector);
+                        $resultadoSector = $is_sector_saved && $resultadoSector;
+                        Yii::log("Insertado sectoress: " . $sector);
+                        
+                    }
+                    
+                    
                     if ($resultadoSector) {
                         //Guardo el historial de periodos del proyecto
                         $historialproyectoperiodo = new HistorialProyectosPeriodo();
