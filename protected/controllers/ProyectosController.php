@@ -255,11 +255,11 @@ class ProyectosController extends Controller {
                                     $modelproyectos->idtbl_Proyectos, $_POST['Proyectos']['idtbl_sectorbeneficiado'][$i]);
                         $resultadoSector = $is_sector_saved && $resultadoSector;
                     }*/
-                    print_r($_POST['Proyectos']['idtbl_sectorbeneficiado']);
+                    //
                     foreach($_POST['Proyectos']['idtbl_sectorbeneficiado'] as $sector){
                         $is_sector_saved = $modelProyectosXSector->addBenefitedSector(
                                 $modelproyectos->idtbl_Proyectos,$sector);
-                        $resultadoSector = $is_sector_saved && $resultadoSector;
+                        $resultadoSector = ($is_sector_saved == 1) && $resultadoSector;
                     }
                     
                     
