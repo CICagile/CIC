@@ -215,19 +215,10 @@ class Proyectos extends CActiveRecord {
      */
 
     public function obtenerProyectoconPeriodoActual($pIdProyecto) {
-
-        $connection = Yii::app()->db;
-        $sql = "SELECT tbl_proyectos.*, tbl_periodos.idPeriodo, tbl_periodos.inicio, tbl_periodos.fin
-                    FROM tbl_proyectos
-                    INNER JOIN tbl_historialproyectosperiodos
-                    ON (tbl_proyectos.idtbl_Proyectos = tbl_historialproyectosperiodos.idtbl_Proyectos)
-                    INNER JOIN tbl_periodos 
-                    ON (tbl_historialproyectosperiodos.idPeriodo = tbl_periodos.idPeriodo)
-                    WHERE tbl_proyectos.idtbl_Proyectos = :idproyecto
-                    ORDER BY tbl_periodos.fin DESC
-                    LIMIT 1";
-        $command = $connection->createCommand($sql);
-        $command->bindParam(":idproyecto", $pIdProyecto, PDO::PARAM_INT);
+        $call = 'CALL obtenerProyectoConPeridoActual(:pIdProyecto)';
+        $conexion = Yii::app()->db;
+        $command = $conexion->createCommand($call);
+        $command->bindParam(':pIdProyecto', $pIdProyecto, PDO::PARAM_INT);
         $model = $command->queryRow();
 
         if ($model == false)
@@ -238,7 +229,7 @@ class Proyectos extends CActiveRecord {
             $this->idperiodo = $model['idPeriodo']; //Asociamos el atributo simulado idperiodo
             $this->inicio = $model['inicio']; //Asociamos el atributos simulado inicio
             $this->fin = $model['fin']; //Asociamos el atributos simulado fin
-            Proyectos::obtenerSectoresBeneficiados($pIdProyecto);
+            Proyectos::obtenerSectoresBeneficiados($pIdProyecto);//asociamos los valores de sectores beneficiados
             return $this; //Retornamos el objeto Proyecto
         }
     }

@@ -257,11 +257,9 @@ class ProyectosController extends Controller {
                     }*/
                     print_r($_POST['Proyectos']['idtbl_sectorbeneficiado']);
                     foreach($_POST['Proyectos']['idtbl_sectorbeneficiado'] as $sector){
-                        $is_sector_saved = $modelProyectosXSector->saveBenefiedSector(
+                        $is_sector_saved = $modelProyectosXSector->addBenefitedSector(
                                 $modelproyectos->idtbl_Proyectos,$sector);
                         $resultadoSector = $is_sector_saved && $resultadoSector;
-                        Yii::log("Insertado sectoress: " . $sector);
-                        
                     }
                     
                     

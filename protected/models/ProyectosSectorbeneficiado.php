@@ -90,5 +90,23 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
         $isSaveOk = $this->save();
         return $isSaveOk;
     }
+    
+    /*
+     * Agrega sectores beneficiados a un proyecto
+     * IMPORTANTE: debe ser llamado desde una transacción (se asume que es así)
+     * @param Integer $pIdProyecto id del proyecto a insertar
+     * @param Integer $pIdSectorBeneficiado id del serctor a insertar
+     * @return Boolean transaction status
+     */
+    public function addBenefitedSector($pIdProyecto, $pIdSectorBeneficiado){
+        $conexion = Yii::app()->db;
+        $call = 'CALL agregarSectorBeneficiado(:pIdProyecto,:pIdSector)';
+
+            $comando = $conexion->createCommand($call);
+            $comando->bindParam(':pIdProyecto', $pIdProyecto);
+            $comando->bindParam(':pIdSector', $pIdSectorBeneficiado);
+            $comando->execute();
+        return true;
+    }
 
 }
