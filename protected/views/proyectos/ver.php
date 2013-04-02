@@ -86,7 +86,12 @@ $columns = array (
                 ),
                 '_tipoproyecto.nombre',                
                 '_objetivoproyecto.nombre',
-                '_adscrito.nombre'             
+                '_adscrito.nombre',
+            array(
+                'label' => 'Sector(es) beneficiado(s)',
+                'value' => $model->idtbl_sectorbeneficiado,
+                'type' => 'html',
+                ),
 	),
 )); 
       

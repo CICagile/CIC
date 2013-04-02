@@ -226,7 +226,7 @@ class Proyectos extends CActiveRecord
     /*Esta funcion retorna la información del proyecto
          * y la información del periodo actual asociado al proyecto
          */
-        public function obtenerProyectoconPeriodoActual($idproyecto){
+        public function obtenerProyectoconPeriodoActual($pIdProyecto){
             
             $connection=Yii::app()->db;
             $sql=   "SELECT tbl_proyectos.*, tbl_periodos.idPeriodo, tbl_periodos.inicio, tbl_periodos.fin
@@ -239,7 +239,7 @@ class Proyectos extends CActiveRecord
                     ORDER BY tbl_periodos.fin DESC
                     LIMIT 1";
             $command=$connection->createCommand($sql);
-            $command->bindParam(":idproyecto",$idproyecto,PDO::PARAM_INT);
+            $command->bindParam(":idproyecto",$pIdProyecto,PDO::PARAM_INT);
             $model = $command->queryRow();
             
             if($model == false)
@@ -250,6 +250,7 @@ class Proyectos extends CActiveRecord
                 $this->idperiodo = $model['idPeriodo'];//Asociamos el atributo simulado idperiodo
                 $this->inicio = $model['inicio'];//Asociamos el atributos simulado inicio
                 $this->fin = $model['fin'];//Asociamos el atributos simulado fin
+                Proyectos::obtenerSectoresBeneficiados($pIdProyecto);
                 return $this; //Retornamos el objeto Proyecto
             }                      
         }
