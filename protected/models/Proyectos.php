@@ -45,12 +45,17 @@ class Proyectos extends CActiveRecord
         public $inicio;
         public $fin;
         
-        public $codaprobado = "0";
-        public $codampliado = "1";
+        public $CODIGO_APROBADO = "0";
+        public $CODIGO_AMPLIADO = "1";
         
-        public $labelaprobado = 'Aprobado';
-        public $labelampliado = 'Ampliado';
+        public $LABEL_APROBADO = 'Aprobado';
+        public $LABEL_AMPLIADO = 'Ampliado';
     
+            /*public $CODIGO_APROBADO = "0";
+    public $CODIGO_AMPLIADO = "1";
+    public $LABEL_APROBADO = 'Aprobado';
+    public $LABEL_AMPLIADO = 'Ampliado';*/
+        
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);

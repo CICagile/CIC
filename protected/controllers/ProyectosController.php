@@ -442,7 +442,7 @@ class ProyectosController extends Controller {
                         if($result){
                         
                             //Cambiamos el estado del proyecto
-                            $modelproyectos->estado = $modelproyectos->codampliado;
+                            $modelproyectos->estado = $modelproyectos->CODIGO_AMPLIADO;
 
                             $result = $modelproyectos->save(false);
 
