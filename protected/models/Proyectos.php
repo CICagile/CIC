@@ -249,50 +249,64 @@ class Proyectos extends CActiveRecord
             }                      
         }
         
-        public function obtenerProyectosActivos(){                    
-            $connection=Yii::app()->db;
-            $sql=   "SELECT tbl_proyectos.*, DATE_FORMAT(tbl_periodos.inicio, '%d-%m-%Y') AS inicio, 
-                    DATE_FORMAT(tbl_periodos.fin, '%d-%m-%Y') AS fin
-                    FROM tbl_proyectos
-                    INNER JOIN tbl_historialproyectosperiodos
-                    ON (tbl_proyectos.idtbl_Proyectos = tbl_historialproyectosperiodos.idtbl_Proyectos)
-                    INNER JOIN tbl_periodos 
-                    ON (tbl_historialproyectosperiodos.idPeriodo = tbl_periodos.idPeriodo)
-                    WHERE tbl_periodos.fin > SYSDATE()"; 
-            $command=$connection->createCommand($sql);
-            $models = $command->queryAll();
-            
-            if(empty($models))
-                return null;
-            else
-                return $models;
+    public function obtenerProyectosActivos() {
+        return Proyectos::executeNonTransactionalProcedureWithNoParameters('CALL obtenerProyectosActivos()');
+    }
 
-        }
-        
-        public function obtenerProyectosAntiguos(){                    
-            
-            $connection=Yii::app()->db;
-            $sql=   "SELECT idtbl_Proyectos, nombre, codigo, estado, tipoproyecto, idtbl_adscrito, idtbl_objetivoproyecto,
-                    idPeriodo, DATE_FORMAT(inicio, '%d-%m-%Y') AS inicio, DATE_FORMAT(fin, '%d-%m-%Y') AS fin 
-                    FROM(SELECT * FROM (
-                            SELECT tbl_proyectos.*, tbl_periodos.*
-                            FROM tbl_proyectos
-                            INNER JOIN tbl_historialproyectosperiodos
-                            ON (tbl_proyectos.idtbl_Proyectos = tbl_historialproyectosperiodos.idtbl_Proyectos)					
-                            INNER JOIN tbl_periodos 
-                            ON (tbl_historialproyectosperiodos.idPeriodo = tbl_periodos.idPeriodo)			
-                            ORDER BY tbl_periodos.fin desc
-                        ) AS p
-                        GROUP BY idtbl_Proyectos
-                    ) AS proyectos
-                    WHERE proyectos.fin < SYSDATE()"; 
-            $command=$connection->createCommand($sql);
-            $models = $command->queryAll();
-            
-            if(empty($models))
-                return null;
-            else
-                return $models;
+    public function obtenerProyectosAntiguos() {
+        return Proyectos::executeNonTransactionalProcedureWithNoParameters('CALL obtenerProyectosAntiguos()');
+    }
+    
+    /*
+     * Obtiene los sectores beneficiados según el id de un proyecto
+     * Se utiliza para mostrarlos en la visión detallada del proyecto
+     *  @param Integer $pIdProyecto
+     */
+    private function obtenerSectoresBeneficiados($pIdProyecto){
+        $call = 'CALL obtenerSectoresBeneficiados(:pIdProyecto)';
+        $conexion = Yii::app()->db;
+        $command = $conexion->createCommand($call);
+        $command->bindParam(':pIdProyecto', $pIdProyecto, PDO::PARAM_INT);
+        $model = $command->queryAll();
 
+        if ($model == false)
+            return null;
+        else {
+            $this->scenario = 'cargarModelo';
+            $this->idtbl_sectorbeneficiado = Proyectos::listFormatBenefitedSectors($model);
+            // $model[0]["nombre"];
         }
+    }
+    
+    /*
+     * Gives html format using <ul> tag to a list of sectors
+     * @param Array $pSectorsArray
+     * @return String
+     */
+    private function listFormatBenefitedSectors($pSectorsArray){
+        $html_list = '<ul>';
+        foreach($pSectorsArray as $sector){
+            $html_list .= '<li>' . $sector["nombre"] . '</li>';
+        }
+        $html_list .= '</ul>';
+        return $html_list;
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="Common private functions~">
+    /*
+     * Common actions made to execute any nontransactional procedure without parameters
+     * IMPORTANT: result returned by yii's queryAll() function
+     */
+    private static function executeNonTransactionalProcedureWithNoParameters($pProcedureName){
+        $call = $pProcedureName;
+        $conexion = Yii::app()->db;
+        $command = $conexion->createCommand($call);
+        $result = $command->queryAll();
+        if (empty($result))
+            return null;
+        else
+            return $result;
+    } 
+    // </editor-fold>
+    
 }//fin modelo proyectos
