@@ -96,8 +96,8 @@ class InvestigadorController extends Controller
                         $periodo->attributes = $_POST['Periodos'];
                         $model->validarCedulaUnica();
 			if($model->validate(NULL,false)){
-                            $periodo->validarFechaInicioAsistencia($model->codigo);
-                            $periodo->validarFechaFinAsistencia($model->codigo);
+                            $periodo->validarFechaInicioAsistencia($model->proyecto);
+                            $periodo->validarFechaFinAsistencia($model->proyecto);
                             if ($periodo->validate(NULL,false)) {
                                 if($model->crear($periodo))
                                     $this->redirect(array('index'));
@@ -147,5 +147,3 @@ class InvestigadorController extends Controller
 		}
 	}
 }
-
-?>

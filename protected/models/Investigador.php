@@ -28,7 +28,7 @@ class Investigador  extends CModel{
     {
         return array(
             array('nombre,apellido1,cedula,correo,experiencia,grado,proyecto,rol','required','on'=>'nuevo','message'=>'{attribute} no puede dejarse en blanco.'),
-            array('nombre,apellido1,apellido2,codigo','length','max'=>20),
+            array('nombre,apellido1,apellido2,proyecto','length','max'=>20),
             array('cedula','length','min'=>9,'max'=>20),
             array('telefono, correo', 'length', 'max'=>40),
             array('telefono, cedula, experiencia', 'match', 'pattern'=>'/^[\p{N}]+$/u', 'message'=>'{attribute} sólo puede estar compuesto por dígitos.'),
@@ -50,7 +50,7 @@ class Investigador  extends CModel{
         $criteria->alias = "pr";
         $criteria->join = 'INNER JOIN tbl_HistorialProyectosPeriodos HPP ON pr.idtbl_Proyectos = HPP.idtbl_Proyectos
                            INNER JOIN tbl_Periodos P ON HPP.idPeriodo = P.idPeriodo';
-        $criteria->condition = "pr.codigo = '" . $this->codigo . "' AND p.inicio <= SYSDATE() AND p.fin > SYSDATE()";
+        $criteria->condition = "pr.codigo = '" . $this->proyecto . "' AND p.inicio <= SYSDATE() AND p.fin > SYSDATE()";
         if (!Proyectos::model()->exists($criteria)) {
             $this->addError('codigo', $this->getAttributeLabel('codigo') . ' no fue encontrado en la base de datos o no se encuentra activo.');
         }//fin si el código existe en la base de datos

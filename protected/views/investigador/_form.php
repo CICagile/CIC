@@ -73,7 +73,7 @@
 		<?php echo $form->labelEx($model,'rol'); ?>
 		<?php echo $form->dropDownList($model, 'rol',
                         CHtml::listData(RolesInvestigadores::model()->findAll(), 'nombre', 'nombre'), array('empty'=>'Elija un rol')) ?>
-		<?php echo $form->error($model,'rol', NULL, $enableAjaxValidation=false); ?>
+		<?php echo $form->error($model,'rol', NULL, false); ?>
 	</div>
 
         <div class="row">
@@ -114,12 +114,6 @@
                     ));?>
                 <?php echo $form->error($periodo,'fin'); ?>
 		
-	</div>
-        
-        <div class="row">
-		<?php echo $form->labelEx($model,'horas'); ?>
-		<?php echo $form->textField($model,'horas',array('size'=>4,'maxlength'=>4)); ?>
-		<?php echo $form->error($model,'horas'); ?>
 	</div>
 
 	<div class="row buttons">
