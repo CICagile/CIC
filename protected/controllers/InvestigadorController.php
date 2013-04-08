@@ -95,15 +95,13 @@ class InvestigadorController extends Controller
 			$model->attributes=$_POST['Investigador'];
                         $periodo->attributes = $_POST['Periodos'];
                         $model->validarCedulaUnica();
-			if($model->validate(NULL,false)){
-                            $periodo->validarFechaInicioAsistencia($model->proyecto);
-                            $periodo->validarFechaFinAsistencia($model->proyecto);
-                            if ($periodo->validate(NULL,false)) {
-                                if($model->crear($periodo))
-                                    $this->redirect(array('index'));
-                                else
-                                    throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
-                            }//fin si el periodo es válido
+                        $periodo->validarFechaInicioAsistencia($model->proyecto);
+                        $periodo->validarFechaFinAsistencia($model->proyecto);
+			if($model->validate(NULL,false) && $periodo->validate(NULL,false)){
+                            if($model->crear($periodo))
+                                $this->redirect(array('index'));
+                            else
+                                throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
                         }//fin si los datos del asistente són válidos
 		}
 
