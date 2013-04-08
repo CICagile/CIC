@@ -1,5 +1,5 @@
 <?php
-/* @var $this PersonaController */
+/* @var $this InvestigadorController */
 /* @var $model Investigador */
 /* @var $periodo Periodos */
 
