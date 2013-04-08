@@ -34,7 +34,7 @@ class InvestigadorController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array(''),
+				'actions'=>array('create,index'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -45,6 +45,64 @@ class InvestigadorController extends Controller
 				'users'=>array('*'),
 			),
 		);
+	}
+        
+        /**
+         * Muestra la ventana con el formulario para registrar un investigador y llama a las funciones
+         * del modelo que registran al investigador en la BD. Tambien realiza las validaciones de los datos.
+         * @throws CHttpException Manejo de errores en caso de que ocurra un problema con la conexion a la BD.
+         */
+        public function actionCreate()
+	{
+		$model=new Investigador;
+                $model->scenario = 'nuevo';
+                $periodo = new Periodos;
+
+		// Uncomment the following line if AJAX validation is needed
+                $this->performAjaxValidation(array($model,$periodo));
+
+		if(isset($_POST['Investigador']) && isset($_POST['Periodos']))
+		{
+			$model->attributes=$_POST['Investigador'];
+                        $periodo->attributes = $_POST['Periodos'];
+                        $model->validarCedulaUnica();
+			if($model->validate(NULL,false)){
+                            $periodo->validarFechaInicioAsistencia($model->codigo);
+                            $periodo->validarFechaFinAsistencia($model->codigo);
+                            if ($periodo->validate(NULL,false)) {
+                                if($model->crear($periodo))
+                                    $this->redirect(array('index'));
+                                else
+                                    throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
+                            }//fin si el periodo es válido
+                        }//fin si los datos del asistente són válidos
+		}
+
+		$this->render('create',array(
+			'model'=>$model,
+                        'periodo'=>$periodo,
+		));
+	}//fin action create
+        
+        /**
+	 * Lists all models.
+	 */
+	public function actionIndex()
+	{
+		//$dataProvider=new CActiveDataProvider('Asistente');
+		/*$this->render('index'
+		);*/
+                $this->actionAdmin();
+	}
+
+	/**
+	 * Manages all models.
+	 */
+	public function actionAdmin(){
+                $filtersForm=new FiltersForm;
+                $this->render('admin',array(
+                    'filtersForm' => $filtersForm,
+                ));
 	}
         
         /**
