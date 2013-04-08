@@ -9,7 +9,7 @@
 <div class="form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'asistente-form',
+	'id'=>'investigador-form',
 	'enableAjaxValidation'=>true,
 )); ?>
 
@@ -51,6 +51,19 @@
 		<?php echo $form->labelEx($model,'correo'); ?>
 		<?php echo $form->textField($model,'correo',array('size'=>40,'maxlength'=>40)); ?>
 		<?php echo $form->error($model,'correo'); ?>
+	</div>
+        
+        <div class="row">
+		<?php echo $form->labelEx($model,'grado'); ?>
+		<?php echo $form->dropDownList($model, 'grado',
+                        CHtml::listData(GradoAcademico::model()->findAll(), 'nombre', 'nombre-abreviacion'), array('empty'=>'Elija un grado académico')) ?>
+		<?php echo $form->error($model,'grado', NULL, false); ?>
+	</div>
+        
+        <div class="row">
+		<?php echo $form->labelEx($model,'experiencia'); ?>
+		<?php echo $form->textField($model,'experiencia',array('size'=>3,'maxlength'=>3)); ?>
+		<?php echo $form->error($model,'experiencia'); ?>
 	</div>
         
         <div class="row">
