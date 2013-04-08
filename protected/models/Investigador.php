@@ -140,14 +140,47 @@ class Investigador  extends CModel{
     }
     
     /**
-         * Este método retorna una instancia del modelo para cuando se ocupe
-         * acceder a sus propiedades. Por ejemplo, para conseguir el string
-         * de los labels de los atributos.
-         * @return Investigador Una instancia del modelo investigador.
-         */
-        public static function model(){
-            return new Investigador;
-        }//fin model
+     * Este método retorna una instancia del modelo para cuando se ocupe
+     * acceder a sus propiedades. Por ejemplo, para conseguir el string
+     * de los labels de los atributos.
+     * @return Investigador Una instancia del modelo investigador.
+     */
+    public static function model(){
+        return new Investigador;
+    }//fin model
+        
+    /**
+    * Funcion de guardado.
+    * Registra un nuevo investigador en la base de datos. 
+     * Por ahora supongo que las horas son un array de la siguiente forma: array('VIE'=>3, 'FUNDATEC'=>1.5, 'Docencia'=>3, 'Reconocimiento'=>1)
+    * @param Periodos $pPeriodo El periodo inicial del investigador.
+    */
+    public function crear($pPeriodo)
+    {
+        $conexion = Yii::app()->db;
+        $call = "CALL registrarInvestigador(:nombre,:ape1,:ape2,:ced,:correo,:tel,:exp,:grado,:cod,:rol,'" . $pPeriodo->inicio . "','" . $pPeriodo->fin. "')";
+        $transaccion = Yii::app()->db->beginTransaction();
+        try {
+            $comando = $conexion->createCommand($call);
+            $comando->bindParam(':nombre', $this->nombre, PDO::PARAM_STR);
+            $comando->bindParam(':ape1', $this->apellido1, PDO::PARAM_STR);
+            $comando->bindParam(':ape2', $this->apellido2, PDO::PARAM_STR);
+            $comando->bindParam(':ced', $this->cedula, PDO::PARAM_STR);
+            $comando->bindParam(':correo', $this->correo, PDO::PARAM_STR);
+            $comando->bindParam(':tel', $this->telefono, PDO::PARAM_STR);
+            $comando->bindParam(':exp', $this->experiencia, PDO::PARAM_INT);
+            $comando->bindParam(':grado', $this->grado, PDO::PARAM_STR);
+            $comando->bindParam(':cod', $this->proyecto, PDO::PARAM_STR);
+            $comando->bindParam(':rol', $this->rol, PDO::PARAM_STR);
+            $comando->execute();
+            $transaccion->commit();
+        } catch (Exception $e) {
+            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Investigador");
+            $transaccion->rollback();
+            return false;
+        }
+        return true;
+    }//fin crear
 
     
 }//fin clase Investigador
