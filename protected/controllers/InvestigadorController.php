@@ -34,7 +34,7 @@ class InvestigadorController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create,index'),
+				'actions'=>array('create,index,codigoautocomplete'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -46,6 +46,35 @@ class InvestigadorController extends Controller
 			),
 		);
 	}
+        
+        /**
+         * Busca el codigo de la variable GET en la BD para autocompletar un campo de texto. 
+         */
+        public function actionCodigoAutoComplete()
+        {
+            if (isset($_GET['term'])) {
+                $criteria = new CDbCriteria;
+                $criteria->alias = "pr";
+                $criteria->select = 'pr.nombre nombre, pr.codigo codigo, pr.idtbl_proyectos idtbl_Proyectos';
+                $criteria->join = 'INNER JOIN tbl_HistorialProyectosPeriodos HPP ON pr.idtbl_Proyectos = HPP.idtbl_Proyectos
+                                   INNER JOIN tbl_Periodos P ON HPP.idPeriodo = P.idPeriodo';
+                $criteria->condition = "pr.codigo LIKE '" . $_GET['term'] . "%' AND p.inicio <= SYSDATE() AND p.fin > SYSDATE()";
+                
+                $dataProvider = new CActiveDataProvider(get_class(Proyectos::model()), array(
+                    'criteria'=>$criteria,
+                ));
+                $proyectos = $dataProvider->getData();
+                $return_array = array();
+                foreach($proyectos as $proyecto) {
+                    $return_array[] = array(
+                        'label'=>$proyecto->nombre,
+                        'value'=>$proyecto->codigo,
+                        'id'=>$proyecto->idtbl_Proyectos,
+                    );
+                }
+                echo CJSON::encode($return_array);
+            }
+        }
         
         /**
          * Muestra la ventana con el formulario para registrar un investigador y llama a las funciones
