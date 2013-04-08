@@ -173,6 +173,15 @@ class Investigador  extends CModel{
             $comando->bindParam(':cod', $this->proyecto, PDO::PARAM_STR);
             $comando->bindParam(':rol', $this->rol, PDO::PARAM_STR);
             $comando->execute();
+            foreach ($this->horas as $tipo => $horas) {
+                $call = "CALL asignarHorasInvestigador(:ced,:horas,:tipo,'" . $pPeriodo->inicio . "','" . $pPeriodo->fin . "',:cod)";
+                $comando = $conexion->createCommand($call);
+                $comando->bindParam(':ced', $this->cedula, PDO::PARAM_STR);
+                $comando->bindParam(':horas', $horas);
+                $comando->bindParam(':tipo', $tipo, PDO::PARAM_STR);
+                $comando->bindParam(':cod', $this->proyecto, PDO::PARAM_STR);
+                $comando->execute();
+            }//fin for
             $transaccion->commit();
         } catch (Exception $e) {
             Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Investigador");
