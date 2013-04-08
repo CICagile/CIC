@@ -10,6 +10,8 @@ $this->pageTitle=Yii::app()->name;
 <ul>
     <li><?php echo CHtml::link('Módulo de Proyectos',array('proyectos/admin')) ?></li>
     <p></p>
-    <li><?php echo CHtml::link('Módulo de Asistentes',array('asistente/admin')) ?></li>    
+    <li><?php echo CHtml::link('Módulo de Asistentes',array('asistente/admin')) ?></li>
+    <p></p>
+    <li><?php echo CHtml::link('Módulo de Investigadores',array('investigador/admin')) ?></li>
        
 </ul>
