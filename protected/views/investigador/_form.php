@@ -88,6 +88,23 @@
                         CHtml::listData(RolesInvestigadores::model()->findAll(), 'nombre', 'nombre'), array('empty'=>'Elija un rol')) ?>
 		<?php echo $form->error($model,'rol', NULL, false); ?>
 	</div>
+        
+        
+        <p id="horas">
+            <div class="row">
+                <?php echo $form->labelEx($model,'horas'); ?>
+                <?php echo CHtml::textField("txt_horas"); ?>
+                <?php echo $form->error($model,'horas'); ?>
+            </div>
+        
+            <div class="row">
+                <?php echo CHtml::label('Tipo de Horas',false); ?>
+                <?php echo $form->dropDownList($model, 'rol',
+                        CHtml::listData(TipoHoraInvestigador::model()->findAll(), 'nombre', 'nombre'), array('empty'=>'Elija una opción')) ?>
+                <?php echo $form->error($model,'horas', NULL, false); ?>
+            </div>
+            <span style="clear:none; float:right;"><a id="minus6" href="">[-]</a> <a id="plus6" href="">[+]</a></span>
+        </p>
 
         <div class="row">
 		<?php echo $form->labelEx($periodo,'inicio'); ?>
@@ -134,5 +151,17 @@
 	</div>
 
 <?php $this->endWidget(); ?>
+<?php $form=$this->widget('ext.dynamicform.DynamicForm', array(
+	'id'=>'dynamic-horas',
+	'options' => array(
+            'limit' => 100,
+            'createColor' => 'green',
+            'removeColor' => 'red',
+            'duration' => 1000
+        ),
+        'form' => 'horas',
+        'plus' => 'plus',
+        'minus'=> 'minus'
+)); ?>
 
 </div><!-- form -->

@@ -90,7 +90,8 @@ class Investigador  extends CModel{
             'experiencia' => 'Años de Experiencia',
             'grado' => 'Grado Académico',
             'proyecto' => 'Código del Proyecto',
-            'rol' => 'Rol del Investigador'
+            'rol' => 'Rol del Investigador',
+            'horas' => 'Horas'
         );
     }//fin attribute labels
     
