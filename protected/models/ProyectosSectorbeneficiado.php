@@ -9,6 +9,8 @@
  */
 class ProyectosSectorbeneficiado extends CActiveRecord {
 
+    // Rules, relations, attribute labels, search
+// <editor-fold defaultstate="collapsed" desc="Yii functions">
     /**
      * Returns the static model of the specified AR class.
      * @param string $className active record class name.
@@ -78,27 +80,35 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
                 ));
     }
 
-    /* Function overload for save, this one is transactional
-     * @param integer $pIdProyecto the project id
-     * @param integer $pIdSectorBeneficiado the Sector's id
-     * @return: the result from the save() function
-     */
+// </editor-fold>
+// <editor-fold defaultstate="collapsed" desc="Functions">
 
-    public function saveBenefiedSector($pIdProyecto, $pIdSectorBeneficiado) {
-        $this->idtbl_Proyectos = $pIdProyecto;
-        $this->idtbl_sectorbeneficiado = $pIdSectorBeneficiado;
-        $isSaveOk = $this->save();
-        return $isSaveOk;
-    }
-    
     /*
-     * Agrega sectores beneficiados a un proyecto
+     * Agrega uno o más sectores beneficiados a un proyecto
+     * IMPORTANTE: se asume que es invocado desde una transacción activa
+     * @param Integer $pIdProyecto id del proyecto al que se asocian sectores
+     * @param Array[Integer] $pIdsSectoresBeneficiados
+     * @return Boolean verdadero si se ejecutó correctamente, falso sino
+     */
+    public function saveAllBenefitedSectors($pIdProyecto, $pIdsSectoresBeneficiados) {
+        $resultadoSector = true;
+        foreach ($pIdsSectoresBeneficiados as $sector) {
+            $is_sector_saved = ProyectosSectorbeneficiado::addBenefitedSector(
+                    $pIdProyecto, $sector);
+            $resultadoSector = ($is_sector_saved == 1) && $resultadoSector;
+        }
+        return $resultadoSector;
+    }
+
+    /*
+     * Agrega un sector beneficiado a un proyecto
      * IMPORTANTE: debe ser llamado desde una transacción (se asume que es así)
      * @param Integer $pIdProyecto id del proyecto a insertar
      * @param Integer $pIdSectorBeneficiado id del serctor a insertar
      * @return Integer number of affected rows
      */
-    public function addBenefitedSector($pIdProyecto, $pIdSectorBeneficiado){
+
+    private function addBenefitedSector($pIdProyecto, $pIdSectorBeneficiado) {
         $conexion = Yii::app()->db;
         $call = 'CALL agregarSectorBeneficiado(:pIdProyecto,:pIdSector)';
         $comando = $conexion->createCommand($call);
@@ -107,4 +117,5 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
         return $comando->execute();
     }
 
+// </editor-fold>
 }

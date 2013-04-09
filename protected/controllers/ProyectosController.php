@@ -70,6 +70,38 @@ class ProyectosController extends Controller {
                 'dataProvider' => $model->buscarAsistentesActivosDeProyecto(),
             ));
     }
+    
+    /**
+     * Verifica que los nuevos datos de los asistentes sean válidos y guarda los cambios.
+     * @param string $pRol El rol del asistente en el proyecto
+     * @param double $pHoras Horas que el asistente debe dedicar semanalmente al proyecto.
+     * @param fecha $pFin La fecha de finalización de la asistencia.
+     */
+    public function actionActualizarInfoAsistentes($id) {
+        $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
+        $dataProvider = $model->buscarAsistentesActivosDeProyecto();
+        $errores = array();
+
+        if (isset($_POST['horas']) && isset($_POST['rol']) && isset($_POST['fin'])) {
+            $datos_asistentes = $dataProvider->data;
+            $horas = $_POST['horas'];
+            $roles = $_POST['rol'];
+            $fechas_fin = $_POST['fin'];
+            $errores = $this->actualizarCadaAsistente($model, $datos_asistentes, $horas, $roles, $fechas_fin);
+            if (empty($errores))
+                $this->redirect(array('ver', 'id' => $id)); //Sólo llega a esta instrucción si no hay errores en los datos.
+            else
+                $dataProvider = $model->buscarAsistentesActivosDeProyecto(); //vuelve a cargar los datos desde la base en caso de que algunos datos sí se hayan actualizado.
+        }//fin si asistente se modificó.
+
+        $this->render('viewEditable', array(
+            'model' => $model,
+            'dataProvider' => $dataProvider,
+            'errores' => $errores,
+        ));
+    }
+
+//fin actualizar informacion de los assitentes activos del proyecto.
 
     /**
      * Actualiza el periódo del fin de la asistencia de un asistente en un proyecto.
@@ -157,37 +189,6 @@ class ProyectosController extends Controller {
 
 //fin actualizar cada asistente
 
-    /**
-     * Verifica que los nuevos datos de los asistentes sean válidos y guarda los cambios.
-     * @param string $pRol El rol del asistente en el proyecto
-     * @param double $pHoras Horas que el asistente debe dedicar semanalmente al proyecto.
-     * @param fecha $pFin La fecha de finalización de la asistencia.
-     */
-    public function actionActualizarInfoAsistentes($id) {
-        $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
-        $dataProvider = $model->buscarAsistentesActivosDeProyecto();
-        $errores = array();
-
-        if (isset($_POST['horas']) && isset($_POST['rol']) && isset($_POST['fin'])) {
-            $datos_asistentes = $dataProvider->data;
-            $horas = $_POST['horas'];
-            $roles = $_POST['rol'];
-            $fechas_fin = $_POST['fin'];
-            $errores = $this->actualizarCadaAsistente($model, $datos_asistentes, $horas, $roles, $fechas_fin);
-            if (empty($errores))
-                $this->redirect(array('ver', 'id' => $id)); //Sólo llega a esta instrucción si no hay errores en los datos.
-            else
-                $dataProvider = $model->buscarAsistentesActivosDeProyecto(); //vuelve a cargar los datos desde la base en caso de que algunos datos sí se hayan actualizado.
-        }//fin si asistente se modificó.
-
-        $this->render('viewEditable', array(
-            'model' => $model,
-            'dataProvider' => $dataProvider,
-            'errores' => $errores,
-        ));
-    }
-
-//fin actualizar informacion de los assitentes activos del proyecto.
 
     protected function FechaPhptoMysql($pfechaphp) {
         try {
@@ -243,27 +244,11 @@ class ProyectosController extends Controller {
 
 
                 if ($resultado) {//Si se guarda bien el proyecto
-                    //$resultadoSector = $modelProyectosXSector->saveBenefiedSector($modelproyectos->idtbl_Proyectos, $modelproyectos->idtbl_sectorbeneficiado);
-                    
-                    $resultadoSector = true;
-                /*foreach($modelproyectos->idtbl_sectorbeneficiado as $sector){
-                    $is_sector_saved = $modelProyectosXSector->saveBenefiedSector($modelproyectos->idtbl_Proyectos, $sector);
-                    $resultadoSector = $is_sector_saved && $resultadoSector;}*/
-                    
-                    /*for($i=0;$i < count($_POST['Proyectos']['idtbl_sectorbeneficiado']); $i++){
-                        $is_sector_saved = $modelProyectosXSector->saveBenefiedSector(
-                                    $modelproyectos->idtbl_Proyectos, $_POST['Proyectos']['idtbl_sectorbeneficiado'][$i]);
-                        $resultadoSector = $is_sector_saved && $resultadoSector;
-                    }*/
-                    //
-                    foreach($_POST['Proyectos']['idtbl_sectorbeneficiado'] as $sector){
-                        $is_sector_saved = $modelProyectosXSector->addBenefitedSector(
-                                $modelproyectos->idtbl_Proyectos,$sector);
-                        $resultadoSector = ($is_sector_saved == 1) && $resultadoSector;
-                    }
-                    
-                    
-                    if ($resultadoSector) {
+                    //almacena los sectores beneficiados
+                    $resultado_sector = $modelProyectosXSector->saveAllBenefitedSectors(
+                            $modelproyectos->idtbl_Proyectos, $modelproyectos->idtbl_sectorbeneficiado);
+                            
+                    if ($resultado_sector) {
                         //Guardo el historial de periodos del proyecto
                         $historialproyectoperiodo = new HistorialProyectosPeriodo();
                         $historialproyectoperiodo->idPeriodo = $modelperiodos->idPeriodo;
@@ -284,13 +269,13 @@ class ProyectosController extends Controller {
                         }
                     } else { //-
                         $transaction->rollBack();
-                        Yii::log("Rollback inventado al intentar crear el proyecto con el código: " . $modelproyectos->codigo . "-" . $modelProyectosXSector->idtbl_sectorbeneficiado . "+" . $modelProyectosXSector->idtbl_Proyectos, "warning", "application.
+                        Yii::log("Rollback. Error al almacenar el sector: " . $modelproyectos->codigo . "-" . $modelProyectosXSector->idtbl_sectorbeneficiado . "+" . $modelProyectosXSector->idtbl_Proyectos, "warning", "application.
     controllers.ProyectosController");
                         throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
                     }//-
                 } else {
                     $transaction->rollBack();
-                    Yii::log("Rollback inventado al intentar crear el proyecto con el código: " . $modelproyectos->codigo . "-" . $modelProyectosXSector->idtbl_sectorbeneficiado . "+" . $modelProyectosXSector->idtbl_Proyectos, "warning", "application.
+                    Yii::log("Rollback al intentar crear el proyecto con el código: " . $modelproyectos->codigo . "-" . $modelProyectosXSector->idtbl_sectorbeneficiado . "+" . $modelProyectosXSector->idtbl_Proyectos, "warning", "application.
     controllers.ProyectosController");
                     throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
                 }

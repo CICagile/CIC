@@ -30,24 +30,25 @@
  */
 class Proyectos extends CActiveRecord {
 
-    /**
-     * Returns the static model of the specified AR class.
-     * @param string $className active record class name.
-     * @return Proyectos the static model class
-     */
+// <editor-fold defaultstate="collapsed" desc="Properties">
     public $fecha_inicio_search;
     public $fecha_fin_search;
-    //
+    
+    //Array Integer|String : almacena valores de sectores beneficiados
     public $idtbl_sectorbeneficiado;
     //Las variables fecha inicio y fecha fin se utilizan para simular el periodo del proyecto.
     public $idperiodo;
     public $inicio;
     public $fin;
-    public $CODIGO_APROBADO = "0";
-    public $CODIGO_AMPLIADO = "1";
-    public $LABEL_APROBADO = 'Aprobado';
-    public $LABEL_AMPLIADO = 'Ampliado';
+// </editor-fold>
 
+// Rules, relations, attribute labels, search
+// <editor-fold defaultstate="collapsed" desc="Yii functions">
+    /**
+     * Returns the static model of the specified AR class.
+     * @param string $className active record class name.
+     * @return Proyectos the static model class
+     */
     public static function model($className = __CLASS__) {
         return parent::model($className);
     }
@@ -68,7 +69,7 @@ class Proyectos extends CActiveRecord {
         return array(
             array('nombre, codigo, idtbl_objetivoproyecto, tipoproyecto, idtbl_adscrito, idtbl_sectorbeneficiado, estado', 'required', 'message' => '{attribute} es requerido.'),
             array('codigo', 'unique', 'className' => 'Proyectos', 'message' => 'Ya existe un proyecto con ese código.'),
-            array('idtbl_objetivoproyecto, tipoproyecto, idtbl_adscrito, estado', 'numerical', 'integerOnly' => true), /*removido idtbl_sectorbeneficiado,*/
+            array('idtbl_objetivoproyecto, tipoproyecto, idtbl_adscrito, estado', 'numerical', 'integerOnly' => true), /* removido idtbl_sectorbeneficiado, */
             array('nombre', 'length', 'min' => 3, 'max' => 500, 'tooShort' => 'El {attribute} debe ser mayor a {min} caracteres.', 'tooLong' => 'El {attribute} debe ser menor a {max} caracteres.'),
             array('codigo', 'length', 'min' => 2, 'max' => 20, 'tooShort' => 'El {attribute} debe ser mayor a {min} caracteres.', 'tooLong' => 'El {attribute} debe ser menor a {max} caracteres.'),
             // The following rule is used by search().
@@ -156,6 +157,9 @@ class Proyectos extends CActiveRecord {
                 ));
     }
 
+// </editor-fold>
+
+// <editor-fold defaultstate="collapsed" desc="Functions">
     public function agregarAsistenteProyecto($pidproyecto, $pcarnet, $pidrol, $pfechaini, $pfechafin, $phoras) {
         $conexion = Yii::app()->db;
         $call = 'CALL agregarAsistenteProyecto(:idproyecto,:carnet,:idrol,:fechaini,:fechafin, :horas)';
@@ -208,8 +212,6 @@ class Proyectos extends CActiveRecord {
         return $dataProvider;
     }
 
-//fin buscar asistentes activos del proyecto
-
     /* Esta funcion retorna la información del proyecto
      * y la información del periodo actual asociado al proyecto
      */
@@ -229,7 +231,7 @@ class Proyectos extends CActiveRecord {
             $this->idperiodo = $model['idPeriodo']; //Asociamos el atributo simulado idperiodo
             $this->inicio = $model['inicio']; //Asociamos el atributos simulado inicio
             $this->fin = $model['fin']; //Asociamos el atributos simulado fin
-            Proyectos::obtenerSectoresBeneficiados($pIdProyecto);//asociamos los valores de sectores beneficiados
+            Proyectos::obtenerSectoresBeneficiados($pIdProyecto); //asociamos los valores de sectores beneficiados
             return $this; //Retornamos el objeto Proyecto
         }
     }
@@ -296,6 +298,15 @@ class Proyectos extends CActiveRecord {
     }
 
     // </editor-fold>
+// </editor-fold>
+
+// <editor-fold defaultstate="collapsed" desc="Constants">
+    public $CODIGO_APROBADO = "0";
+    public $CODIGO_AMPLIADO = "1";
+    public $LABEL_APROBADO = 'Aprobado';
+    public $LABEL_AMPLIADO = 'Ampliado';
+
+// </editor-fold>
 }
 
 //fin modelo proyectos
