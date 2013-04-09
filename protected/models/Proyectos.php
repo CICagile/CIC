@@ -33,15 +33,14 @@ class Proyectos extends CActiveRecord {
 // <editor-fold defaultstate="collapsed" desc="Properties">
     public $fecha_inicio_search;
     public $fecha_fin_search;
-    
     //Array Integer|String : almacena valores de sectores beneficiados
     public $idtbl_sectorbeneficiado;
     //Las variables fecha inicio y fecha fin se utilizan para simular el periodo del proyecto.
     public $idperiodo;
     public $inicio;
     public $fin;
-// </editor-fold>
 
+// </editor-fold>
 // Rules, relations, attribute labels, search
 // <editor-fold defaultstate="collapsed" desc="Yii functions">
     /**
@@ -158,7 +157,6 @@ class Proyectos extends CActiveRecord {
     }
 
 // </editor-fold>
-
 // <editor-fold defaultstate="collapsed" desc="Functions">
     public function agregarAsistenteProyecto($pidproyecto, $pcarnet, $pidrol, $pfechaini, $pfechafin, $phoras) {
         $conexion = Yii::app()->db;
@@ -251,10 +249,12 @@ class Proyectos extends CActiveRecord {
     public function obtenerSectoresBeneficiadosConFormato() {
         $this->idtbl_sectorbeneficiado = Proyectos::listFormatBenefitedSectors($this->idtbl_sectorbeneficiado);
     }
-    
+
     /*
      * Establece idtbl_sectorbeneficiado con un arreglo de sectores beneficiados
+     * @param Integer $pIdProyecto
      */
+
     private function obtenerSectoresBeneficiados($pIdProyecto) {
         $call = 'CALL obtenerSectoresBeneficiados(:pIdProyecto)';
         $conexion = Yii::app()->db;
@@ -277,12 +277,15 @@ class Proyectos extends CActiveRecord {
      */
 
     private function listFormatBenefitedSectors($pSectorsArray) {
-        $html_list = '<ul>';
-        foreach ($pSectorsArray as $sector) {
-            $html_list .= '<li>' . $sector["nombre"] . '</li>';
+        if (is_array($pSectorsArray)) {
+            $html_list = '<ul>';
+            foreach ($pSectorsArray as $sector) {
+                $html_list .= '<li>' . $sector["nombre"] . '</li>';
+            }
+            $html_list .= '</ul>';
+            return $html_list;
         }
-        $html_list .= '</ul>';
-        return $html_list;
+        else return "No se ha especificado";
     }
 
     // <editor-fold defaultstate="collapsed" desc="Common private functions~">
@@ -303,7 +306,6 @@ class Proyectos extends CActiveRecord {
 
     // </editor-fold>
 // </editor-fold>
-
 // <editor-fold defaultstate="collapsed" desc="Constants">
     public $CODIGO_APROBADO = "0";
     public $CODIGO_AMPLIADO = "1";

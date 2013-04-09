@@ -109,15 +109,28 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
      * $return Boolean true si se ejecutó correctamente, en otro caso, false
      */
     public function updateBenefitedSectors($pIdProyecto, $pAntiguosSectores, $pNuevosSectores) {
-        $sectores_a_borrar = array_udiff($pAntiguosSectores, $pNuevosSectores,
-                'ProyectosSectorbeneficiado::compareSectorArrayWithId');
-        $sectores_a_insertar = array_udiff($pNuevosSectores, $pAntiguosSectores,
-                'ProyectosSectorbeneficiado::compareIdWithSectorArray');
+        if(!is_array($pNuevosSectores)) //caso en el que no se han ingresado nuevos sectores
+            return true;
+        if(is_array($pNuevosSectores[0]))
+            return true;
+        
+        if(is_array($pAntiguosSectores)){ //si no hay sectores beneficiados, no es un arreglo
+            $sectores_a_borrar = array_udiff($pAntiguosSectores, $pNuevosSectores,
+                    'ProyectosSectorbeneficiado::compareSectorArrayWithId');
+        
+            $sectores_a_insertar = array_udiff($pNuevosSectores, $pAntiguosSectores,
+                    'ProyectosSectorbeneficiado::compareIdWithSectorArray');
+        }else
+            $sectores_a_insertar = $pNuevosSectores;
 
         $transaccion = Yii::app()->db->beginTransaction();
 
-        $resultado_borrar =
-                ProyectosSectorbeneficiado::deleteBenefitedSectors($pIdProyecto, $sectores_a_borrar);
+        if(isset($sectores_a_borrar))//verificacion por si no habian sectores beneficiados antes
+            $resultado_borrar =
+                    ProyectosSectorbeneficiado::deleteBenefitedSectors($pIdProyecto, $sectores_a_borrar);
+        else 
+            $resultado_borrar = true;
+        
         $resultado_insertar =
                 ProyectosSectorbeneficiado::saveAllBenefitedSectors($pIdProyecto, $sectores_a_insertar);
         

@@ -47,6 +47,7 @@
         <div class="row">
             <?php echo $form->labelEx($modelproyectos, 'idtbl_sectorbeneficiado'); ?>
             <div class="row"><?php echo $BENEFIT_MULTIPLE_CHOICE; ?></div>
+            <div class="row">O d&eacute;jelo en blanco para no modificar los sectores beneficiados</div>
             <?php
             $data = CHtml::listData(SectorBeneficiado::model()->findAll(), 'idtbl_sectorbeneficiado', 'nombre');
             //asort($data); //ordena los resultados alfabéticamente
