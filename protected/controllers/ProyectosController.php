@@ -46,6 +46,7 @@ class ProyectosController extends Controller {
 
     public function actionVer($id) {
         $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
+        Proyectos::model()->obtenerSectoresBeneficiadosConFormato();
         if ($model === null)
             throw new CHttpException(404, 'La página solicitado no se ha encontrado.');
         else
@@ -294,6 +295,9 @@ class ProyectosController extends Controller {
 
     public function actionActualizar($id) {
         $modelproyectos = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
+        $antiguos_sectores = $modelproyectos->idtbl_sectorbeneficiado;
+        $modelProyectosXSector = new ProyectosSectorbeneficiado;
+        
         if ($modelproyectos === null)
             throw new CHttpException(404, 'La página solicitado no se ha encontrado.');
 
@@ -314,10 +318,16 @@ class ProyectosController extends Controller {
             $modelproyectos->attributes = $_POST['Proyectos'];
             $result = $modelproyectos->save(false);
             if ($result) {
+                $result_sectores = $modelProyectosXSector->updateBenefitedSectors(
+                        $modelproyectos->idtbl_Proyectos, $antiguos_sectores, $modelproyectos->idtbl_sectorbeneficiado);
+             if($result_sectores){   
                 Yii::log("Cambio exitoso de la información del proyecto: " . $modelproyectos->codigo, "info", "application.
     controllers.ProyectosController");
                 $this->redirect(array('ver', 'id' => $modelproyectos->idtbl_Proyectos));
-            } else {
+             }else {
+                throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
+            }
+            }else{
                 throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
             }
         }

@@ -245,11 +245,16 @@ class Proyectos extends CActiveRecord {
     }
 
     /*
-     * Obtiene los sectores beneficiados según el id de un proyecto
-     * Se utiliza para mostrarlos en la visión detallada del proyecto
-     *  @param Integer $pIdProyecto
+     * Da formato de lista a 
      */
 
+    public function obtenerSectoresBeneficiadosConFormato() {
+        $this->idtbl_sectorbeneficiado = Proyectos::listFormatBenefitedSectors($this->idtbl_sectorbeneficiado);
+    }
+    
+    /*
+     * Establece idtbl_sectorbeneficiado con un arreglo de sectores beneficiados
+     */
     private function obtenerSectoresBeneficiados($pIdProyecto) {
         $call = 'CALL obtenerSectoresBeneficiados(:pIdProyecto)';
         $conexion = Yii::app()->db;
@@ -261,8 +266,7 @@ class Proyectos extends CActiveRecord {
             return null;
         else {
             $this->scenario = 'cargarModelo';
-            $this->idtbl_sectorbeneficiado = Proyectos::listFormatBenefitedSectors($model);
-            // $model[0]["nombre"];
+            $this->idtbl_sectorbeneficiado = $model;
         }
     }
 

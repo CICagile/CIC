@@ -94,10 +94,64 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
         $resultadoSector = true;
         foreach ($pIdsSectoresBeneficiados as $sector) {
             $is_sector_saved = ProyectosSectorbeneficiado::addBenefitedSector(
-                    $pIdProyecto, $sector);
+                            $pIdProyecto, $sector);
             $resultadoSector = ($is_sector_saved == 1) && $resultadoSector;
         }
         return $resultadoSector;
+    }
+
+    /*
+     * Actualiza los sectores beneficiados asociados a un proyecto
+     *  |-borra los no estén en $pNuevosSectores e inserta los nuevos valores
+     * @param Integer $pIdProyecto id del proyecto a actualizar
+     * $param Array[Integer $pAntiguosSectores
+     * $param Array[Integer $pNuevosSectores
+     * $return Boolean true si se ejecutó correctamente, en otro caso, false
+     */
+    public function updateBenefitedSectors($pIdProyecto, $pAntiguosSectores, $pNuevosSectores) {
+        $sectores_a_borrar = array_udiff($pAntiguosSectores, $pNuevosSectores,
+                'ProyectosSectorbeneficiado::compareSectorArrayWithId');
+        $sectores_a_insertar = array_udiff($pNuevosSectores, $pAntiguosSectores,
+                'ProyectosSectorbeneficiado::compareIdWithSectorArray');
+
+        $transaccion = Yii::app()->db->beginTransaction();
+
+        $resultado_borrar =
+                ProyectosSectorbeneficiado::deleteBenefitedSectors($pIdProyecto, $sectores_a_borrar);
+        $resultado_insertar =
+                ProyectosSectorbeneficiado::saveAllBenefitedSectors($pIdProyecto, $sectores_a_insertar);
+        
+        if($resultado_borrar && $resultado_insertar){
+            $transaccion->commit();
+            Yii::log("Cambio exitoso en sectores beneficiados del proyecto: " . $pIdProyecto, "info", "application.
+                models.ProyectosSectorBeneficiado");
+            return true;
+        }
+        else{
+            Yii::log("Fallo al actualizar sectores beneficiados del proyecto: " . $pIdProyecto, "warning", "application.
+                models.ProyectosSectorBeneficiado");
+            $transaccion->rollback;
+            return false;
+        }
+    }
+    
+    
+    /*
+     * Compara el valor del campo idtbl_sectorbeneficiado de $pSectorsArray con $pIdSector
+     * @param Array $pSectorsArray arreglo de la forma array("idtbl_sectorbeneficiado"=>"valor","nombre"=>nombre
+     * @param Array $pIdSector
+     * @returns Boolean resultado de la comparación
+     */
+    public function compareSectorArrayWithId($pSectorsArray,$pIdSector){
+        if($pSectorsArray["idtbl_sectorbeneficiado"] == $pIdSector)
+            return 0; //indica que son iguales
+        else return 1;
+    }
+    
+    public function compareIdWithSectorArray($pIdSector,$pSectorsArray){
+        if($pIdSector == $pSectorsArray["idtbl_sectorbeneficiado"])
+            return 0; //indica que son iguales
+        else return 1;
     }
 
     /*
@@ -114,6 +168,41 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
         $comando = $conexion->createCommand($call);
         $comando->bindParam(':pIdProyecto', $pIdProyecto);
         $comando->bindParam(':pIdSector', $pIdSectorBeneficiado);
+        return $comando->execute();
+    }
+
+    /*
+     * Elimina la asociación entre un proyecto y N sectores
+     * IMPORTANTE: se asume que se invoca desde una transaccion activa
+     * @param Integer $pIdProyecto id del proyecto
+     * @param Array[Sector] sector tiene la forma array("idtbl_sectorbeneficiado"=>"valor","nombre"=>nombre
+     * @return Boolean verdadero si se ejecutó correctamente, falso sino
+     */
+
+    private function deleteBenefitedSectors($pIdProyecto, $pSectors) {
+        $resultadoSector = true;
+        foreach ($pSectors as $sector) {
+            $is_sector_saved = ProyectosSectorbeneficiado::deleteBenefitedSector(
+                            $pIdProyecto, $sector["idtbl_sectorbeneficiado"]);
+            $resultadoSector = ($is_sector_saved == 1) && $resultadoSector; //valida que sólo borre 1
+        }
+        return $resultadoSector;
+    }
+
+    /*
+     * Elimina la asociación entre un proyecto y un sector beneficiado
+     * IMPORTANTE: se asume que se llama desde una transacción activa
+     * @param Integer $pIdProyecto id del proyecto
+     * @param Integer $pIdSector id del sector
+     * @return Integer number of affected rows
+     */
+
+    private function deleteBenefitedSector($pIdProyecto, $pIdSector) {
+        $conexion = Yii::app()->db;
+        $call = 'CALL borrarSectorBeneficiadoAsociadoAProyecto(:pIdProyecto,:pIdSector)';
+        $comando = $conexion->createCommand($call);
+        $comando->bindParam(':pIdProyecto', $pIdProyecto);
+        $comando->bindParam(':pIdSector', $pIdSector);
         return $comando->execute();
     }
 
