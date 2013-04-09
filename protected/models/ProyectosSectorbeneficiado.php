@@ -143,14 +143,18 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
      * @returns Boolean resultado de la comparación
      */
     public function compareSectorArrayWithId($pSectorsArray,$pIdSector){
-        if($pSectorsArray["idtbl_sectorbeneficiado"] == $pIdSector)
-            return 0; //indica que son iguales
+        if(is_array($pSectorsArray))
+            if($pSectorsArray["idtbl_sectorbeneficiado"] == $pIdSector)
+                return 0; //indica que son iguales
+            else return 1;
         else return 1;
     }
     
     public function compareIdWithSectorArray($pIdSector,$pSectorsArray){
-        if($pIdSector == $pSectorsArray["idtbl_sectorbeneficiado"])
-            return 0; //indica que son iguales
+        if(is_array($pSectorsArray))
+            if($pIdSector == $pSectorsArray["idtbl_sectorbeneficiado"])
+                return 0; //indica que son iguales
+            else return 1;
         else return 1;
     }
 
