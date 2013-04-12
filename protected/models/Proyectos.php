@@ -255,7 +255,7 @@ class Proyectos extends CActiveRecord {
      * @param Integer $pIdProyecto
      */
 
-    private function obtenerSectoresBeneficiados($pIdProyecto) {
+    public function obtenerSectoresBeneficiados($pIdProyecto) {
         $call = 'CALL obtenerSectoresBeneficiados(:pIdProyecto)';
         $conexion = Yii::app()->db;
         $command = $conexion->createCommand($call);

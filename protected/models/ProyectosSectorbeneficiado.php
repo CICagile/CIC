@@ -108,67 +108,69 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
      * $param Array[Integer $pNuevosSectores
      * $return Boolean true si se ejecutó correctamente, en otro caso, false
      */
+
     public function updateBenefitedSectors($pIdProyecto, $pAntiguosSectores, $pNuevosSectores) {
-        if(!is_array($pNuevosSectores)) //caso en el que no se han ingresado nuevos sectores
+        if (!is_array($pNuevosSectores)) //caso en el que no se han ingresado nuevos sectores
             return true;
-        if(is_array($pNuevosSectores[0]))
+        if (is_array($pNuevosSectores[0]))
             return true;
-        
-        if(is_array($pAntiguosSectores)){ //si no hay sectores beneficiados, no es un arreglo
-            $sectores_a_borrar = array_udiff($pAntiguosSectores, $pNuevosSectores,
-                    'ProyectosSectorbeneficiado::compareSectorArrayWithId');
-        
-            $sectores_a_insertar = array_udiff($pNuevosSectores, $pAntiguosSectores,
-                    'ProyectosSectorbeneficiado::compareIdWithSectorArray');
+
+        if (is_array($pAntiguosSectores)) { //si no hay sectores beneficiados, no es un arreglo
+            $sectores_a_borrar = array_udiff($pAntiguosSectores, $pNuevosSectores, 'ProyectosSectorbeneficiado::compareSectorArrayWithId');
+
+            $sectores_a_insertar = array_udiff($pNuevosSectores, $pAntiguosSectores, 'ProyectosSectorbeneficiado::compareIdWithSectorArray');
         }else
             $sectores_a_insertar = $pNuevosSectores;
 
         $transaccion = Yii::app()->db->beginTransaction();
 
-        if(isset($sectores_a_borrar))//verificacion por si no habian sectores beneficiados antes
+        if (isset($sectores_a_borrar))//verificacion por si no habian sectores beneficiados antes
             $resultado_borrar =
                     ProyectosSectorbeneficiado::deleteBenefitedSectors($pIdProyecto, $sectores_a_borrar);
-        else 
+        else
             $resultado_borrar = true;
-        
+
         $resultado_insertar =
                 ProyectosSectorbeneficiado::saveAllBenefitedSectors($pIdProyecto, $sectores_a_insertar);
-        
-        if($resultado_borrar && $resultado_insertar){
+
+        if ($resultado_borrar && $resultado_insertar) {
             $transaccion->commit();
             Yii::log("Cambio exitoso en sectores beneficiados del proyecto: " . $pIdProyecto, "info", "application.
                 models.ProyectosSectorBeneficiado");
             return true;
-        }
-        else{
+        } else {
             Yii::log("Fallo al actualizar sectores beneficiados del proyecto: " . $pIdProyecto, "warning", "application.
                 models.ProyectosSectorBeneficiado");
             $transaccion->rollback;
             return false;
         }
     }
-    
-    
+
     /*
      * Compara el valor del campo idtbl_sectorbeneficiado de $pSectorsArray con $pIdSector
      * @param Array $pSectorsArray arreglo de la forma array("idtbl_sectorbeneficiado"=>"valor","nombre"=>nombre
      * @param Array $pIdSector
      * @returns Boolean resultado de la comparación
      */
-    public function compareSectorArrayWithId($pSectorsArray,$pIdSector){
-        if(is_array($pSectorsArray))
-            if($pSectorsArray["idtbl_sectorbeneficiado"] == $pIdSector)
+
+    public function compareSectorArrayWithId($pSectorsArray, $pIdSector) {
+        if (is_array($pSectorsArray))
+            if ($pSectorsArray["idtbl_sectorbeneficiado"] == $pIdSector)
                 return 0; //indica que son iguales
-            else return 1;
-        else return 1;
+            else
+                return 1;
+        else
+            return 1;
     }
-    
-    public function compareIdWithSectorArray($pIdSector,$pSectorsArray){
-        if(is_array($pSectorsArray))
-            if($pIdSector == $pSectorsArray["idtbl_sectorbeneficiado"])
+
+    public function compareIdWithSectorArray($pIdSector, $pSectorsArray) {
+        if (is_array($pSectorsArray))
+            if ($pIdSector == $pSectorsArray["idtbl_sectorbeneficiado"])
                 return 0; //indica que son iguales
-            else return 1;
-        else return 1;
+            else
+                return 1;
+        else
+            return 1;
     }
 
     /*
