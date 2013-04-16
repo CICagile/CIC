@@ -6,6 +6,19 @@
 /* @var $periodo Periodos */
 ?>
 
+<?php $form=$this->widget('ext.dynamicform.DynamicForm', array(
+	'id'=>'dynamic-horas',
+	'options' => array(
+            'limit' => 100,
+            'createColor' => 'green',
+            'removeColor' => 'red',
+            'duration' => 1350
+        ),
+        'form' => 'formhoras',
+        'plus' => 'plus',
+        'minus'=> 'minus'
+)); ?>
+
 <div class="form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(
@@ -90,7 +103,7 @@
 	</div>
         
         
-        <p id="horas">
+        <div id="formhoras">
             <div class="row">
                 <?php echo $form->labelEx($model,'horas'); ?>
                 <?php echo CHtml::textField("txt_horas"); ?>
@@ -103,8 +116,8 @@
                         CHtml::listData(TipoHoraInvestigador::model()->findAll(), 'nombre', 'nombre'), array('empty'=>'Elija una opción')) ?>
                 <?php echo $form->error($model,'horas', NULL, false); ?>
             </div>
-            <span style="clear:none; float:right;"><a id="minus6" href="">[-]</a> <a id="plus6" href="">[+]</a></span>
-        </p>
+            <span style="clear:none; float:right;"><a id="minus" href="">[-]</a> <a id="plus" href="">[+]</a></span>
+        </div>
 
         <div class="row">
 		<?php echo $form->labelEx($periodo,'inicio'); ?>
@@ -151,17 +164,5 @@
 	</div>
 
 <?php $this->endWidget(); ?>
-<?php $form=$this->widget('ext.dynamicform.DynamicForm', array(
-	'id'=>'dynamic-horas',
-	'options' => array(
-            'limit' => 100,
-            'createColor' => 'green',
-            'removeColor' => 'red',
-            'duration' => 1000
-        ),
-        'form' => 'horas',
-        'plus' => 'plus',
-        'minus'=> 'minus'
-)); ?>
 
 </div><!-- form -->

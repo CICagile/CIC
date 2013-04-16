@@ -37,11 +37,11 @@ class DynamicForm extends CWidget
     
     public function init()
     {
-        $jsfile = dirname(__FILE__).DIRECTORY_SEPARATOR.'jquery-dynamic-form.js';
-        Yii::app()->getAssetsManager()->publish($jsfile);
+        $file = dirname(__FILE__).DIRECTORY_SEPARATOR.'jquery-dynamic-form.js';
+        $jsfile = Yii::app()->getAssetManager()->publish($file);
         Yii::app()->clientScript->registerScriptFile($jsfile);
         $options = CJavaScript::encode($this->options);
-        Yii::app()->getClientScript()->registerScript(__CLASS__.'#'.$this->id,'$(#"'.$this->form.'").dynamicForm("'.$this->plus.'", "'.$this->minus.', '.$options.');');
+        Yii::app()->getClientScript()->registerScript(__CLASS__.'#'.$this->id,'$("#'.$this->form.'").dynamicForm("#'.$this->plus.'", "#'.$this->minus.'", '.$options.');');
         parent::init();
     }
 }//fin clase Dynamic form
