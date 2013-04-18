@@ -19,7 +19,7 @@ class Investigador  extends CModel{
     public $grado;
     public $proyecto;
     public $rol;
-    public $horas = array();
+    public $horas = null;
     
     /**
      *@return array Reglas de validación para los atributos del modelo. 
@@ -27,7 +27,7 @@ class Investigador  extends CModel{
     public function rules()
     {
         return array(
-            array('nombre,apellido1,cedula,correo,experiencia,grado,proyecto,rol','required','on'=>'nuevo','message'=>'{attribute} no puede dejarse en blanco.'),
+            array('nombre,apellido1,cedula,correo,experiencia,grado,proyecto,rol,horas','required','on'=>'nuevo','message'=>'{attribute} no puede dejarse en blanco.'),
             array('nombre,apellido1,apellido2,proyecto','length','max'=>20),
             array('cedula','length','min'=>9,'max'=>20),
             array('telefono, correo', 'length', 'max'=>40),

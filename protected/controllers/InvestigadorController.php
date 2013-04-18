@@ -90,19 +90,26 @@ class InvestigadorController extends Controller
 		// Uncomment the following line if AJAX validation is needed
                 $this->performAjaxValidation(array($model,$periodo));
 
-		if(isset($_POST['Investigador']) && isset($_POST['Periodos']))
+		if(isset($_POST['Investigador']) && isset($_POST['Periodos']) && isset($_POST['formhoras']))
 		{
-			$model->attributes=$_POST['Investigador'];
-                        $periodo->attributes = $_POST['Periodos'];
-                        $model->validarCedulaUnica();
-                        $periodo->validarFechaInicioAsistencia($model->proyecto);
-                        $periodo->validarFechaFinAsistencia($model->proyecto);
-			if($model->validate(NULL,false) && $periodo->validate(NULL,false)){
-                            if($model->crear($periodo))
-                                $this->redirect(array('index'));
-                            else
-                                throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
-                        }//fin si los datos del asistente són válidos
+                    $horas = array();
+                    $datos_horas = $_POST['formhoras']['formhoras'];
+                    $model->attributes=$_POST['Investigador'];
+                    $periodo->attributes = $_POST['Periodos'];
+                    foreach ($datos_horas as $dato)
+                    {
+                        $horas[$dato['tipo_horas']] = $dato['cantidad_horas'];
+                    }
+                    $model->horas = $horas;
+                    $model->validarCedulaUnica();
+                    $periodo->validarFechaInicioAsistencia($model->proyecto);
+                    $periodo->validarFechaFinAsistencia($model->proyecto);
+                    if($model->validate(NULL,false) && $periodo->validate(NULL,false)){
+                        if($model->crear($periodo))
+                            $this->redirect(array('index'));
+                        else
+                            throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
+                    }//fin si los datos del asistente són válidos
 		}
 
 		$this->render('create',array(
