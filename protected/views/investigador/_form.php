@@ -4,6 +4,7 @@
 /* @var $model Investigador */
 /* @var $form CActiveForm */
 /* @var $periodo Periodos */
+/* @var $horas array */
 ?>
 
 <?php $form=$this->widget('ext.dynamicform.DynamicForm', array(
@@ -12,12 +13,13 @@
             'limit' => 100,
             'createColor' => 'green',
             'removeColor' => 'red',
-            'duration' => 450
+            'duration' => 450,
+            'data' => $horas,
         ),
         'form' => 'formhoras',
         'plus' => 'plus',
         'minus'=> 'minus'
-)); ?>
+));?>
 
 <div class="form">
 

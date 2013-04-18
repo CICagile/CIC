@@ -86,6 +86,7 @@ class InvestigadorController extends Controller
 		$model=new Investigador;
                 $model->scenario = 'nuevo';
                 $periodo = new Periodos;
+                $datos_horas = array();
 
 		// Uncomment the following line if AJAX validation is needed
                 $this->performAjaxValidation(array($model,$periodo));
@@ -115,6 +116,7 @@ class InvestigadorController extends Controller
 		$this->render('create',array(
 			'model'=>$model,
                         'periodo'=>$periodo,
+                        'horas'=>  array_values($datos_horas),
 		));
 	}//fin action create
         

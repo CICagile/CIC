@@ -2,6 +2,7 @@
 /* @var $this InvestigadorController */
 /* @var $model Investigador */
 /* @var $periodo Periodos */
+/* @var $horas array*/
 
 $this->breadcrumbs=array(
 	'Investigador'=>array('index'),
@@ -15,4 +16,4 @@ $this->menu=array(
 
 <h1>Registrar Nuevo Investigador</h1>
 
-<?php echo $this->renderPartial('_form', array('model'=>$model,'periodo'=>$periodo)); ?>
+<?php echo $this->renderPartial('_form', array('model'=>$model,'periodo'=>$periodo,'horas'=>$horas,)); ?>
