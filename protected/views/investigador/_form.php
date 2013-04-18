@@ -12,7 +12,7 @@
             'limit' => 100,
             'createColor' => 'green',
             'removeColor' => 'red',
-            'duration' => 500
+            'duration' => 450
         ),
         'form' => 'formhoras',
         'plus' => 'plus',
@@ -116,7 +116,7 @@
                         CHtml::listData(TipoHoraInvestigador::model()->findAll(), 'nombre', 'nombre'), array('empty'=>'Elija una opción')) ?>
                 <?php echo $form->error($model,'horas', NULL, false); ?>
             </div>
-            <span style="clear:none;"><a id="minus" href="">[-]</a> <a id="plus" href="">[+]</a></span>
+            <span style="clear:none; float:right;"><a id="minus" href="">[-]</a> <a id="plus" href="">[+]</a></span>
         </div>
 
         <div class="row">
