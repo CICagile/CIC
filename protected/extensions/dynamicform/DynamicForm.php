@@ -3,6 +3,8 @@
 /**
  * Esta clase crea un widget que permite agregar campos de formulario de forma
  * dinamica a partir de una plantilla.
+ * @author Mario Retana <maretana@ic-itcr.ac.cr>
+ * @see Plugin usado: jquery-dynamic-form.js
  */
 class DynamicForm extends CWidget
 {
