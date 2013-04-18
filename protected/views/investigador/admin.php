@@ -6,7 +6,7 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'Registrar nuevo asistente', 'url'=>array('create')),
+	array('label'=>'Registrar nuevo investigador', 'url'=>array('create')),
 	
 );
 /*/Arreglo con las columnas que se mostrarán en el CGridView
