@@ -2,7 +2,8 @@
 
 /**
  * Esta clase crea un widget que permite agregar campos de formulario de forma
- * dinamica a partir de una plantilla.
+ * dinamica a partir de una plantilla. Supone que esá disponible la versión de
+ * jQuery 1.4 o superior.
  * @author Mario Retana <maretana@ic-itcr.ac.cr>
  * @see Plugin usado: jquery-dynamic-form.js
  */
