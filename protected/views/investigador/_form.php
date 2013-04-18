@@ -103,7 +103,7 @@
 	</div>
         
         
-        <div id="formhoras" class="row-box">
+        <div id="formhoras">
             <div class="row">
                 <?php echo $form->labelEx($model,'horas'); ?>
                 <?php echo CHtml::textField("txt_horas"); ?>
