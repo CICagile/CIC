@@ -17,7 +17,7 @@ class DynamicForm extends CWidget
      *  - boolean   normalizedFullForm  normaliza todos los campos del formulario (incluso los que están fuera del script).
      *  - string    createColor         Efecto de color cuando se hace un duplicado (requiere el módulo jQuery UI Effects).
      *  - string    removeColor         Efecto de color cuando se remueve un duplicado (requiere el módulo jQuery UI Effects).
-     *  - int       duration            Duración del efecto de color (requiere el módulo jQuery UI Effects).
+     *  - int       duration            Duración del efecto de color en milisegundos (requiere el módulo jQuery UI Effects).
      *  - type      data                datos JSON que van a llenar previamente el formulario.
      * @var array $options Opciones del script.
      */
