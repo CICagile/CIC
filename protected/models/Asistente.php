@@ -24,6 +24,18 @@ class Asistente  extends CModel{
     public $rol;
     public $horas;
     
+    
+        public static function model($className=__CLASS__)
+	{
+		return parent::model($className);
+	}
+        
+        public function tableName()
+	{
+		return 'tbl_asistente';
+	}
+
+    
     /**
 	 * @return array validation rules for model attributes.
 	 */
@@ -177,6 +189,40 @@ class Asistente  extends CModel{
             ));
             return $dataProvider;
     }
+    
+    public function search()
+	{
+           $call = 'CALL verAsistentes()';
+           $rawData=Yii::app()->db->createCommand($call)->queryAll();
+            // or using: $rawData=User::model()->findAll();
+            $dataProvider= new CArrayDataProvider($rawData, array(
+            'keyField'=>'carnet',
+            'id'=>'user',
+            'sort'=>array(
+            'attributes'=>array(
+            'carnet',
+             'nombre',
+             'apellido1',
+             'apellido2',
+             'cedula',
+             'numerocuenta',
+             'cuentacliente',
+             'telefono',
+             'correo',
+              //'banco',
+             //'carrera',
+             ),
+             ),
+            'pagination'=>array(
+            'pageSize'=>10,
+              ),
+            ));
+            return $dataProvider;
+            }
+           
+            
+
+		
     
     public function __get($name)
     {

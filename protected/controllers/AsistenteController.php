@@ -78,9 +78,9 @@ class AsistenteController extends Controller
 	 */
 	public function actionView($id)
 	{
-		$this->render('view',array(
-			'model'=>$this->loadModel($id),
-		));
+               	$this->render('view',array(
+                        'model'=>$this->loadModel($id),
+                ));
 	}
 
 	/**
@@ -196,7 +196,7 @@ class AsistenteController extends Controller
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer the ID of the model to be loaded
 	 */
-	public function loadModel($id)
+	public function loadModel($carnet)
 	{
 		$model = new Asistente;
                 $atributos = $model->buscarAsistentePorCarnet($id);
@@ -218,4 +218,6 @@ class AsistenteController extends Controller
 			Yii::app()->end();
 		}
 	}
+        
+ 
 }
