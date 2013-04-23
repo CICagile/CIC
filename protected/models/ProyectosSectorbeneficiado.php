@@ -117,32 +117,20 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
         
         if (is_array($pAntiguosSectores)) { //si no hay sectores beneficiados, no es un arreglo
             
+            //obtiene los antiguos sectores beneficiados en formato de arreglo de enteros
             $antiguos_sectores = array();
-            
             foreach ($pAntiguosSectores as $sector_antiguo){
                 array_push($antiguos_sectores,$sector_antiguo["idtbl_sectorbeneficiado"]);
             }
             
             $sectores_a_borrar = array_diff($antiguos_sectores,$pNuevosSectores); //array_udiff($pAntiguosSectores, $pNuevosSectores, 'ProyectosSectorbeneficiado::compareSectorArrayWithId');
             $sectores_a_insertar = array_diff($pNuevosSectores, $antiguos_sectores); //array_udiff($pNuevosSectores, $pAntiguosSectores, 'ProyectosSectorbeneficiado::compareIdWithSectorArray');
-            
-            /*$sectoresInsertar = implode(",", $sectores_a_insertar);
-            Yii::log("**Sectores a insertar " . $sectoresInsertar , "info", "application.
-                models.ProyectosSectorBeneficiado");*/
+
         }else
             $sectores_a_insertar = $pNuevosSectores;
 
         $transaccion = Yii::app()->db->beginTransaction();
 
-        if(isset($sectores_a_borrar)){
-            $sectoresBorrar = implode(",",$sectores_a_borrar);
-            Yii::log("Sectores a borrar " . $sectoresBorrar , "info", "application.
-                models.ProyectosSectorBeneficiado");
-        }
-        
-        
-        
-        
         if (isset($sectores_a_borrar))//verificacion por si no habian sectores beneficiados antes
             $resultado_borrar =
                     ProyectosSectorbeneficiado::deleteBenefitedSectors($pIdProyecto, $sectores_a_borrar);
@@ -166,51 +154,6 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
     }
 
     /*
-     * Compara el valor del campo idtbl_sectorbeneficiado de $pSectorsArray con $pIdSector
-     * @param Array $pSectorsArray arreglo de la forma array("idtbl_sectorbeneficiado"=>"valor","nombre"=>nombre
-     * @param Array $pIdSector
-     * @returns Boolean resultado de la comparación
-     */
-
-    public function compareSectorArrayWithId($pSectorsArray, $pIdSector) {
-        if (is_array($pSectorsArray))
-            if ($pSectorsArray["idtbl_sectorbeneficiado"] == $pIdSector){
-                return 0; //indica que son iguales
-            }
-            else{
-                return 1;
-                }
-        else
-            return 1;
-    }
-
-    public function compareIdWithSectorArray($pIdSector, $pSectorsArray) {
-        if (is_array($pSectorsArray))
-            if ($pIdSector == $pSectorsArray["idtbl_sectorbeneficiado"]){
-                return 0; //indica que son iguales
-            }else if(is_array($pIdSector)){
-                return 0;
-            }
-            else{
-                if(is_array($pIdSector))
-                    $arrcomma = implode(",", $pIdSector);
-                else $arrcomma = $pIdSector;
-                
-                Yii::log("++son diferentes ". $arrcomma . " y " . $pSectorsArray["idtbl_sectorbeneficiado"] , "info", "application.
-                models.ProyectosSectorBeneficiado");
-                return 1;
-            }
-                
-        else{//pSectorsArray no es un array
-            if($pSectorsArray == $pIdSector)
-                return 0;
-            else
-                return 1;
-            
-            }
-    }
-
-    /*
      * Agrega un sector beneficiado a un proyecto
      * IMPORTANTE: debe ser llamado desde una transacción (se asume que es así)
      * @param Integer $pIdProyecto id del proyecto a insertar
@@ -231,8 +174,7 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
      * Elimina la asociación entre un proyecto y N sectores
      * IMPORTANTE: se asume que se invoca desde una transaccion activa
      * @param Integer $pIdProyecto id del proyecto
-     * //cambiar la forma del parametro que sigue por un entero normal
-     * @param Array[Sector] sector tiene la forma array("idtbl_sectorbeneficiado"=>"valor","nombre"=>nombre
+     * @param Array[Int] $pSectors id's de los sectores a borrar
      * @return Boolean verdadero si se ejecutó correctamente, falso sino
      */
 
@@ -261,6 +203,21 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
         $comando->bindParam(':pIdProyecto', $pIdProyecto);
         $comando->bindParam(':pIdSector', $pIdSector);
         return $comando->execute();
+    }
+    
+    /*
+     * Obtiene los sectores beneficiados que están en $pIdsArray pero no en $pSectorsArray
+     * Se utiliza para mostrar los sectores beneficiados que no pertenecen a un proyecto dado
+     * @param Array([idsector]=>[sector]) $pIdsArray
+     * @param Array[Sector $pSectorsArray
+     * @returns arreglo de la forma [idsector]=>[sector]
+     */
+    public static function getDifference($pIdsArray, $pSectorsArray){
+        $sectors_array = array();
+        foreach($pSectorsArray as $key=>$value){ //primero obtiene un arreglo de la forma idsector=>sector
+            $sectors_array[$pSectorsArray[$key]["idtbl_sectorbeneficiado"]] = $pSectorsArray[$key]["nombre"];
+        }
+        return array_diff_key($pIdsArray,$sectors_array);
     }
 
 // </editor-fold>
