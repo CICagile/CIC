@@ -199,9 +199,9 @@ class AsistenteController extends Controller
 	public function loadModel($carnet)
 	{
 		$model = new Asistente;
-                $atributos = $model->buscarAsistentePorCarnet($id);
+                $atributos = $model->buscarAsistentePorCarnet($carnet);
 		if($atributos===null)
-			throw new CHttpException(404,'No se encontro el carnet ' . $id);
+			throw new CHttpException(404,'No se encontro el carnet ' . $carnet);
                 $model->attributes = $atributos;
 		return $model;
 	}
