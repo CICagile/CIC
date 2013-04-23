@@ -1,4 +1,7 @@
 <?php
+/*
+ * option transfer extraido de /* http://www.yiiframework.com/extension/optiontransferselect/
+ */
 class Optiontransferselect extends CWidget{
 	/**
 	 * The label for the first mutiple select

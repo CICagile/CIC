@@ -56,7 +56,7 @@ class ProyectosController extends Controller {
             ));
     }
 
-    /*
+    /**
      * Muestra el detalle de un proyecto antiguo
      */
 
@@ -296,21 +296,25 @@ class ProyectosController extends Controller {
     public function actionActualizar($id) {
         $modelproyectos = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
         $antiguos_sectores = $modelproyectos->idtbl_sectorbeneficiado;
-        $modelProyectosXSector = new ProyectosSectorbeneficiado;
         
         if ($modelproyectos === null)
             throw new CHttpException(404, 'La página solicitado no se ha encontrado.');
 
         $modelproyectos->scenario = 'actualizarproyecto';
 
-        if (isset($_POST['ajax']) && $_POST['ajax'] === 'proyectos-formactualizar') {
+        if (isset($_POST['ajax']) && $_POST['ajax'] === 'proyectos-formactualizar' 
+                && isset($_POST['Proyectos']['idtbl_sectorbeneficiado'])) {
 
+            //$modelproyectos->idtbl_sectorbeneficiado = $_POST['Proyectos']['idtbl_sectorbeneficiado'];
+            /*if(!isset($_POST['Proyectos']['idtbl_sectorbeneficiado']))
+                unset($modelproyectos->idtbl_sectorbeneficiado);*/
+                
             if ($modelproyectos->codigo == $_POST['Proyectos']['codigo']) {//Para este caso no procedo a validar el codigo del proyecto
-                echo CActiveForm::validate($modelproyectos, array('nombre', 'idtbl_objetivoproyecto', 'tipoproyecto', 'idtbl_adscrito', 'estado'));
+                echo CActiveForm::validate($modelproyectos, array('nombre', 'idtbl_objetivoproyecto', 'tipoproyecto', 'idtbl_adscrito', 'estado', 'idtbl_sectorbeneficiado'));
             }
             else
                 echo CActiveForm::validate($modelproyectos);
-
+            
             Yii::app()->end();
         }
 
@@ -318,7 +322,7 @@ class ProyectosController extends Controller {
             $modelproyectos->attributes = $_POST['Proyectos'];
             $result = $modelproyectos->save(false);
             if ($result) {
-                $result_sectores = $modelProyectosXSector->updateBenefitedSectors(
+                $result_sectores = ProyectosSectorbeneficiado::updateBenefitedSectors(
                         $modelproyectos->idtbl_Proyectos, $antiguos_sectores, $modelproyectos->idtbl_sectorbeneficiado);
              if($result_sectores){   
                 Yii::log("Cambio exitoso de la información del proyecto: " . $modelproyectos->codigo, "info", "application.

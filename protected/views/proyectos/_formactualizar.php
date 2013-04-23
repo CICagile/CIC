@@ -47,8 +47,6 @@
     </div>  
     
     <?php
-    /* http://www.yiiframework.com/extension/optiontransferselect/ */
-    //option transfers
     
     //leftOption contiene todos los sectores beneficiados
     $leftOption = CHtml::listData(SectorBeneficiado::model()->findAll(), 'idtbl_sectorbeneficiado', 'nombre');    
@@ -57,8 +55,7 @@
         $leftOption = ProyectosSectorbeneficiado::getDifference($leftOption,$modelproyectos->idtbl_sectorbeneficiado);
         $rightOption = CHtml::listData($modelproyectos->idtbl_sectorbeneficiado, 'idtbl_sectorbeneficiado', 'nombre');
     }
-    
-    //print_r($rightOption);
+      
     $this->widget('application.extensions.optiontransferselect.Optiontransferselect', array(
         'leftTitle' => 'Sectores disponibles',
         'rightTitle' => 'Sectores beneficiados',

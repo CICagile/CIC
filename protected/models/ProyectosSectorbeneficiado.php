@@ -83,14 +83,14 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Functions">
 
-    /*
+    /**
      * Agrega uno o más sectores beneficiados a un proyecto
      * IMPORTANTE: se asume que es invocado desde una transacción activa
      * @param Integer $pIdProyecto id del proyecto al que se asocian sectores
      * @param Array[Integer] $pIdsSectoresBeneficiados
      * @return Boolean verdadero si se ejecutó correctamente, falso sino
      */
-    public function saveAllBenefitedSectors($pIdProyecto, $pIdsSectoresBeneficiados) {
+    public static function saveAllBenefitedSectors($pIdProyecto, $pIdsSectoresBeneficiados) {
         $resultadoSector = true;
         foreach ($pIdsSectoresBeneficiados as $sector) {
             $is_sector_saved = ProyectosSectorbeneficiado::addBenefitedSector(
@@ -100,7 +100,7 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
         return $resultadoSector;
     }
 
-    /*
+    /**
      * Actualiza los sectores beneficiados asociados a un proyecto
      *  |-borra los no estén en $pNuevosSectores e inserta los nuevos valores
      * @param Integer $pIdProyecto id del proyecto a actualizar
@@ -108,24 +108,21 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
      * $param Array[Integer $pNuevosSectores
      * $return Boolean true si se ejecutó correctamente, en otro caso, false
      */
-
-    public function updateBenefitedSectors($pIdProyecto, $pAntiguosSectores, $pNuevosSectores) {
+    public static function updateBenefitedSectors($pIdProyecto, $pAntiguosSectores, $pNuevosSectores) {
         if (!is_array($pNuevosSectores)) //caso en el que no se han ingresado nuevos sectores
             return true;
         if (is_array($pNuevosSectores[0]))
             return true;
-        
+
         if (is_array($pAntiguosSectores)) { //si no hay sectores beneficiados, no es un arreglo
-            
             //obtiene los antiguos sectores beneficiados en formato de arreglo de enteros
             $antiguos_sectores = array();
-            foreach ($pAntiguosSectores as $sector_antiguo){
-                array_push($antiguos_sectores,$sector_antiguo["idtbl_sectorbeneficiado"]);
+            foreach ($pAntiguosSectores as $sector_antiguo) {
+                array_push($antiguos_sectores, $sector_antiguo["idtbl_sectorbeneficiado"]);
             }
-            
-            $sectores_a_borrar = array_diff($antiguos_sectores,$pNuevosSectores);
-            $sectores_a_insertar = array_diff($pNuevosSectores, $antiguos_sectores);
 
+            $sectores_a_borrar = array_diff($antiguos_sectores, $pNuevosSectores);
+            $sectores_a_insertar = array_diff($pNuevosSectores, $antiguos_sectores);
         }else
             $sectores_a_insertar = $pNuevosSectores;
 
@@ -153,30 +150,29 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
         }
     }
 
-    /*
+    /**
      * Obtiene los sectores beneficiados que están en $pIdsArray pero no en $pSectorsArray
      * Se utiliza para mostrar los sectores beneficiados que no pertenecen a un proyecto dado
      * @param Array([idsector]=>[sector]) $pIdsArray
      * @param Array[Sector $pSectorsArray
      * @returns arreglo de la forma [idsector]=>[sector]
      */
-    public static function getDifference($pIdsArray, $pSectorsArray){
+    public static function getDifference($pIdsArray, $pSectorsArray) {
         $sectors_array = array();
-        foreach($pSectorsArray as $key=>$value){ //primero obtiene un arreglo de la forma idsector=>sector
+        foreach ($pSectorsArray as $key => $value) { //primero obtiene un arreglo de la forma idsector=>sector
             $sectors_array[$pSectorsArray[$key]["idtbl_sectorbeneficiado"]] = $pSectorsArray[$key]["nombre"];
         }
-        return array_diff_key($pIdsArray,$sectors_array);
+        return array_diff_key($pIdsArray, $sectors_array);
     }
-    
-    /*
+
+    /**
      * Agrega un sector beneficiado a un proyecto
      * IMPORTANTE: debe ser llamado desde una transacción (se asume que es así)
      * @param Integer $pIdProyecto id del proyecto a insertar
      * @param Integer $pIdSectorBeneficiado id del serctor a insertar
      * @return Integer number of affected rows
      */
-
-    private function addBenefitedSector($pIdProyecto, $pIdSectorBeneficiado) {
+    private static function addBenefitedSector($pIdProyecto, $pIdSectorBeneficiado) {
         $conexion = Yii::app()->db;
         $call = 'CALL agregarSectorBeneficiado(:pIdProyecto,:pIdSector)';
         $comando = $conexion->createCommand($call);
@@ -185,15 +181,14 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
         return $comando->execute();
     }
 
-    /*
+    /**
      * Elimina la asociación entre un proyecto y N sectores
      * IMPORTANTE: se asume que se invoca desde una transaccion activa
      * @param Integer $pIdProyecto id del proyecto
      * @param Array[Int] $pSectors id's de los sectores a borrar
      * @return Boolean verdadero si se ejecutó correctamente, falso sino
      */
-
-    private function deleteBenefitedSectors($pIdProyecto, $pSectors) {
+    private static function deleteBenefitedSectors($pIdProyecto, $pSectors) {
         $resultadoSector = true;
         foreach ($pSectors as $sector) {
             $is_sector_saved = ProyectosSectorbeneficiado::deleteBenefitedSector(
@@ -203,15 +198,14 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
         return $resultadoSector;
     }
 
-    /*
+    /**
      * Elimina la asociación entre un proyecto y un sector beneficiado
      * IMPORTANTE: se asume que se llama desde una transacción activa
      * @param Integer $pIdProyecto id del proyecto
      * @param Integer $pIdSector id del sector
      * @return Integer number of affected rows
      */
-
-    private function deleteBenefitedSector($pIdProyecto, $pIdSector) {
+    private static function deleteBenefitedSector($pIdProyecto, $pIdSector) {
         $conexion = Yii::app()->db;
         $call = 'CALL borrarSectorBeneficiadoAsociadoAProyecto(:pIdProyecto,:pIdSector)';
         $comando = $conexion->createCommand($call);
@@ -219,7 +213,6 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
         $comando->bindParam(':pIdSector', $pIdSector);
         return $comando->execute();
     }
-    
 
 // </editor-fold>
 }

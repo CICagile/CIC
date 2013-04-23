@@ -245,12 +245,11 @@ class Proyectos extends CActiveRecord {
     /*
      * Da formato de lista a 
      */
-
     public function obtenerSectoresBeneficiadosConFormato() {
         $this->idtbl_sectorbeneficiado = Proyectos::listFormatBenefitedSectors($this->idtbl_sectorbeneficiado);
     }
 
-    /*
+    /**
      * Establece idtbl_sectorbeneficiado con un arreglo de sectores beneficiados
      * @param Integer $pIdProyecto
      */
@@ -270,7 +269,7 @@ class Proyectos extends CActiveRecord {
         }
     }
 
-    /*
+    /**
      * Gives html format using <ul> tag to a list of sectors
      * @param Array $pSectorsArray
      * @return String
@@ -289,7 +288,7 @@ class Proyectos extends CActiveRecord {
     }
 
     // <editor-fold defaultstate="collapsed" desc="Common private functions~">
-    /*
+    /**
      * Common actions made to execute any nontransactional procedure without parameters
      * IMPORTANT: result returned by yii's queryAll() function
      */
