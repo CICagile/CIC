@@ -114,23 +114,42 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
             return true;
         if (is_array($pNuevosSectores[0]))
             return true;
-
+        
         if (is_array($pAntiguosSectores)) { //si no hay sectores beneficiados, no es un arreglo
-            $sectores_a_borrar = array_udiff($pAntiguosSectores, $pNuevosSectores, 'ProyectosSectorbeneficiado::compareSectorArrayWithId');
-
-            $sectores_a_insertar = array_udiff($pNuevosSectores, $pAntiguosSectores, 'ProyectosSectorbeneficiado::compareIdWithSectorArray');
+            
+            $antiguos_sectores = array();
+            
+            foreach ($pAntiguosSectores as $sector_antiguo){
+                array_push($antiguos_sectores,$sector_antiguo["idtbl_sectorbeneficiado"]);
+            }
+            
+            $sectores_a_borrar = array_diff($antiguos_sectores,$pNuevosSectores); //array_udiff($pAntiguosSectores, $pNuevosSectores, 'ProyectosSectorbeneficiado::compareSectorArrayWithId');
+            $sectores_a_insertar = array_diff($pNuevosSectores, $antiguos_sectores); //array_udiff($pNuevosSectores, $pAntiguosSectores, 'ProyectosSectorbeneficiado::compareIdWithSectorArray');
+            
+            /*$sectoresInsertar = implode(",", $sectores_a_insertar);
+            Yii::log("**Sectores a insertar " . $sectoresInsertar , "info", "application.
+                models.ProyectosSectorBeneficiado");*/
         }else
             $sectores_a_insertar = $pNuevosSectores;
 
         $transaccion = Yii::app()->db->beginTransaction();
 
+        if(isset($sectores_a_borrar)){
+            $sectoresBorrar = implode(",",$sectores_a_borrar);
+            Yii::log("Sectores a borrar " . $sectoresBorrar , "info", "application.
+                models.ProyectosSectorBeneficiado");
+        }
+        
+        
+        
+        
         if (isset($sectores_a_borrar))//verificacion por si no habian sectores beneficiados antes
             $resultado_borrar =
                     ProyectosSectorbeneficiado::deleteBenefitedSectors($pIdProyecto, $sectores_a_borrar);
         else
             $resultado_borrar = true;
 
-        $resultado_insertar =
+        $resultado_insertar = // true;
                 ProyectosSectorbeneficiado::saveAllBenefitedSectors($pIdProyecto, $sectores_a_insertar);
 
         if ($resultado_borrar && $resultado_insertar) {
@@ -155,22 +174,40 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
 
     public function compareSectorArrayWithId($pSectorsArray, $pIdSector) {
         if (is_array($pSectorsArray))
-            if ($pSectorsArray["idtbl_sectorbeneficiado"] == $pIdSector)
+            if ($pSectorsArray["idtbl_sectorbeneficiado"] == $pIdSector){
                 return 0; //indica que son iguales
-            else
+            }
+            else{
                 return 1;
+                }
         else
             return 1;
     }
 
     public function compareIdWithSectorArray($pIdSector, $pSectorsArray) {
         if (is_array($pSectorsArray))
-            if ($pIdSector == $pSectorsArray["idtbl_sectorbeneficiado"])
+            if ($pIdSector == $pSectorsArray["idtbl_sectorbeneficiado"]){
                 return 0; //indica que son iguales
+            }else if(is_array($pIdSector)){
+                return 0;
+            }
+            else{
+                if(is_array($pIdSector))
+                    $arrcomma = implode(",", $pIdSector);
+                else $arrcomma = $pIdSector;
+                
+                Yii::log("++son diferentes ". $arrcomma . " y " . $pSectorsArray["idtbl_sectorbeneficiado"] , "info", "application.
+                models.ProyectosSectorBeneficiado");
+                return 1;
+            }
+                
+        else{//pSectorsArray no es un array
+            if($pSectorsArray == $pIdSector)
+                return 0;
             else
                 return 1;
-        else
-            return 1;
+            
+            }
     }
 
     /*
@@ -194,6 +231,7 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
      * Elimina la asociación entre un proyecto y N sectores
      * IMPORTANTE: se asume que se invoca desde una transaccion activa
      * @param Integer $pIdProyecto id del proyecto
+     * //cambiar la forma del parametro que sigue por un entero normal
      * @param Array[Sector] sector tiene la forma array("idtbl_sectorbeneficiado"=>"valor","nombre"=>nombre
      * @return Boolean verdadero si se ejecutó correctamente, falso sino
      */
@@ -202,7 +240,7 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
         $resultadoSector = true;
         foreach ($pSectors as $sector) {
             $is_sector_saved = ProyectosSectorbeneficiado::deleteBenefitedSector(
-                            $pIdProyecto, $sector["idtbl_sectorbeneficiado"]);
+                            $pIdProyecto, $sector);
             $resultadoSector = ($is_sector_saved == 1) && $resultadoSector; //valida que sólo borre 1
         }
         return $resultadoSector;

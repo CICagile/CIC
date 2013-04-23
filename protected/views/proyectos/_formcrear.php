@@ -107,7 +107,6 @@
     /* http://www.yiiframework.com/extension/optiontransferselect/ */
     //option transfers
     $leftOption = CHtml::listData(SectorBeneficiado::model()->findAll(), 'idtbl_sectorbeneficiado', 'nombre');
-    print_r($leftOption);
     
     //asort($leftOption);
     $this->widget('application.extensions.optiontransferselect.Optiontransferselect', array(
