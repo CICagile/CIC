@@ -71,11 +71,12 @@ div.form .row-box
        /*	border: 1px solid #aaaaaa; 
        /* border-color: #000;
         border-style:solid;*/
-        /*border-top-width:  1px solid #aaaaaa;  
-        border-right-width:  1px solid #aaaaaa;  
-        border-bottom-width:  1px solid #aaaaaa; 
-        border-left-width:  1px solid #aaaaaa; */
-        border: 1px dotted black;
+        border-top: 2px solid #aaaaaa;  
+        /*border-right-width:  1px solid #aaaaaa;*/  
+        border-bottom: 2px solid #aaaaaa;
+        border-spacing: 10px;
+        /*border-left-width:  1px solid #aaaaaa; */
+        /*border: 1px dotted black;*/
 }
 
 div.form .hint

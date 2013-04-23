@@ -104,8 +104,7 @@
 		<?php echo $form->error($model,'rol', NULL, false); ?>
 	</div>
         
-        <div class="row">
-         <div id="formhoras" class="row-box"  >
+        <div id="formhoras" class="row-box">
             <div class="row">
                 <?php echo $form->labelEx($model,'horas'); ?>
                 <?php echo CHtml::textField("cantidad_horas"); ?>
@@ -118,9 +117,8 @@
                         CHtml::listData(TipoHoraInvestigador::model()->findAll(), 'nombre', 'nombre'), array('empty'=>'Elija una opción')) ?>
                 <?php echo $form->error($model,'horas', NULL, false); ?>
             </div>
-        </div>
+            <span style="clear:none;float:right;"><a id="minus" href="">[-]</a> <a id="plus" href="">[+]</a></span>
             <br>
-            <span style="clear:none;"><a id="minus" href="">[-]</a> <a id="plus" href="">[+]</a></span>
         </div>
 
         <div class="row">
