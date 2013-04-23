@@ -27,16 +27,40 @@ class Investigador  extends CModel{
     public function rules()
     {
         return array(
-            array('nombre,apellido1,cedula,correo,experiencia,grado,proyecto,rol,horas','required','on'=>'nuevo','message'=>'{attribute} no puede dejarse en blanco.'),
+            array('nombre,apellido1,cedula,correo,experiencia,grado,proyecto,rol','required','on'=>'nuevo','message'=>'{attribute} no puede dejarse en blanco.'),
             array('nombre,apellido1,apellido2,proyecto','length','max'=>20),
             array('cedula','length','min'=>9,'max'=>20),
             array('telefono, correo', 'length', 'max'=>40),
             array('telefono, cedula, experiencia', 'match', 'pattern'=>'/^[\p{N}]+$/u', 'message'=>'{attribute} sólo puede estar compuesto por dígitos.'),
             array('correo', 'email', 'message'=>'Dirección de correo inválida'),
             array('nombre, apellido1, apellido2, ', 'match', 'pattern'=>'/^[\p{L} ]+$/u'),
-            array('codigo','validarCodigoProyecto','on'=>'nuevo')
+            array('codigo','validarCodigoProyecto','on'=>'nuevo'),
+            array('horas','validarHorasInvestigador','on'=>'nuevo'),
         );
     }//fin rules
+    
+    /**
+     * Valida que las horas del investigador no estén vacías
+     * @param type $attribute Atributos del validador
+     * @param type $params Parametros del validador.
+     */
+    public function validarHorasInvestigador($attribute, $params)
+    {
+        if(isset($params['on']) && $params['on'] != $this->scenario)
+            return;
+        if ($this->$attribute === null || empty($this->$attribute))
+        {
+            $this->addError($attribute,  $this->getAttributeLabel($attribute) . ' no puede estar vacío.');
+            return;
+        }//fin si el arreglo está vacío o es nulo
+        foreach ($this->$attribute as $tipo=>$horas)
+        {
+            if ($tipo === '')
+                $this->addError($attribute,  'El tipo de horas no puede estar vacío.');
+            if ($horas === '')
+                $this->addError($attribute,  'La cantidad de horas no puede estar vacía.');
+        }//fin for
+    }//fin validar Horas Investigador
     
     /**
      * Valida que el codigo del proyecto se encuentre en la BD y esté activo.
