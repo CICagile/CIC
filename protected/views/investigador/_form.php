@@ -1,15 +1,28 @@
 
 <?php
-/* @var $this AsistenteController */
-/* @var $model Asistente */
+/* @var $this InvestigadorController */
+/* @var $model Investigador */
 /* @var $form CActiveForm */
 /* @var $periodo Periodos */
 ?>
 
+<?php $form=$this->widget('ext.dynamicform.DynamicForm', array(
+	'id'=>'dynamic-horas',
+	'options' => array(
+            'limit' => 100,
+            'createColor' => 'green',
+            'removeColor' => 'red',
+            'duration' => 500
+        ),
+        'form' => 'formhoras',
+        'plus' => 'plus',
+        'minus'=> 'minus'
+)); ?>
+
 <div class="form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'asistente-form',
+	'id'=>'investigador-form',
 	'enableAjaxValidation'=>true,
 )); ?>
 
@@ -40,67 +53,6 @@
 		<?php echo $form->textField($model,'cedula',array('size'=>20,'maxlength'=>20)); ?>
 		<?php echo $form->error($model,'cedula'); ?>
 	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'numerocuenta'); ?>
-		<?php echo $form->textField($model,'numerocuenta',array('size'=>30,'maxlength'=>30)); ?>
-		<?php echo $form->error($model,'numerocuenta'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'banco'); ?>
-		<?php echo $form->dropDownList($model, 'banco',
-                                CHtml::listData(Banco::model()->findAll(), 'nombre', 'nombre'), array('empty'=>'Elija un banco')); ?>
-		<?php echo $form->error($model,'banco', NULL, $enableAjaxValidation=false); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'cuentacliente'); ?>
-		<?php echo $form->textField($model,'cuentacliente',array('size'=>17,'maxlength'=>17)); ?>
-		<?php echo $form->error($model,'cuentacliente'); ?>
-	</div>
-        
-        <div class="row">
-		<?php echo $form->labelEx($model,'carnet'); ?>
-		<?php echo $form->textField($model,'carnet',array('size'=>15,'maxlength'=>15)); ?>
-		<?php echo $form->error($model,'carnet'); ?>
-	</div>
-        
-        <div class="row">
-		<?php echo $form->labelEx($model,'carrera'); ?>
-		<?php echo $form->dropDownList($model, 'carrera',
-                        CHtml::listData(Carrera::model()->findAll(), 'nombre', 'nombre'), array('empty'=>'Elija una carrera')); ?>
-		<?php echo $form->error($model,'carrera', NULL, $enableAjaxValidation=false); ?>
-	</div>
-        
-        <div class="row">
-		<?php echo $form->labelEx($model,'codigo'); ?>
-                <?php $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
-                        'attribute'=>'codigo',
-                        'model'=>$model,
-                        'source'=>$this->createUrl('asistente/codigoautocomplete'),
-                        'options'=>array(
-                            'showAnim'=>'fold',
-                        ),
-                        'htmlOptions'=>array(
-                            'size'=>20, 'maxlength'=>20
-                        )
-                        )); ?>
-		<?php echo $form->error($model,'codigo'); ?>
-	</div>
-        
-        <div class="row">
-		<?php echo $form->labelEx($model,'rol'); ?>
-		<?php echo $form->dropDownList($model, 'rol',
-                        CHtml::listData(RolAsistente::model()->findAll(), 'nombre', 'nombre'), array('empty'=>'Elija un rol')) ?>
-		<?php echo $form->error($model,'rol', NULL, $enableAjaxValidation=false); ?>
-	</div>
-        
-        <div class="row">
-		<?php echo $form->labelEx($model,'horas'); ?>
-		<?php echo $form->textField($model,'horas',array('size'=>4,'maxlength'=>4)); ?>
-		<?php echo $form->error($model,'horas'); ?>
-	</div>
         
         <div class="row">
 		<?php echo $form->labelEx($model,'telefono'); ?>
@@ -114,6 +66,59 @@
 		<?php echo $form->error($model,'correo'); ?>
 	</div>
         
+        <div class="row">
+		<?php echo $form->labelEx($model,'grado'); ?>
+		<?php echo $form->dropDownList($model, 'grado',
+                        CHtml::listData(GradoAcademico::model()->findAll(), 'nombre', 'nombre-abreviacion'), array('empty'=>'Elija un grado académico')) ?>
+		<?php echo $form->error($model,'grado', NULL, false); ?>
+	</div>
+        
+        <div class="row">
+		<?php echo $form->labelEx($model,'experiencia'); ?>
+		<?php echo $form->textField($model,'experiencia',array('size'=>3,'maxlength'=>3)); ?>
+		<?php echo $form->error($model,'experiencia'); ?>
+	</div>
+        
+        <div class="row">
+		<?php echo $form->labelEx($model,'proyecto'); ?>
+                <?php $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
+                        'attribute'=>'proyecto',
+                        'model'=>$model,
+                        'source'=>$this->createUrl('investigador/codigoautocomplete'),
+                        'options'=>array(
+                            'showAnim'=>'fold',
+                        ),
+                        'htmlOptions'=>array(
+                            'size'=>20, 'maxlength'=>20
+                        )
+                        )); ?>
+		<?php echo $form->error($model,'proyecto'); ?>
+	</div>
+        
+        <div class="row">
+		<?php echo $form->labelEx($model,'rol'); ?>
+		<?php echo $form->dropDownList($model, 'rol',
+                        CHtml::listData(RolesInvestigadores::model()->findAll(), 'nombre', 'nombre'), array('empty'=>'Elija un rol')) ?>
+		<?php echo $form->error($model,'rol', NULL, false); ?>
+	</div>
+        
+        
+        <div id="formhoras" class="row-box">
+            <div class="row">
+                <?php echo $form->labelEx($model,'horas'); ?>
+                <?php echo CHtml::textField("txt_horas"); ?>
+                <?php echo $form->error($model,'horas'); ?>
+            </div>
+        
+            <div class="row">
+                <?php echo CHtml::label('Tipo de Horas',false); ?>
+                <?php echo $form->dropDownList($model, 'rol',
+                        CHtml::listData(TipoHoraInvestigador::model()->findAll(), 'nombre', 'nombre'), array('empty'=>'Elija una opción')) ?>
+                <?php echo $form->error($model,'horas', NULL, false); ?>
+            </div>
+            <span style="clear:none;"><a id="minus" href="">[-]</a> <a id="plus" href="">[+]</a></span>
+        </div>
+
         <div class="row">
 		<?php echo $form->labelEx($periodo,'inicio'); ?>
 		<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
@@ -155,7 +160,7 @@
 	</div>
 
 	<div class="row buttons">
-		<?php echo CHtml::submitButton('Crear'); ?>
+		<?php echo CHtml::submitButton('Registrar'); ?>
 	</div>
 
 <?php $this->endWidget(); ?>

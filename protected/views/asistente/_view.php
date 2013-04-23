@@ -1,8 +1,5 @@
 <?php
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 ?>
 <div class="view">
 
@@ -30,22 +27,12 @@
 	<?php echo CHtml::encode($data->cuentacliente); ?>
 	<br />
         
-        <b><?php echo CHtml::encode($data->getAttributeLabel('codigo')); ?>:</b>
-	<?php echo CHtml::encode($data->codigo); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('telefono')); ?>:</b>
+       	<b><?php echo CHtml::encode($data->getAttributeLabel('telefono')); ?>:</b>
 	<?php echo CHtml::encode($data->telefono); ?>
 	<br />
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('correo')); ?>:</b>
 	<?php echo CHtml::encode($data->correo); ?>
 	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('idtbl_Bancos')); ?>:</b>
-	<?php echo CHtml::encode($data->idtbl_Bancos); ?>
-	<br />
-
-	 ?>
 
 </div>

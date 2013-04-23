@@ -1,17 +1,21 @@
 <?php
 
 /**
- * This is the model class for table "tbl_personas".
+ * This is the model class for table "tbl_adscrito".
+ *
+ * The followings are the available columns in table 'tbl_adscrito':
+ * @property integer $idtbl_adscrito
+ * @property string $nombre
+ *
  * The followings are the available model relations:
- * @property Proyectos[] $tblProyectoses
- * @property Contactos[] $contactoses
+ * @property Proyectos[] $proyectoses
  */
-class Personas extends CActiveRecord
+class Adscrito extends CActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
-	 * @return Personas the static model class
+	 * @return Adscrito the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
@@ -23,7 +27,7 @@ class Personas extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'tbl_personas';
+		return 'tbl_adscrito';
 	}
 
 	/**
@@ -34,11 +38,12 @@ class Personas extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('nombre, apellido1, cedula, numerocuenta, cuentacliente', 'required'),
-			array('nombre, apellido1, apellido2, cedula', 'length', 'max'=>20),
-			array('numerocuenta', 'length', 'max'=>30),
-			array('cuentacliente', 'length', 'max'=>17),
-			array('idtbl_Personas, nombre, apellido1, apellido2, cedula, numerocuenta,cuentacliente', 'safe', 'on'=>'search'),
+			array('idtbl_adscrito, nombre', 'required'),
+			array('idtbl_adscrito', 'numerical', 'integerOnly'=>true),
+			array('nombre', 'length', 'max'=>250),
+			// The following rule is used by search().
+			// Please remove those attributes that should not be searched.
+			array('idtbl_adscrito, nombre', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -50,8 +55,7 @@ class Personas extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'tblProyectoses' => array(self::MANY_MANY, 'Proyectos', 'tbl_profesoresproyectos(tbl_Personas_idtbl_Personas, tbl_Proyectos_idtbl_Proyectos)'),
-			'contactoses' => array(self::HAS_MANY, 'Contactos', 'tbl_Personas_idtbl_Personas'),
+			'proyectoses' => array(self::HAS_MANY, 'Proyectos', 'idtbl_adscrito'),
 		);
 	}
 
@@ -61,13 +65,8 @@ class Personas extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'idtbl_Personas' => 'Id Persona',
-			'nombre' => 'Nombre',
-			'apellido1' => 'Primer  Apellido',
-			'apellido2' => 'Segundo Apellido',
-			'cedula' => 'Cédula',
-			'numerocuenta' => 'Número de Cuenta',
-			'cuentacliente' => 'Cuenta Cliente',
+			'idtbl_adscrito' => 'Idtbl Adscrito',
+			'nombre' => 'Adscrito a',
 		);
 	}
 
@@ -82,13 +81,8 @@ class Personas extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('idtbl_Personas',$this->idtbl_Personas);
+		$criteria->compare('idtbl_adscrito',$this->idtbl_adscrito);
 		$criteria->compare('nombre',$this->nombre,true);
-		$criteria->compare('apellido1',$this->apellido1,true);
-		$criteria->compare('apellido2',$this->apellido2,true);
-		$criteria->compare('cedula',$this->cedula,true);
-		$criteria->compare('numerocuenta',$this->numerocuenta,true);
-		$criteria->compare('cuentacliente',$this->cuentacliente,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

@@ -7,7 +7,11 @@ class AsistenteController extends Controller
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
 	public $layout='//layouts/column2';
-      
+
+        
+	/**
+	 * @return array action filters
+	 */
 	public function filters()
 	{
 		return array(
@@ -25,11 +29,11 @@ class AsistenteController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view'),
+				'actions'=>array('view'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update'),
+				'actions'=>array('create','updateDP','codigoautocomplete','update','index'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -41,6 +45,32 @@ class AsistenteController extends Controller
 			),
 		);
 	}
+        
+        public function actionCodigoAutoComplete()
+        {
+            if (isset($_GET['term'])) {
+                $criteria = new CDbCriteria;
+                $criteria->alias = "pr";
+                $criteria->select = 'pr.nombre nombre, pr.codigo codigo, pr.idtbl_proyectos idtbl_Proyectos';
+                $criteria->join = 'INNER JOIN tbl_HistorialProyectosPeriodos HPP ON pr.idtbl_Proyectos = HPP.idtbl_Proyectos
+                                   INNER JOIN tbl_Periodos P ON HPP.idPeriodo = P.idPeriodo';
+                $criteria->condition = "pr.codigo LIKE '" . $_GET['term'] . "%' AND p.inicio <= SYSDATE() AND p.fin > SYSDATE()";
+                
+                $dataProvider = new CActiveDataProvider(get_class(Proyectos::model()), array(
+                    'criteria'=>$criteria,
+                ));
+                $proyectos = $dataProvider->getData();
+                $return_array = array();
+                foreach($proyectos as $proyecto) {
+                    $return_array[] = array(
+                        'label'=>$proyecto->nombre,
+                        'value'=>$proyecto->codigo,
+                        'id'=>$proyecto->idtbl_Proyectos,
+                    );
+                }
+                echo CJSON::encode($return_array);
+            }
+        }
 
 	/**
 	 * Displays a particular model.
@@ -60,64 +90,84 @@ class AsistenteController extends Controller
 	public function actionCreate()
 	{
 		$model=new Asistente;
-                $this->performAjaxValidation($model);
+                $model->scenario = 'nuevo';
+                $periodo = new Periodos;
 
-		if(isset($_POST['Asistente']))
+		// Uncomment the following line if AJAX validation is needed
+                $this->performAjaxValidation(array($model,$periodo));
+
+		if(isset($_POST['Asistente']) && isset($_POST['Periodos']))
 		{
 			$model->attributes=$_POST['Asistente'];
-			if($model->validate()){
-                            if($model->crear())
-				$this->redirect(Yii::app()->homeUrl);
-                            else
-                                $this->redirect ('error');
-                        }
+                        $periodo->attributes = $_POST['Periodos'];
+                        $model->validarCarnetUnico();
+                        $model->validarCedulaUnica();
+			if($model->validate(NULL,false)){
+                            $periodo->validarFechaInicioAsistencia($model->codigo);
+                            $periodo->validarFechaFinAsistencia($model->codigo);
+                            if ($periodo->validate(NULL,false)) {
+                                if($model->crear($periodo))
+                                    $this->redirect(array('index'));
+                                else
+                                    throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
+                            }//fin si el periodo es válido
+                        }//fin si los datos del asistente són válidos
 		}
 
 		$this->render('create',array(
 			'model'=>$model,
+                        'periodo'=>$periodo,
 		));
 	}
+        
 
 	/**
-	 * Updates a particular model.
-	 * If update is successful, the browser will be redirected to the 'view' page.
-	 * @param integer $id the ID of the model to be updated
-	 */
-	public function actionUpdate($id)
+         * Actualiza los Datos Personales de un asistente.
+         * @param type $id Carnet del asistente.
+         */
+	public function actionUpdateDP($id = NULL)
 	{
-               // $model=new Asistente;
+            if ($id === NULL) {
+                /* Cuando busca un asistente, en la página en la que ve los detalles del asistente,
+                 * le debería salir las opciones de modificar que son modificar datos personales,
+                 * agregar asistente a un nuevo proyecto y modificar datos del asistente
+                 */
+                $this->actionIndex();
+            }
+            else {
 		$model=$this->loadModel($id);
+                $model->scenario = 'actDP';
+                $nombre = $model->nombre;
+                $apellido1 = $model->apellido1;
+                $apellido2 = $model->apellido2;
+                $carnet = $id;
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Asistente']))
 		{
+                        $cedula = $model->cedula;
 			$model->attributes=$_POST['Asistente'];
-			if($model->save())
-				//$this->redirect(array('view','id'=>$model->idtbl_Personas));
-                                  $this->redirect(Yii::app()->homeUrl);
-                        else
-                                $this->redirect ('error');
+                        $model->validarCarnetUnico($id);
+                        $model->validarCedulaUnica($cedula);
+			if($model->validate(NULL, false)){
+                                $model->attributes = $_POST['Asistente'];
+				if ($model->actualizarDatosPersonales($id))
+                                    $this->redirect(array('view','id'=>$model->carnet));
+                                else
+                                    throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
+                        }//fin si los datos son válidos
 		}
 
-		$this->render('update',array(
+		$this->render('updateDP',array(
 			'model'=>$model,
+                        'nombre'=>$nombre,
+                        'apellido1'=>$apellido1,
+                        'apellido2'=>$apellido2,
+                        'carnet'=>$carnet,
 		));
-	}
-
-	/**
-	 * Deletes a particular model.
-	 * If deletion is successful, the browser will be redirected to the 'admin' page.
-	 * @param integer $id the ID of the model to be deleted
-	 */
-	public function actionDelete($id)
-	{
-		$this->loadModel($id)->delete();
-
-		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
-		if(!isset($_GET['ajax']))
-			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+            }
 	}
 
 	/**
@@ -125,24 +175,20 @@ class AsistenteController extends Controller
 	 */
 	public function actionIndex()
 	{
-                $dataProvider=new  CActiveDataProvider('Asistente');
-		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
-		));
+		//$dataProvider=new CActiveDataProvider('Asistente');
+		/*$this->render('index'
+		);*/
+                $this->actionAdmin();
 	}
 
 	/**
 	 * Manages all models.
 	 */
-	public function actionAdmin()
-	{
-		$model=new Asistente();
-		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['Asistente']))
-			$model->attributes=$_GET['Asistente'];
-		$this->render('admin',array(
-			'model'=>$model,
-		));
+	public function actionAdmin(){
+                $filtersForm=new FiltersForm;
+                $this->render('admin',array(
+                    'filtersForm' => $filtersForm,
+                ));
 	}
 
 	/**
@@ -152,9 +198,11 @@ class AsistenteController extends Controller
 	 */
 	public function loadModel($carnet)
 	{
-		$model=Asistente::model()->findBySql($carnet);
-		if($model===null)
-			throw new CHttpException(404,'The requested page does not exist.');
+		$model = new Asistente;
+                $atributos = $model->buscarAsistentePorCarnet($id);
+		if($atributos===null)
+			throw new CHttpException(404,'No se encontro el carnet ' . $id);
+                $model->attributes = $atributos;
 		return $model;
 	}
 

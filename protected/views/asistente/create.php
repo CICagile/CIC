@@ -1,18 +1,18 @@
 <?php
 /* @var $this PersonaController */
 /* @var $model Persona */
+/* @var $periodo Periodos */
 
-/*$this->breadcrumbs=array(
-	'Personas'=>array('index'),
-	'Create',
-);*/
+$this->breadcrumbs=array(
+	'Asistentes'=>array('index'),
+	'Registrar Nuevo Asistente',
+);
 
-/*$this->menu=array(
-	array('label'=>'List Persona', 'url'=>array('index')),
-	array('label'=>'Manage Persona', 'url'=>array('admin')),
-);*/
+$this->menu=array(
+	array('label'=>'Ver asistentes', 'url'=>array('admin')),
+);
 ?>
 
 <h1>Registrar Nuevo Asistente</h1>
 
-<?php echo $this->renderPartial('_form', array('model'=>$model)); ?>
+<?php echo $this->renderPartial('_form', array('model'=>$model,'periodo'=>$periodo)); ?>

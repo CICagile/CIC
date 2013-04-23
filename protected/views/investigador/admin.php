@@ -1,15 +1,15 @@
 <?php
-$model = new Asistente();
+//$model = new Asistente();
 $this->breadcrumbs=array(
-	'Asistentes'=>array('admin'),
-	'Lista de Asistentes',
+	'Investigadores'=>array('admin'),
+	'Lista de Investigadores',
 );
 
 $this->menu=array(
 	array('label'=>'Registrar nuevo asistente', 'url'=>array('create')),
 	
 );
-//Arreglo con las columnas que se mostrarán en el CGridView
+/*/Arreglo con las columnas que se mostrarán en el CGridView
 $columns = array(
     array(
         'header'=>CHtml::encode('Carnet'),
@@ -57,14 +57,14 @@ Yii::app()->clientScript->registerScript('search', "$('.search-button').click(fu
 	return false;
 });
 ");
-?>
+*/?>
 
-<h1>Lista de Asistentes</h1>
+<!--h1>Lista de Asistentes</h1--!>
 
-<?php $this->widget('zii.widgets.grid.CGridView', array(
+<?php /*$this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'asistente-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$filtersForm,
 	'columns'=>$columns,
-       )); 
+       )); */
 ?>

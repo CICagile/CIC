@@ -7,7 +7,7 @@
 // CWebApplication properties can be configured here.
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'=>'Página CIC',
+	'name'=>'Sistema Gestión Proyectos del CIC',
 
 	// preloading 'log' component
 	'preload'=>array('log'),
@@ -53,32 +53,40 @@ return array(
 		// uncomment the following to use a MySQL database
 		
 		'db'=>array(
+                       // 'connectionString' => 'mysql:host=169.254.150.189;dbname=db_cic',
 			'connectionString' => 'mysql:host=172.19.16.219;dbname=db_cic',
 			'emulatePrepare' => true,
 			'username' => 'CIC',
 			'password' => 'Cicagile004',
 			'charset' => 'utf8',
 		),
+            
+//                'db'=>array(
+//			'connectionString' => 'mysql:host=localhost;dbname=db_cic',
+//			'emulatePrepare' => true,
+//			'username' => 'root',
+//			'password' => 'CICagile004',
+//			'charset' => 'utf8',
+//		),
 		
 		'errorHandler'=>array(
 			// use 'site/error' action to display errors
 			'errorAction'=>'site/error',
-		),
-		'log'=>array(
-			'class'=>'CLogRouter',
-			'routes'=>array(
-				array(
-					'class'=>'CFileLogRoute',
-					'levels'=>'error, warning',
-				),
-				// uncomment the following to show log messages on web pages
-				/*
-				array(
-					'class'=>'CWebLogRoute',
-				),
-				*/
-			),
-		),
+		),              
+                'log'=>array(
+                    'class'=>'CLogRouter',
+                    'routes'=>array(
+                            array(
+                                    'class'=>'CFileLogRoute',
+                                    'levels'=>'error, warning',
+                            ),
+                            array(
+                                    'class'=>'CFileLogRoute',
+                                    'levels'=>'info, trace',
+                                    'logFile'=>'info.log',
+                            ),
+                    ),
+                ),
 	),
 
 	// application-level parameters that can be accessed
@@ -87,5 +95,5 @@ return array(
 		// this is used in contact page
 		'adminEmail'=>'webmaster@example.com',
 	),
-    'language'=>'es',
+        'language'=>'es',
 );
