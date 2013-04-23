@@ -123,8 +123,8 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
                 array_push($antiguos_sectores,$sector_antiguo["idtbl_sectorbeneficiado"]);
             }
             
-            $sectores_a_borrar = array_diff($antiguos_sectores,$pNuevosSectores); //array_udiff($pAntiguosSectores, $pNuevosSectores, 'ProyectosSectorbeneficiado::compareSectorArrayWithId');
-            $sectores_a_insertar = array_diff($pNuevosSectores, $antiguos_sectores); //array_udiff($pNuevosSectores, $pAntiguosSectores, 'ProyectosSectorbeneficiado::compareIdWithSectorArray');
+            $sectores_a_borrar = array_diff($antiguos_sectores,$pNuevosSectores);
+            $sectores_a_insertar = array_diff($pNuevosSectores, $antiguos_sectores);
 
         }else
             $sectores_a_insertar = $pNuevosSectores;
@@ -137,7 +137,7 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
         else
             $resultado_borrar = true;
 
-        $resultado_insertar = // true;
+        $resultado_insertar =
                 ProyectosSectorbeneficiado::saveAllBenefitedSectors($pIdProyecto, $sectores_a_insertar);
 
         if ($resultado_borrar && $resultado_insertar) {
@@ -153,6 +153,21 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
         }
     }
 
+    /*
+     * Obtiene los sectores beneficiados que están en $pIdsArray pero no en $pSectorsArray
+     * Se utiliza para mostrar los sectores beneficiados que no pertenecen a un proyecto dado
+     * @param Array([idsector]=>[sector]) $pIdsArray
+     * @param Array[Sector $pSectorsArray
+     * @returns arreglo de la forma [idsector]=>[sector]
+     */
+    public static function getDifference($pIdsArray, $pSectorsArray){
+        $sectors_array = array();
+        foreach($pSectorsArray as $key=>$value){ //primero obtiene un arreglo de la forma idsector=>sector
+            $sectors_array[$pSectorsArray[$key]["idtbl_sectorbeneficiado"]] = $pSectorsArray[$key]["nombre"];
+        }
+        return array_diff_key($pIdsArray,$sectors_array);
+    }
+    
     /*
      * Agrega un sector beneficiado a un proyecto
      * IMPORTANTE: debe ser llamado desde una transacción (se asume que es así)
@@ -205,20 +220,6 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
         return $comando->execute();
     }
     
-    /*
-     * Obtiene los sectores beneficiados que están en $pIdsArray pero no en $pSectorsArray
-     * Se utiliza para mostrar los sectores beneficiados que no pertenecen a un proyecto dado
-     * @param Array([idsector]=>[sector]) $pIdsArray
-     * @param Array[Sector $pSectorsArray
-     * @returns arreglo de la forma [idsector]=>[sector]
-     */
-    public static function getDifference($pIdsArray, $pSectorsArray){
-        $sectors_array = array();
-        foreach($pSectorsArray as $key=>$value){ //primero obtiene un arreglo de la forma idsector=>sector
-            $sectors_array[$pSectorsArray[$key]["idtbl_sectorbeneficiado"]] = $pSectorsArray[$key]["nombre"];
-        }
-        return array_diff_key($pIdsArray,$sectors_array);
-    }
 
 // </editor-fold>
 }
