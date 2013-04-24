@@ -34,15 +34,19 @@ class Investigador  extends CModel{
             array('telefono, cedula, experiencia', 'match', 'pattern'=>'/^[\p{N}]+$/u', 'message'=>'{attribute} sólo puede estar compuesto por dígitos.'),
             array('correo', 'email', 'message'=>'Dirección de correo inválida'),
             array('nombre, apellido1, apellido2, ', 'match', 'pattern'=>'/^[\p{L} ]+$/u'),
-            array('codigo','validarCodigoProyecto','on'=>'nuevo'),
-            array('horas','validarHorasInvestigador','on'=>'nuevo'),
+            array('proyecto','validarCodigoProyecto','on'=>'nuevo'),
+            array('horas','validarHorasInvestigador','on'=>'nuevo','min'=>1),
         );
     }//fin rules
     
     /**
      * Valida que las horas del investigador no estén vacías
      * @param type $attribute Atributos del validador
-     * @param type $params Parametros del validador.
+     * @param type $params Parametros del validador. Los parámetros son:
+     *  on  - Dice bajo que scenario del modelo hace la validación, si se omite, siempre realiza la validación.
+     *  min - Mínimo valor que pueden tener las horas. No puede ser negativo.
+     *  max - Máximo valor que pueden tener las horas.
+     * Todos los parámetros son opcionales.
      */
     public function validarHorasInvestigador($attribute, $params)
     {
@@ -56,9 +60,30 @@ class Investigador  extends CModel{
         foreach ($this->$attribute as $tipo=>$horas)
         {
             if ($tipo === '')
+            {
                 $this->addError($attribute,  'El tipo de horas no puede estar vacío.');
+                break;
+            }//fin si el tipo est[a vacio
             if ($horas === '')
+            {
                 $this->addError($attribute,  'La cantidad de horas no puede estar vacía.');
+                break;
+            }//fin si las horas estan en blanco
+            if (!preg_match('/^[0-9]+(.(5?)(0*))?$/', $horas))
+            {
+                $this->addError($attribute,  'La cantidad de horas no son válidas');
+                break;
+            }//fin si las horas no coinciden con el patrón.
+            if (isset($params['min']) && $horas < $params['min'])
+            {
+                $this->addError($attribute,  'La cantidad de horas no pueden ser menos de ' . $params['min']);
+                break;
+            }//fin si el parámetro min se toma en cuenta.
+            if (isset($params['max']) && $horas > $params['max'])
+            {
+                $this->addError($attribute,  'La cantidad de horas no pueden ser más de ' . $params['max']);
+                break;
+            }//fin si el parámetro max se toma en cuenta.
         }//fin for
     }//fin validar Horas Investigador
     
@@ -74,9 +99,9 @@ class Investigador  extends CModel{
         $criteria->alias = "pr";
         $criteria->join = 'INNER JOIN tbl_HistorialProyectosPeriodos HPP ON pr.idtbl_Proyectos = HPP.idtbl_Proyectos
                            INNER JOIN tbl_Periodos P ON HPP.idPeriodo = P.idPeriodo';
-        $criteria->condition = "pr.codigo = '" . $this->proyecto . "' AND p.inicio <= SYSDATE() AND p.fin > SYSDATE()";
+        $criteria->condition = "pr.codigo = '" . $this->$attribute . "' AND p.inicio <= SYSDATE() AND p.fin > SYSDATE()";
         if (!Proyectos::model()->exists($criteria)) {
-            $this->addError('codigo', $this->getAttributeLabel('codigo') . ' no fue encontrado en la base de datos o no se encuentra activo.');
+            $this->addError($attribute, $this->getAttributeLabel($attribute) . ' no fue encontrado en la base de datos o no se encuentra activo.');
         }//fin si el código existe en la base de datos
     }//fin validarCodigoProyecto
     
