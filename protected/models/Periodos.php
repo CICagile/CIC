@@ -122,12 +122,9 @@ class Periodos extends CActiveRecord
          * @param string $pCodProyecto Código del proyecto con el que se va a hacer la comparación.
          */
         public function validarFechaFinAsistencia($pCodProyecto){
-            
-          $select = "SELECT DATE_FORMAT(P.fin, '%d-%m-%Y') fin FROM tbl_Proyectos Pr
-		INNER JOIN tbl_historialproyectosperiodos HPP ON PR.idtbl_Proyectos = HPP.idtbl_historialproyectosperiodos
-		INNER JOIN tbl_Periodos P ON HPP.idPeriodo = P.idPeriodo
-		WHERE Pr.codigo = :codigo AND P.inicio <= SYSDATE() AND P.fin > SYSDATE();";
-          $comando = Yii::app()->db->createCommand($select);
+              
+          $call = "CALL buscarFechaFinProyecto(:codigo)";
+          $comando = Yii::app()->db->createCommand($call);
           $comando->bindParam(':codigo',$pCodProyecto,PDO::PARAM_STR);
           $query = $comando->query();
           $resultado = $query->read();
@@ -143,11 +140,8 @@ class Periodos extends CActiveRecord
      */
     public function validarFechaInicioAsistencia($pCodProyecto){
             
-          $select = "SELECT DATE_FORMAT(P.inicio, '%d-%m-%Y') inicio FROM tbl_Proyectos Pr
-		INNER JOIN tbl_historialproyectosperiodos HPP ON PR.idtbl_Proyectos = HPP.idtbl_historialproyectosperiodos
-		INNER JOIN tbl_Periodos P ON HPP.idPeriodo = P.idPeriodo
-		WHERE Pr.codigo = :codigo AND P.inicio <= SYSDATE() AND P.fin > SYSDATE();";
-          $comando = Yii::app()->db->createCommand($select);
+          $call = "CALL buscarFechaInicioProyecto(:codigo)";
+          $comando = Yii::app()->db->createCommand($call);
           $comando->bindParam(':codigo',$pCodProyecto,PDO::PARAM_STR);
           $query = $comando->query();
           $resultado = $query->read();

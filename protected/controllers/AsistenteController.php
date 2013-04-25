@@ -78,9 +78,9 @@ class AsistenteController extends Controller
 	 */
 	public function actionView($id)
 	{
-		$this->render('view',array(
-			'model'=>$this->loadModel($id),
-		));
+               	$this->render('view',array(
+                        'model'=>$this->loadModel($id),
+                ));
 	}
 
 	/**
@@ -154,7 +154,7 @@ class AsistenteController extends Controller
 			if($model->validate(NULL, false)){
                                 $model->attributes = $_POST['Asistente'];
 				if ($model->actualizarDatosPersonales($id))
-                                    $this->redirect(array('index'));
+                                    $this->redirect(array('view','id'=>$model->carnet));
                                 else
                                     throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
                         }//fin si los datos son válidos
@@ -196,12 +196,12 @@ class AsistenteController extends Controller
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer the ID of the model to be loaded
 	 */
-	public function loadModel($id)
+	public function loadModel($carnet)
 	{
 		$model = new Asistente;
-                $atributos = $model->buscarAsistentePorCarnet($id);
+                $atributos = $model->buscarAsistentePorCarnet($carnet);
 		if($atributos===null)
-			throw new CHttpException(404,'No se encontro el carnet ' . $id);
+			throw new CHttpException(404,'No se encontro el carnet ' . $carnet);
                 $model->attributes = $atributos;
 		return $model;
 	}
@@ -218,4 +218,6 @@ class AsistenteController extends Controller
 			Yii::app()->end();
 		}
 	}
+        
+ 
 }

@@ -177,7 +177,7 @@ class Asistente  extends CModel{
             ));
             return $dataProvider;
     }
-    
+
     public function __get($name)
     {
         if (property_exists($this, $name))
