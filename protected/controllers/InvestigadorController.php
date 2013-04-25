@@ -99,7 +99,15 @@ class InvestigadorController extends Controller
                     $periodo->attributes = $_POST['Periodos'];
                     foreach ($datos_horas as $dato)
                     {
-                        $horas[$dato['tipo_horas']] = $dato['cantidad_horas'];
+                        if (array_key_exists($dato['tipo_horas'],$horas))
+                        {
+                            $model->addError('horas',  'El tipo de horas no se puede repetir.');//TODO: Esto se debería validar dentro del modelo.
+                            break;
+                        }//fin si el tipo de horas se repite.
+                        else
+                        {
+                            $horas[$dato['tipo_horas']] = $dato['cantidad_horas'];
+                        }//fin si el tipo de horas no se repite
                     }
                     $model->horas = $horas;
                     $model->validarCedulaUnica();
