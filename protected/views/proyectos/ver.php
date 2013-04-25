@@ -46,7 +46,7 @@ $columns = array (
     ),
     array(
         'class'=>'CButtonColumn',
-        'template'=>'{view}{update}{desvincularasistente}',
+        'template'=>'{view}{update}{delete}',
         'viewButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("id"=>$data["carnet"]))',
         'viewButtonLabel' => 'Ver información detallada del asistente',
         'updateButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/updateDP", array("id"=>$data["carnet"]))',
