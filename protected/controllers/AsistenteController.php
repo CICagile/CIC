@@ -218,6 +218,4 @@ class AsistenteController extends Controller
 			Yii::app()->end();
 		}
 	}
-        
- 
 }

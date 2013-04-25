@@ -12,6 +12,8 @@ $this->pageTitle=Yii::app()->name;
     <br/>
     <li><?php echo CHtml::link('Módulo de Asistentes',array('asistente/admin')) ?></li>
     <br/>
+    <li><?php echo CHtml::link('Módulo de Investigadores',array('investigador/admin')) ?></li>
+    <br/>
     <li>Gestión del Sistema
         <ul>
             <li><?php echo CHtml::link('Objetivos de Proyecto',array('objetivoproyecto/admin')) ?></li>
