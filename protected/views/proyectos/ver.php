@@ -51,17 +51,10 @@ $columns = array (
         'viewButtonLabel' => 'Ver información detallada del asistente',
         'updateButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/updateDP", array("id"=>$data["carnet"]))',
         'updateButtonLabel' => 'Editar información personal del asistente',
-          'buttons'=>array
-                    (
-                        'desvincularasistente' => array
-                        (
-                            'label'=>'Desvincular un asistente de un proyecto.',
-                            'imageUrl'=>Yii::app()->request->baseUrl.'/images/desvincularuser.jpg',
-                            //'click'=>'Yii::app()->createUrl("proyectos/ver", array("id"=>$data["carnet"]))',
-                          
-                        ),                        
-                    ),
-));
+        'deleteButtonUrl'=>'Yii::app()->controller->createURL("Asistente/desvincular",array("idtbl_Proyectos"=>'.$model->idtbl_Proyectos.',"carnet"=>$data["carnet"]))',
+        //'deleteButtonUrl'=>'Yii::app()->controller->createURL("Asistente/desvincular", array("id"=>$data["carnet"]))',
+        'deleteButtonLabel' => 'Desvincular Asistente'
+     ));
 
 ?>
 
