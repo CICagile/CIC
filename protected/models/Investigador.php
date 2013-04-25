@@ -59,12 +59,12 @@ class Investigador  extends CModel{
         }//fin si el arreglo está vacío o es nulo
         foreach ($this->$attribute as $tipo=>$horas)
         {
-            if ($tipo === '')
+            if ($tipo == NULL)
             {
                 $this->addError($attribute,  'El tipo de horas no puede estar vacío.');
                 break;
             }//fin si el tipo est[a vacio
-            if ($horas === '')
+            if ($horas == NULL)
             {
                 $this->addError($attribute,  'La cantidad de horas no puede estar vacía.');
                 break;
