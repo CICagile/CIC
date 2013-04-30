@@ -304,10 +304,6 @@ class Proyectos extends CActiveRecord {
     /**
      * Common actions made to execute any nontransactional procedure without parameters
      * IMPORTANT: result returned by yii's queryAll() function
-     */
-    
-    /**
-     * ejecuta un procedure de manera no transaccional, que no recibe parámetros
      * @param string $pProcedureName
      * @return resultado de funcion queryAll()
      */
