@@ -11,6 +11,7 @@ $this->menu=array(
         array('label'=>'Ver Proyectos Activos', 'url'=>array('admin')),	
 );
 ?>
+<h2>Esto es en ampliar proyecto</h2>
 
 <h1>Lista de Proyectos Antiguos</h1>
 <?php
