@@ -160,6 +160,16 @@ class Proyectos extends CActiveRecord {
 
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Functions">
+    /**
+     * Agrega un asistente a un proyecto
+     * @param $pidproyecto id del proyecto
+     * @param $pcarnet carnet del asistente
+     * @param $pidrol rol del asistente
+     * @param $pfechaini fecha de inicio de la asistencia
+     * @param $pfechafin fecha de fin de la asistencia
+     * @param $phoras cantidad de horas
+     * @return boolean resultado de la transaccion
+     */
     public function agregarAsistenteProyecto($pidproyecto, $pcarnet, $pidrol, $pfechaini, $pfechafin, $phoras) {
         $conexion = Yii::app()->db;
         $call = 'CALL agregarAsistenteProyecto(:idproyecto,:carnet,:idrol,:fechaini,:fechafin, :horas)';
@@ -212,8 +222,10 @@ class Proyectos extends CActiveRecord {
         return $dataProvider;
     }
 
-    /* Esta funcion retorna la información del proyecto
+    /**
+     *  Esta funcion retorna la información del proyecto
      * y la información del periodo actual asociado al proyecto
+     * @return un objeto proyecto con la información actualizada
      */
 
     public function obtenerProyectoconPeriodoActual($pIdProyecto) {
@@ -236,26 +248,36 @@ class Proyectos extends CActiveRecord {
         }
     }
 
+    /**
+     * obtiene los proyectos activos 
+     * @return resultado obtenido de la base de datos al realizar la ejecución
+     */
     public function obtenerProyectosActivos() {
         return Proyectos::executeNonTransactionalProcedureWithNoParameters('CALL obtenerProyectosActivos()');
     }
 
+    /**
+     * obtiene los proyectos cuyo periodo de vigencia ha expirado
+     * @return objeto Proyecto que incluye los sectores beneficiados, pero en formato de lista html
+     */
     public function obtenerProyectosAntiguos() {
-        return Proyectos::executeNonTransactionalProcedureWithNoParameters('CALL obtenerProyectosAntiguos()');
+        $model = Proyectos::executeNonTransactionalProcedureWithNoParameters('CALL obtenerProyectosAntiguos()');
+        $model->idtbl_sectorbeneficiado = Proyectos::listFormatBenefitedSectors($this->idtbl_sectorbeneficiado);
+        return $model; 
     }
 
     /*
-     * Da formato de lista a 
+     * Asocia los sectores beneficiados con formato HTML a objeto this
      */
     public function obtenerSectoresBeneficiadosConFormato() {
         $this->idtbl_sectorbeneficiado = Proyectos::listFormatBenefitedSectors($this->idtbl_sectorbeneficiado);
     }
 
+    
     /**
      * Establece idtbl_sectorbeneficiado con un arreglo de sectores beneficiados
      * @param Integer $pIdProyecto
      */
-
     public function obtenerSectoresBeneficiados($pIdProyecto) {
         $call = 'CALL obtenerSectoresBeneficiados(:pIdProyecto)';
         $conexion = Yii::app()->db;
@@ -276,7 +298,6 @@ class Proyectos extends CActiveRecord {
      * @param Array $pSectorsArray
      * @return String
      */
-
     private function listFormatBenefitedSectors($pSectorsArray) {
         if (is_array($pSectorsArray)) {
             $html_list = '<ul>';
@@ -293,6 +314,12 @@ class Proyectos extends CActiveRecord {
     /**
      * Common actions made to execute any nontransactional procedure without parameters
      * IMPORTANT: result returned by yii's queryAll() function
+     */
+    
+    /**
+     * ejecuta un procedure de manera no transaccional, que no recibe parámetros
+     * @param string $pProcedureName
+     * @return resultado de funcion queryAll()
      */
     private static function executeNonTransactionalProcedureWithNoParameters($pProcedureName) {
         $call = $pProcedureName;
