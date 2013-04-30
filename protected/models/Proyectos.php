@@ -308,10 +308,11 @@ class Proyectos extends CActiveRecord {
     // </editor-fold>
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Constants">
-    public $CODIGO_APROBADO = "0";
-    public $CODIGO_AMPLIADO = "1";
     public $LABEL_APROBADO = 'Aprobado';
     public $LABEL_AMPLIADO = 'Ampliado';
+    
+    public $CODIGO_APROBADO = "0";
+    public $codampliado = "1";
 
 // </editor-fold>
 }
