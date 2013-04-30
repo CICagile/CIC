@@ -33,7 +33,7 @@ class AsistenteController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','updateDP','codigoautocomplete','update','index'),
+				'actions'=>array('create','updateDP','codigoautocomplete','update','index','desvincular'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -71,16 +71,24 @@ class AsistenteController extends Controller
                 echo CJSON::encode($return_array);
             }
         }
-
+        public function actionDesvincular($idtbl_Proyectos,$carnet)
+        {
+           $model = $this->loadModel($carnet);
+           if($model->desvincular($idtbl_Proyectos,$carnet))
+                                    $this->redirect(array('Proyectos/ver','id'=>$idtbl_Proyectos));
+                                else
+                                    throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
+           
+        }
 	/**
 	 * Displays a particular model.
 	 * @param integer $id the ID of the model to be displayed
 	 */
 	public function actionView($id)
 	{
-               	$this->render('view',array(
-                        'model'=>$this->loadModel($id),
-                ));
+		$this->render('view',array(
+			'model'=>$this->loadModel($id),
+		));
 	}
 
 	/**
@@ -196,12 +204,12 @@ class AsistenteController extends Controller
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer the ID of the model to be loaded
 	 */
-	public function loadModel($carnet)
+	public function loadModel($id)
 	{
 		$model = new Asistente;
-                $atributos = $model->buscarAsistentePorCarnet($carnet);
+                $atributos = $model->buscarAsistentePorCarnet($id);
 		if($atributos===null)
-			throw new CHttpException(404,'No se encontro el carnet ' . $carnet);
+			throw new CHttpException(404,'No se encontro el carnet ' . $id);
                 $model->attributes = $atributos;
 		return $model;
 	}
@@ -218,6 +226,4 @@ class AsistenteController extends Controller
 			Yii::app()->end();
 		}
 	}
-        
- 
 }

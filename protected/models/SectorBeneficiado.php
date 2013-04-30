@@ -1,21 +1,21 @@
 <?php
 
 /**
- * This is the model class for table "tbl_tipoproyecto".
+ * This is the model class for table "tbl_sectorbeneficiado".
  *
- * The followings are the available columns in table 'tbl_tipoproyecto':
- * @property integer $idtbl_tipoproyecto
+ * The followings are the available columns in table 'tbl_sectorbeneficiado':
+ * @property integer $idtbl_sectorbeneficiado
  * @property string $nombre
  *
  * The followings are the available model relations:
- * @property Proyectos[] $proyectoses
+ * @property Proyectos[] $tblProyectoses
  */
-class TipoProyecto extends CActiveRecord
+class SectorBeneficiado extends CActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
-	 * @return TipoProyecto the static model class
+	 * @return SectorBeneficiado the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
@@ -27,7 +27,7 @@ class TipoProyecto extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'tbl_tipoproyecto';
+		return 'tbl_sectorbeneficiado';
 	}
 
 	/**
@@ -38,15 +38,13 @@ class TipoProyecto extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('nombre', 'length', 'max'=>45),
-                        array('nombre', 'unique', 'className' => 'TipoProyecto', 'caseSensitive' => true, 'message' => 'Ya existe esa adscripción.'), 
-			// The following rule is used by search().
-			// Please remove those attributes that should not be searched.
-			array('idtbl_tipoproyecto, nombre', 'safe', 'on'=>'search'),
+			array('nombre', 'required'),
+			array('nombre', 'length', 'min'=>3, 'max'=>250, 'tooShort'=> 'El {attribute} debe ser mayor a {min} caracteres.', 'tooLong' => 'El {attribute} debe ser menor a {max} caracteres.'),
+			array('idtbl_sectorbeneficiado, nombre', 'safe', 'on'=>'search'),
 		);
 	}
 
-        /**
+	/**
 	 * @return array relational rules.
 	 */
 	public function relations()
@@ -54,7 +52,7 @@ class TipoProyecto extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'proyectoses' => array(self::HAS_MANY, 'Proyectos', 'tipoproyecto'),
+			'tblProyectoses' => array(self::MANY_MANY, 'Proyectos', 'tbl_proyectos_sectorbeneficiado(idtbl_sectorbeneficiado, idtbl_Proyectos)'),
 		);
 	}
 
@@ -64,8 +62,8 @@ class TipoProyecto extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'idtbl_tipoproyecto' => 'Idtbl Tipoproyecto',
-			'nombre' => 'Tipo de proyecto',
+			'idtbl_sectorbeneficiado' => 'Idtbl Sectorbeneficiado',
+			'nombre' => 'Nombre',
 		);
 	}
 
@@ -80,7 +78,7 @@ class TipoProyecto extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('idtbl_tipoproyecto',$this->idtbl_tipoproyecto);
+		$criteria->compare('idtbl_sectorbeneficiado',$this->idtbl_sectorbeneficiado);
 		$criteria->compare('nombre',$this->nombre,true);
 
 		return new CActiveDataProvider($this, array(

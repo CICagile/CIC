@@ -61,6 +61,7 @@ Yii::app()->clientScript->registerScript('search', "$('.search-button').click(fu
 
 <h1>Lista de Asistentes</h1>
 
+
 <?php $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'asistente-grid',
 	'dataProvider'=>$model->search(),

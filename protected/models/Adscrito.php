@@ -8,7 +8,7 @@
  * @property string $nombre
  *
  * The followings are the available model relations:
- * @property Proyectos[] $proyectoses
+ * @property Proyectos[] $_proyectos
  */
 class Adscrito extends CActiveRecord
 {
@@ -38,8 +38,7 @@ class Adscrito extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('idtbl_adscrito, nombre', 'required'),
-			array('idtbl_adscrito', 'numerical', 'integerOnly'=>true),
+                        array('nombre', 'unique', 'className' => 'Adscrito', 'caseSensitive' => true, 'message' => 'Ya existe esa adscripción.'), 
 			array('nombre', 'length', 'max'=>250),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
@@ -55,7 +54,7 @@ class Adscrito extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'proyectoses' => array(self::HAS_MANY, 'Proyectos', 'idtbl_adscrito'),
+			'_proyectos' => array(self::HAS_MANY, 'Proyectos', 'idtbl_adscrito'),
 		);
 	}
 

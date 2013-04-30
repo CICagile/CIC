@@ -73,14 +73,14 @@ class Proyectos extends CActiveRecord
                         array('nombre, codigo, idtbl_objetivoproyecto, tipoproyecto, idtbl_adscrito, estado', 'required', 'message' => '{attribute} es requerido.'),                        
                         array('codigo', 'unique', 'className' => 'Proyectos', 'message' => 'Ya existe un proyecto con ese código.'),                      
 			array('idtbl_objetivoproyecto, tipoproyecto, idtbl_adscrito, estado', 'numerical', 'integerOnly'=>true),
-                    
-			array('nombre', 'length', 'min'=>3, 'max'=>500, 'tooShort'=> 'El {attribute} debe ser mayor a {min} caracteres.', 'tooLong' => 'El {attribute} debe ser menor a {max} caracteres.'),
+                    	array('nombre', 'length', 'min'=>3, 'max'=>500, 'tooShort'=> 'El {attribute} debe ser mayor a {min} caracteres.', 'tooLong' => 'El {attribute} debe ser menor a {max} caracteres.'),
 			array('codigo', 'length', 'min'=>2, 'max'=>20, 'tooShort'=> 'El {attribute} debe ser mayor a {min} caracteres.', 'tooLong' => 'El {attribute} debe ser menor a {max} caracteres.'),
-			// The following rule is used by search().
+			//array('idtbl_Proyectos','safe'=>true),
+                        // The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			//array('idtbl_Proyectos, nombre, codigo, tbl_Periodos_idPeriodo', 'safe', 'on'=>'search'),
                         array('idtbl_Proyectos, nombre, codigo, $fecha_inicio_search, $fecha_fin_search, estado', 'safe', 'on'=>'search'),
-                        array('idtbl_Proyectos, inicio, fin', 'safe', 'on'=>'cargarModelo'),
+                        array('idtbl_Proyectos, inicio, fin','safe', 'on'=>'cargarModelo'),
 		);
 	}
         
@@ -248,7 +248,6 @@ class Proyectos extends CActiveRecord
         }
         
         public function obtenerProyectosActivos(){                    
-            
             $connection=Yii::app()->db;
             $sql=   "SELECT tbl_proyectos.*, DATE_FORMAT(tbl_periodos.inicio, '%d-%m-%Y') AS inicio, 
                     DATE_FORMAT(tbl_periodos.fin, '%d-%m-%Y') AS fin
@@ -294,4 +293,7 @@ class Proyectos extends CActiveRecord
                 return $models;
 
         }
+        
+       
+        
 }//fin modelo proyectos
