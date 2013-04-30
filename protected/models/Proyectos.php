@@ -261,18 +261,8 @@ class Proyectos extends CActiveRecord {
      * @return objeto Proyecto que incluye los sectores beneficiados, pero en formato de lista html
      */
     public function obtenerProyectosAntiguos() {
-        $model = Proyectos::executeNonTransactionalProcedureWithNoParameters('CALL obtenerProyectosAntiguos()');
-        $model->idtbl_sectorbeneficiado = Proyectos::listFormatBenefitedSectors($this->idtbl_sectorbeneficiado);
-        return $model; 
+        return Proyectos::executeNonTransactionalProcedureWithNoParameters('CALL obtenerProyectosAntiguos()'); 
     }
-
-    /*
-     * Asocia los sectores beneficiados con formato HTML a objeto this
-     */
-    public function obtenerSectoresBeneficiadosConFormato() {
-        $this->idtbl_sectorbeneficiado = Proyectos::listFormatBenefitedSectors($this->idtbl_sectorbeneficiado);
-    }
-
     
     /**
      * Establece idtbl_sectorbeneficiado con un arreglo de sectores beneficiados
@@ -298,7 +288,7 @@ class Proyectos extends CActiveRecord {
      * @param Array $pSectorsArray
      * @return String
      */
-    private function listFormatBenefitedSectors($pSectorsArray) {
+    public static function listFormatBenefitedSectors($pSectorsArray) {
         if (is_array($pSectorsArray)) {
             $html_list = '<ul>';
             foreach ($pSectorsArray as $sector) {
@@ -339,7 +329,7 @@ class Proyectos extends CActiveRecord {
     public $LABEL_AMPLIADO = 'Ampliado';
     
     public $CODIGO_APROBADO = "0";
-    public $codampliado = "1";
+    public $CODIGO_AMPLIADO = "1";
 
 // </editor-fold>
 }
