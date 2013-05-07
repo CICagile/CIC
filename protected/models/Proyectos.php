@@ -318,7 +318,7 @@ class Proyectos extends CActiveRecord {
         /*TODO
          * escribir procedure para cancelar (dateformat~)
          * -> agregar a tabla tbl_cancelacionProyecto
-         * -> cambiar estado del proyecto en tbl_estadosproyecto
+         * cambiar el estado del proyecto con actualizarEstadoProyecto (falta agregar el estado 3)
          * llamar al procedure desde aquí
          * agregar periodo al historial
          */
