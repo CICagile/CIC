@@ -19,6 +19,12 @@ class Investigador  extends CModel{
     public $grado;
     public $proyecto;
     public $rol;
+    
+    /**
+     * Año en que ingresó el investigador al ITCR. 
+     */
+    public $ingreso;
+    
     public $horas = null;
     
     /**
@@ -36,6 +42,7 @@ class Investigador  extends CModel{
             array('nombre, apellido1, apellido2, ', 'match', 'pattern'=>'/^[\p{L} ]+$/u'),
             array('proyecto','validarCodigoProyecto','on'=>'nuevo'),
             array('horas','validarHorasInvestigador','on'=>'nuevo','min'=>1),
+            array('ingreso','numerical','integerOnly'=>true, 'min'=>1901, 'max'=>2155, 'message' => '{attribute} es inválido.'),
         );
     }//fin rules
     
@@ -140,7 +147,8 @@ class Investigador  extends CModel{
             'grado' => 'Grado Académico',
             'proyecto' => 'Código del Proyecto',
             'rol' => 'Rol del Investigador',
-            'horas' => 'Horas'
+            'horas' => 'Horas',
+            'ingreso' => 'Año de ingreso al ITCR',
         );
     }//fin attribute labels
     
@@ -160,7 +168,8 @@ class Investigador  extends CModel{
             'grado',
             'proyecto',
             'rol',
-            'horas'
+            'horas',
+            'ingreso',
         );
     }//fin attribute names
 
@@ -208,7 +217,7 @@ class Investigador  extends CModel{
     public function crear($pPeriodo)
     {
         $conexion = Yii::app()->db;
-        $call = "CALL registrarInvestigador(:nombre,:ape1,:ape2,:ced,:correo,:tel,:exp,:grado,:cod,:rol,'" . $pPeriodo->inicio . "','" . $pPeriodo->fin. "')";
+        $call = "CALL registrarInvestigador(:nombre,:ape1,:ape2,:ced,:correo,:tel,:exp,:grado,:cod,:rol,'" . $pPeriodo->inicio . "','" . $pPeriodo->fin. ", :ingreso')";
         $transaccion = Yii::app()->db->beginTransaction();
         try {
             $comando = $conexion->createCommand($call);
@@ -222,6 +231,7 @@ class Investigador  extends CModel{
             $comando->bindParam(':grado', $this->grado, PDO::PARAM_STR);
             $comando->bindParam(':cod', $this->proyecto, PDO::PARAM_STR);
             $comando->bindParam(':rol', $this->rol, PDO::PARAM_STR);
+            $comando->bindParam(':ingreso', $this->ingreso, PDO::PARAM_STR);
             $comando->execute();
             foreach ($this->horas as $tipo => $horas) {
                 $call = "CALL asignarHorasInvestigador(:ced,:horas,:tipo,'" . $pPeriodo->inicio . "','" . $pPeriodo->fin . "',:cod)";
