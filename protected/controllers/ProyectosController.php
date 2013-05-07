@@ -429,7 +429,11 @@ class ProyectosController extends Controller {
             'dataProvider' => $dataProvider,
         ));
     }
-
+/**
+ *
+ * @param type $id
+ * @throws CHttpException 
+ */
     public function actionAmpliarProyecto($id) {
         $modelproyectos = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
         if ($modelproyectos === null)
@@ -469,7 +473,9 @@ class ProyectosController extends Controller {
                         if ($result) {
 
                             //Cambiamos el estado del proyecto
-                            $modelproyectos->estado = $modelproyectos->CODIGO_AMPLIADO;
+                            $modelproyectos->actualizarEstadoProyecto(
+                                    $modelproyectos->idtbl_Proyectos, $modelproyectos->CODIGO_AMPLIADO);
+                            //$modelproyectos->estado = $modelproyectos->CODIGO_AMPLIADO;
 
                             $result = $modelproyectos->save(false);
 
