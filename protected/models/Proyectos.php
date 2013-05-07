@@ -304,6 +304,26 @@ class Proyectos extends CActiveRecord {
 
         return true;
     }
+    
+    /**
+     * Cambia la fecha de finalización de un proyecto, considerando un motivo que 
+     * se agrega a la tabla tbl_MotivoCancelacion
+     * 
+     * @param int $pIdProyecto
+     * @param date $pFechaCancelacion
+     * @param string $pMotivoCancelacion
+     * @return boolean resultado de la operación: true-> ejecutado correctamente, sino false
+     */
+    public function cancelarProyecto($pIdProyecto, $pFechaCancelacion, $pMotivoCancelacion){
+        /*TODO
+         * escribir procedure para cancelar (dateformat~)
+         * -> agregar a tabla tbl_cancelacionProyecto
+         * -> cambiar estado del proyecto en tbl_estadosproyecto
+         * llamar al procedure desde aquí
+         * agregar periodo al historial
+         */
+        return true;
+    }
 
     /**
      * Gives html format using <ul> tag to a list of sectors
@@ -349,6 +369,7 @@ class Proyectos extends CActiveRecord {
 
     public $CODIGO_APROBADO = "Aprobado";
     public $CODIGO_AMPLIADO = "Ampliado";
+    public $CODIGO_CANCELADO = "Cancelado";
 
 // </editor-fold>
 }
