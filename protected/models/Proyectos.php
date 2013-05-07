@@ -315,6 +315,15 @@ class Proyectos extends CActiveRecord {
      * @return boolean resultado de la operación: true-> ejecutado correctamente, sino false
      */
     public function cancelarProyecto($pIdProyecto, $pFechaCancelacion, $pMotivoCancelacion){
+        $conexion = Yii::app()->db;
+        $call = 'CALL cancelarProyecto(:pIdProyecto, :pFechaCancelacion, :pMotivoCancelacion)';
+        
+        $command = $conexion->createCommand($call);
+        $command->bindParam(':pIdProyecto', $pIdProyecto, PDO::PARAM_INT);
+        $command->bindParam(':pFechaCancelacion', $pFechaCancelacion);
+        $command->bindParam(':pMotivoCancelacion', $pMotivoCancelacion, PDO::PARAM_STR);
+        $command->execute();
+        
         /*TODO
          * escribir procedure para cancelar (dateformat~)
          * -> agregar a tabla tbl_cancelacionProyecto
