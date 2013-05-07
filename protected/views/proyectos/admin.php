@@ -57,7 +57,13 @@ $this->menu=array(
                             'label'=>'Ampliar el proyecto.',
                             'imageUrl'=>Yii::app()->request->baseUrl.'/images/time_add.png',
                             'url'=>'Yii::app()->createUrl("proyectos/ampliarproyecto", array("id"=>$data["idtbl_Proyectos"]))',
-                        ),  
+                        ),
+                        'cancelar' => array
+                        (
+                          'label'=>'Cancelar el proyecto.',  
+                          'imageUrl'=>Yii::app()->request->baseUrl.'/images/cancelp.png',
+                          'url'=>'Yii::app()->createUrl("proyectos/ampliarproyecto", array("id"=>$data["idtbl_Proyectos"]))',  
+                        ),
                     ),
                     
                 ),

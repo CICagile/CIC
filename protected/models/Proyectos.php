@@ -11,14 +11,17 @@
  * @property integer $idtbl_objetivoproyecto
  * @property integer $tipoproyecto
  * @property integer $idtbl_adscrito
- * @property integer $estado
+ * @property integer $idtbl_EstadosProyecto
  *
  * The followings are the available model relations:
  * @property Asistentes[] $tblAsistentes
  * @property Documentos[] $documentoses
  * @property Financiamientoexterno[] $financiamientoexternos
- * @property Periodos[] $_periodos
+ * @property Periodos[] $_periodos //remove?
+ * @property Historialproyectosperiodos[] $historialproyectosperiodoses
  * @property Presupuesto[] $presupuestos
+ * @property Investigadores[] $tblInvestigadores
+ * @property Estadosproyecto $idtblEstadosProyecto
  * @property Adscrito $idtblAdscrito
  * @property Objetivoproyecto $idtblObjetivoproyecto
  * @property Tipoproyecto $tipoproyecto0
@@ -39,6 +42,8 @@ class Proyectos extends CActiveRecord {
     public $idperiodo;
     public $inicio;
     public $fin;
+    
+    public $estado;
 
 
 // </editor-fold>
@@ -98,6 +103,7 @@ class Proyectos extends CActiveRecord {
             '_convenios' => array(self::MANY_MANY, 'Convenio', 'tbl_proyectos_convenio(idtbl_Proyectos, idtbl_convenio)'),
             '_sectorbeneficiados' => array(self::MANY_MANY, 'Sectorbeneficiado', 'tbl_proyectos_sectorbeneficiado(idtbl_Proyectos, idtbl_sectorbeneficiado)'),
             '_periodos' => array(self::MANY_MANY, 'Periodos', 'tbl_historialproyectosperiodos(idtbl_Proyectos, idPeriodo)'),
+            'idtblEstadosProyecto' => array(self::BELONGS_TO, 'Estadosproyecto', 'idtbl_EstadosProyecto'),
         );
     }
 
@@ -116,6 +122,7 @@ class Proyectos extends CActiveRecord {
             'idtbl_adscrito' => 'Adscrito a',
             'estado' => 'Estado del proyecto',
             'idtbl_sectorbeneficiado' => 'Sector Beneficiado',
+            'estado' => 'Estado del Proyecto',
         );
     }
 
