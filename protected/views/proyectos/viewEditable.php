@@ -10,7 +10,7 @@ $this->breadcrumbs=array(
 
 $this->menu=array(
 	array('label'=>'Ver Proyectos', 'url'=>array('admin')),
-	array('label'=>'Nuevo Proyecto', 'url'=>array('create')),        
+	array('label'=>'Nuevo Proyecto', 'url'=>array('crear')),        
 	array('label'=>'Agregar asistente', 'url'=>array('agregarasistente', 'id'=>$model->idtbl_Proyectos)),
 	/*array('label'=>'Delete Proyectos', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->idtbl_Proyectos),'confirm'=>'Are you sure you want to delete this item?')),
 	array('label'=>'Manage Proyectos', 'url'=>array('admin')),*/
@@ -95,7 +95,7 @@ $columns = array (
 		'nombre',
                 array(
                         'label' => 'Estado del proyecto',
-                        'value' => ($model->estado == $model->codaprobado)? $model->labelaprobado : $model->labelampliado,
+                        'value' => ($model->estado == $model->CODIGO_APROBADO)? $model->LABEL_APROBADO : $model->LABEL_AMPLIADO,
                 ),
 		array(
                         'label' => 'Fecha Inicio',

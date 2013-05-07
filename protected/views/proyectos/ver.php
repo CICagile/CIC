@@ -60,14 +60,16 @@ $columns = array (
 
 <h3>Detalle del proyecto.</h3>
 
-<?php $this->widget('zii.widgets.CDetailView', array(
+<?php
+$sectores_beneficiados = Proyectos::listFormatBenefitedSectors($model->idtbl_sectorbeneficiado);
+$this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(            
                 'codigo',
 		'nombre',
                 array(
                         'label' => 'Estado del proyecto',
-                        'value' => ($model->estado == $model->codaprobado)? $model->labelaprobado : $model->labelampliado,
+                        'value' => ($model->estado == $model->CODIGO_APROBADO)? $model->LABEL_APROBADO : $model->LABEL_AMPLIADO,
                 ),
 		array(
                         'label' => 'Fecha Inicio',
@@ -79,7 +81,12 @@ $columns = array (
                 ),
                 '_tipoproyecto.nombre',                
                 '_objetivoproyecto.nombre',
-                '_adscrito.nombre'             
+                '_adscrito.nombre',
+            array(
+                'label' => 'Sector(es) beneficiado(s)',
+                'value' => $sectores_beneficiados,
+                'type' => 'html',
+                ),
 	),
 )); 
       
