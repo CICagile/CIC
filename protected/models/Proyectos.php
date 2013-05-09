@@ -243,7 +243,7 @@ class Proyectos extends CActiveRecord {
     public function agregarInvestigadorProyecto($pCodigo, $pCedula, $pRol, $pInicio, $pFin, $pHoras) {
         $conexion = Yii::app()->db;
         $call = 'CALL agregarInvestigadorProyecto(:cedula, :codigo, :rol, :inicio, :fin)';
-        $transaccion = Yii::app()->db->beginTransaction();
+        $transaction = Yii::app()->db->beginTransaction();
         try {
             $comando = $conexion->createCommand($call);
             $comando->bindParam(':cedula', $pCedula);
@@ -252,11 +252,23 @@ class Proyectos extends CActiveRecord {
             $comando->bindParam(':inicio', $pInicio);
             $comando->bindParam(':fin', $pFin);
             $comando->execute();
-            $transaccion->commit();
+            foreach ($pHoras as $tipo => $horas) {
+                $call = "CALL asignarHorasInvestigador(:ced,:horas,:tipo,:inicio,:fin,:cod)";
+                $comando = $conexion->createCommand($call);
+                $comando->bindParam(':ced', $pCedula, PDO::PARAM_STR);
+                $comando->bindParam(':horas', $horas);
+                $comando->bindParam(':tipo', $tipo, PDO::PARAM_STR);
+                $comando->bindParam(':inicio', $pInicio, PDO::PARAM_STR);
+                $comando->bindParam(':fin', $pFin, PDO::PARAM_STR);
+                $comando->bindParam(':cod', $pCodigo, PDO::PARAM_STR);
+                $comando->execute();
+            }//fin for
+            $transaction->commit();
         } catch (Exception $e) {
-            $transaccion->rollback();
+            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Proyectos");
+            $transaction->rollback();
             return false;
-        }
+        }//fin catch
         return true;
     }//fin agregar investigador a proyecto
 // </editor-fold>
