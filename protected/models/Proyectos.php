@@ -260,7 +260,7 @@ class Proyectos extends CActiveRecord {
      * @return resultado obtenido de la base de datos al realizar la ejecución
      */
     public function obtenerProyectosActivos() {
-        return Proyectos::executeNonTransactionalProcedureWithNoParameters('CALL obtenerProyectosActivos()');
+        return Proyectos::executeNonTransactionalProcedureWithNoParameters('CALL obtenerProyectosActivos(NULL)');
     }
 
     /**
