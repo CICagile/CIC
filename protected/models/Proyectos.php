@@ -166,7 +166,7 @@ class Proyectos extends CActiveRecord {
     }
 
 // </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Functions">
+// <editor-fold defaultstate="collapsed" desc="Funciones asistentes">
     /**
      * Agrega un asistente a un proyecto
      * @param $pidproyecto id del proyecto
@@ -228,7 +228,39 @@ class Proyectos extends CActiveRecord {
                 ));
         return $dataProvider;
     }
-
+// </editor-fold>
+// <editor-fold defaultstate="collapsed" desc="Funciones investigadores">
+    /**
+     * Asocia a un investigador con este proyecto.
+     * @param string $pCodigo Código del proyecto. En este caso no es posible usar $this->codigo por lo que se pasa como parámetro.
+     * @param string $pCedula Cédula del investigador.
+     * @param string $pRol Rol del investigador.
+     * @param string $pInicio Fecha en la que inicia el investigador. Debe tener el formato dd-mm-aaaa.
+     * @param string $pFin Fecha en que finaliza el investigador con el proyecto. Debe tener el formato dd-mm-aaaa.
+     * @param array  $pHoras La cantidad de horas y su tipo que va a realizar el investigador.
+     * @return boolean Retorna true si la transacción ocurre exitosamente y false de lo contrario.
+     */
+    public function agregarInvestigadorProyecto($pCodigo, $pCedula, $pRol, $pInicio, $pFin, $pHoras) {
+        $conexion = Yii::app()->db;
+        $call = 'CALL agregarInvestigadorProyecto(:cedula, :codigo, :rol, :inicio, :fin)';
+        $transaccion = Yii::app()->db->beginTransaction();
+        try {
+            $comando = $conexion->createCommand($call);
+            $comando->bindParam(':cedula', $pCedula);
+            $comando->bindParam(':codigo', $pCodigo);
+            $comando->bindParam(':rol', $pRol);
+            $comando->bindParam(':inicio', $pInicio);
+            $comando->bindParam(':fin', $pFin);
+            $comando->execute();
+            $transaccion->commit();
+        } catch (Exception $e) {
+            $transaccion->rollback();
+            return false;
+        }
+        return true;
+    }//fin agregar investigador a proyecto
+// </editor-fold>
+// <editor-fold defaultstate="collapsed" desc="Functions">
     /**
      *  Esta funcion retorna la información del proyecto
      * y la información del periodo actual asociado al proyecto
