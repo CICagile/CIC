@@ -95,7 +95,7 @@ class InvestigadorController extends Controller
 		{
                     $horas = array();
                     $datos_horas = $_POST['formhoras']['formhoras'];
-                    $model->attributes=$_POST['Investigador'];
+                    $model->attributes = $_POST['Investigador'];
                     $periodo->attributes = $_POST['Periodos'];
                     foreach ($datos_horas as $dato)
                     {

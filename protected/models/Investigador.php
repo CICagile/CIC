@@ -217,7 +217,7 @@ class Investigador  extends CModel{
     public function crear($pPeriodo)
     {
         $conexion = Yii::app()->db;
-        $call = "CALL registrarInvestigador(:nombre,:ape1,:ape2,:ced,:correo,:tel,:exp,:grado,:cod,:rol,'" . $pPeriodo->inicio . "','" . $pPeriodo->fin. ", :ingreso')";
+        $call = "CALL registrarInvestigador(:nombre,:ape1,:ape2,:ced,:correo,:tel,:exp,:grado,:cod,:rol,'" . $pPeriodo->inicio . "','" . $pPeriodo->fin. "', :ingreso)";
         $transaccion = Yii::app()->db->beginTransaction();
         try {
             $comando = $conexion->createCommand($call);
@@ -231,7 +231,7 @@ class Investigador  extends CModel{
             $comando->bindParam(':grado', $this->grado, PDO::PARAM_STR);
             $comando->bindParam(':cod', $this->proyecto, PDO::PARAM_STR);
             $comando->bindParam(':rol', $this->rol, PDO::PARAM_STR);
-            $comando->bindParam(':ingreso', $this->ingreso, PDO::PARAM_STR);
+            $comando->bindParam(':ingreso', $this->ingreso);
             $comando->execute();
             foreach ($this->horas as $tipo => $horas) {
                 $call = "CALL asignarHorasInvestigador(:ced,:horas,:tipo,'" . $pPeriodo->inicio . "','" . $pPeriodo->fin . "',:cod)";
