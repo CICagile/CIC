@@ -571,11 +571,22 @@ class ProyectosController extends Controller {
                 );
             }else {
                 $fecha_cancelacion = $_POST["cancelacion"];
+                $motivo_cancelacion = $_POST["detalle_motivo"];
+                
+                
+                if($modelproyectos.Proyectos::model()->cancelarProyecto($id, $fecha_cancelacion, $motivo_cancelacion)){
+                        
                 
                 $response = array(
                                     'ok' => true,
-                                    'msg' => $_POST["cancelacion"] . ' ' . $_POST["detalle_motivo"],
+                                    'msg' => $fecha_cancelacion . ' ' . $motivo_cancelacion,
                                 );
+                }else{
+                    $response = array(
+                                    'ok' => false,
+                                    'msg' => "Error al cancelar el proyecto",
+                                );
+                }
                 /*
                 $transaction = Yii::app()->db->beginTransaction();
                 $periodoantiguo = Periodos::model()->findByPk($modelproyectos->idperiodo);

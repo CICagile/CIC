@@ -256,7 +256,7 @@ class Proyectos extends CActiveRecord {
      * @return resultado obtenido de la base de datos al realizar la ejecución
      */
     public function obtenerProyectosActivos() {
-        return Proyectos::executeNonTransactionalProcedureWithNoParameters('CALL obtenerProyectosActivos()');
+        return Proyectos::executeNonTransactionalProcedureWithNoParameters('CALL obtenerProyectosActivos(NULL)');
     }
 
     /**
@@ -317,12 +317,20 @@ class Proyectos extends CActiveRecord {
     public function cancelarProyecto($pIdProyecto, $pFechaCancelacion, $pMotivoCancelacion){
         $conexion = Yii::app()->db;
         $call = 'CALL cancelarProyecto(:pIdProyecto, :pFechaCancelacion, :pMotivoCancelacion)';
+        $transaccion = Yii::app()->db->beginTransaction();
+        try{
         
         $command = $conexion->createCommand($call);
         $command->bindParam(':pIdProyecto', $pIdProyecto, PDO::PARAM_INT);
         $command->bindParam(':pFechaCancelacion', $pFechaCancelacion);
         $command->bindParam(':pMotivoCancelacion', $pMotivoCancelacion, PDO::PARAM_STR);
         $command->execute();
+        $transaccion->commit();
+        } catch (Exception $e) {
+            $transaccion->rollback();
+            Yii::log("Rollback al cancelar el proyecto " . $pIdProyecto->codigo, "error", "application.controllers.ModelProyectos");
+            return false;
+        }
         
         /*TODO
          * escribir procedure para cancelar (dateformat~)
