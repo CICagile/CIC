@@ -83,6 +83,7 @@ class ProyectosController extends Controller {
         $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
         $dataProvider = $model->buscarAsistentesActivosDeProyecto();
         $errores = array();
+        $model->scenario = 'editar-asistentes';
 
         if (isset($_POST['horas']) && isset($_POST['rol']) && isset($_POST['fin'])) {
             $datos_asistentes = $dataProvider->data;
@@ -96,7 +97,7 @@ class ProyectosController extends Controller {
                 $dataProvider = $model->buscarAsistentesActivosDeProyecto(); //vuelve a cargar los datos desde la base en caso de que algunos datos sí se hayan actualizado.
         }//fin si asistente se modificó.
 
-        $this->render('viewEditable', array(
+        $this->render('ver', array(
             'model' => $model,
             'dataProvider' => $dataProvider,
             'errores' => $errores,

@@ -11,6 +11,7 @@ $this->menu=array(
         array('label'=>'Actualizar información del proyecto', 'url'=>array('actualizar', 'id'=>$model->idtbl_Proyectos)),
 	array('label'=>'Agregar asistente', 'url'=>array('agregarasistente', 'id'=>$model->idtbl_Proyectos)),
         array('label'=>'Ver Proyectos', 'url'=>array('admin')),
+        array('label'=>'Nuevo Proyecto', 'url'=>array('crear')),
         
 );
 
@@ -20,7 +21,7 @@ $this->menu=array(
 <h3>Detalle del proyecto.</h3>
 
 <?php
-$sectores_beneficiados = Proyectos::listFormatBenefitedSectors($model->idtbl_sectorbeneficiado);
+/*$sectores_beneficiados = Proyectos::listFormatBenefitedSectors($model->idtbl_sectorbeneficiado);
 $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(            
@@ -45,7 +46,7 @@ $this->widget('zii.widgets.CDetailView', array(
                 ),
 	),
 )); 
-      
+   */   
 ?>
 
 <br/>
@@ -57,7 +58,7 @@ $this->widget('zii.widgets.CDetailView', array(
      * De lo contrario, sólo muestra los datos. 
      */
     if ($model->scenario === 'editar-asistentes')
-        $this->renderPartial('_editarasistentes', array('model'=>$model,'dataProvider'=>$dataProvider));
+        $this->renderPartial('_editarasistentes', array('model'=>$model,'dataProvider'=>$dataProvider,'errores'=>$errores));
     else
         $this->renderPartial('_verasistentes', array('model'=>$model,'dataProvider'=>$dataProvider));
 ?>
