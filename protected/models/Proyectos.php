@@ -256,10 +256,12 @@ class Proyectos extends CActiveRecord {
      * obtiene los proyectos activos 
      * @return resultado obtenido de la base de datos al realizar la ejecución
      */
+   /* public function obtenerProyectosActivos($sector) {
+        return Proyectos::executeNonTransactionalProcedureWithNoParameters('CALL obtenerProyectosActivos($sector)');
+    }*/
     public function obtenerProyectosActivos() {
         return Proyectos::executeNonTransactionalProcedureWithNoParameters('CALL obtenerProyectosActivos(NULL)');
     }
-
     /**
      * obtiene los proyectos cuyo periodo de vigencia ha expirado
      * @return objeto Proyecto que incluye los sectores beneficiados, pero en formato de lista html
