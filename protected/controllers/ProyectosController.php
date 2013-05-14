@@ -27,7 +27,7 @@ class ProyectosController extends Controller {
         return array(
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
                 'actions' => array('ver', 'ActualizarInfoAsistentes', 'crear', 'actualizar', 'agregarasistente', 'AsistenteAutoComplete',
-                    'ValidarAgregarAsistente', 'adminantiguos', 'verantiguos', 'ampliarproyecto', 'agregarInvestigador'),
+                    'ValidarAgregarAsistente', 'adminantiguos', 'verantiguos', 'ampliarproyecto', 'agregarInvestigador', 'investigadorAutoComplete'),
                 'users' => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -635,6 +635,35 @@ class ProyectosController extends Controller {
             echo CJSON::encode($return_array);
         }
     }
+    
+    /**
+         * Busca el codigo de la variable GET en la BD para autocompletar un campo de texto. 
+         */
+        public function actionInvestigadorAutoComplete()
+        {
+            if (isset($_GET['term'])) {
+                $criteria = new CDbCriteria;
+                $criteria->alias = "P";
+                $criteria->select = '*';
+                $criteria->join = 'INNER JOIN tbl_HistorialProyectosPeriodos HPP ON pr.idtbl_Proyectos = HPP.idtbl_Proyectos
+                                   INNER JOIN tbl_Periodos P ON HPP.idPeriodo = P.idPeriodo';
+                $criteria->condition = "pr.codigo LIKE '" . $_GET['term'] . "%' AND p.inicio <= SYSDATE() AND p.fin > SYSDATE()";
+                
+                $dataProvider = new CActiveDataProvider(get_class(Proyectos::model()), array(
+                    'criteria'=>$criteria,
+                ));
+                $proyectos = $dataProvider->getData();
+                $return_array = array();
+                foreach($proyectos as $proyecto) {
+                    $return_array[] = array(
+                        'label'=>$proyecto->nombre,
+                        'value'=>$proyecto->codigo,
+                        'id'=>$proyecto->idtbl_Proyectos,
+                    );
+                }
+                echo CJSON::encode($return_array);
+            }
+        }//fin investigador autocomplete
 
     public function actionValidarAgregarAsistente() {
         if (isset($_POST['action'])) {
