@@ -27,7 +27,7 @@ class ProyectosController extends Controller {
         return array(
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
                 'actions' => array('ver', 'ActualizarInfoAsistentes', 'crear', 'actualizar', 'agregarasistente', 'AsistenteAutoComplete',
-                    'ValidarAgregarAsistente', 'adminantiguos', 'verantiguos', 'ampliarproyecto'),
+                    'ValidarAgregarAsistente', 'adminantiguos', 'verantiguos', 'ampliarproyecto', 'agregarInvestigador'),
                 'users' => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -588,6 +588,18 @@ class ProyectosController extends Controller {
             'model' => $model,
         ));
     }
+    
+    /**
+     * Agrega un investigador a un proyecto.
+     * @param int $id PK del proyecto en la BD.
+     */
+    public function actionAgregarInvestigador($id){
+        $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
+        $model->scenario = 'agregar-investigador';
+        $this->render('agregarinvestigador', array(
+            null
+        ));
+    }//fin agregar investigador
 
     public function actionAsistenteAutoComplete() {
         if (isset($_GET['term'])) {
