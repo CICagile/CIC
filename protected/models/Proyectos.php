@@ -39,7 +39,7 @@ class Proyectos extends CActiveRecord {
     public $idperiodo;
     public $inicio;
     public $fin;
-
+    public $sectorbeneficiado;
 
 // </editor-fold>
 // Rules, relations, attribute labels, search
@@ -253,7 +253,7 @@ class Proyectos extends CActiveRecord {
      * @return resultado obtenido de la base de datos al realizar la ejecución
      */
     public function obtenerProyectosActivos() {
-        return Proyectos::executeNonTransactionalProcedureWithNoParameters('CALL obtenerProyectosActivos()');
+        return Proyectos::executeNonTransactionalProcedureWithNoParameters('CALL obtenerProyectosActivos(NULL)');
     }
 
     /**

@@ -375,10 +375,12 @@ class ProyectosController extends Controller {
                         'sort' => array(
                             'attributes' => array(
                                 'idtbl_Proyectos',
-                                'codigo',
+                               // 'codigo',
                                 'nombre',
                                 'inicio',
                                 'fin',
+                                'sectorbeneficiado',
+                                
                             ),
                         ),
                         'pagination' => array(
