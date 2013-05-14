@@ -361,13 +361,13 @@ class ProyectosController extends Controller {
         // Create filter model and set properties
         $filtersForm = new FiltersForm;
         $atributos = array();
-        $atributos = $filtersForm->getAttributes();
+       
         $dataProvider = new CArrayDataProvider(array());
 
         if (isset($_GET['FiltersForm']))
             $filtersForm->filters = $_GET['FiltersForm'];
-
-        $modelos = Proyectos::model()->obtenerProyectosActivos();
+        $atributos = $filtersForm->getAttributes();
+        $modelos = Proyectos::model()->obtenerProyectosActivos($atributos[4]);
 
         if (!$modelos == null) {
             $filteredData = $filtersForm->filter($modelos);
