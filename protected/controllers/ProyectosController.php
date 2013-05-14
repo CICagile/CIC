@@ -46,6 +46,7 @@ class ProyectosController extends Controller {
 
     public function actionVer($id) {
         $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
+        $model->scenario = 'ver';
         //Proyectos::model()->obtenerSectoresBeneficiadosConFormato();
         if ($model === null)
             throw new CHttpException(404, 'La página solicitado no se ha encontrado.');
