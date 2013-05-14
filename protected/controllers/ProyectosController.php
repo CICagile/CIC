@@ -27,7 +27,7 @@ class ProyectosController extends Controller {
         return array(
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
                 'actions' => array('ver', 'ActualizarInfoAsistentes', 'crear', 'actualizar', 'agregarasistente', 'AsistenteAutoComplete',
-                    'ValidarAgregarAsistente', 'adminantiguos', 'verantiguos', 'ampliarproyecto'),
+                    'ValidarAgregarAsistente', 'adminantiguos', 'verantiguos', 'ampliarproyecto', 'cancelarproyecto'),
                 'users' => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -431,7 +431,11 @@ class ProyectosController extends Controller {
             'dataProvider' => $dataProvider,
         ));
     }
-
+/**
+ *
+ * @param type $id
+ * @throws CHttpException 
+ */
     public function actionAmpliarProyecto($id) {
         $modelproyectos = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
         if ($modelproyectos === null)
@@ -471,7 +475,9 @@ class ProyectosController extends Controller {
                         if ($result) {
 
                             //Cambiamos el estado del proyecto
-                            $modelproyectos->estado = $modelproyectos->CODIGO_AMPLIADO;
+                            $modelproyectos->actualizarEstadoProyecto(
+                                    $modelproyectos->idtbl_Proyectos, $modelproyectos->CODIGO_AMPLIADO);
+                            //$modelproyectos->estado = $modelproyectos->CODIGO_AMPLIADO;
 
                             $result = $modelproyectos->save(false);
 
@@ -540,6 +546,133 @@ class ProyectosController extends Controller {
         ));
     }
 
+    
+    /**
+     * Permite cancelar un proyecto, con las acciones correspondientes para los asistentes
+     * e investigadores asociados
+     * @param type $id corresponde al id del proyecto a cancelar
+     * @throws CHttpException 
+     */
+     public function actionCancelarProyecto($id) {
+        $modelproyectos = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
+        if ($modelproyectos === null)
+            throw new CHttpException(404, 'La página solicitado no se ha encontrado.');
+
+        if (Yii::app()->request->isAjaxRequest && isset($_POST["cancelacion"])
+                && isset($_POST["detalle_motivo"])) {
+
+            if (trim($_POST["cancelacion"]) == NULL) {
+                $response = array(
+                    'ok' => false,
+                    'msg' => 'Debe seleccionar la fecha de cancelación.',
+                );
+            }else if(trim($_POST["detalle_motivo"]) == NULL){ 
+                $response = array(
+                    'ok' => false,
+                    'msg' => 'Debe indicar un motivo para la cancelación.',
+                );
+            }else {
+                $fecha_cancelacion = $_POST["cancelacion"];
+                
+                $response = array(
+                                    'ok' => true,
+                                    'msg' => $_POST["cancelacion"] . ' ' . $_POST["detalle_motivo"],
+                                );
+                /*
+                $transaction = Yii::app()->db->beginTransaction();
+                $periodoantiguo = Periodos::model()->findByPk($modelproyectos->idperiodo);
+                $periodoantiguo->fin = date("Y-m-d");
+                $result = $periodoantiguo->save(false);
+
+                if ($result) {
+
+                    $periodoampliado = new Periodos();
+                    $periodoampliado->inicio = $periodoantiguo->inicio;
+                    $periodoampliado->fin = $this->FechaPhptoMysql($fecha_cancelacion);
+
+                    $result = $periodoampliado->save(false);
+
+                    if ($result) {
+
+                        $historialproyectosperiodo = new HistorialProyectosPeriodo();
+                        $historialproyectosperiodo->idtbl_Proyectos = $modelproyectos->idtbl_Proyectos;
+                        $historialproyectosperiodo->idPeriodo = $periodoampliado->idPeriodo;
+
+                        $result = $historialproyectosperiodo->save(false);
+
+                        if ($result) {
+
+                            //Cambiamos el estado del proyecto
+                            $modelproyectos->actualizarEstadoProyecto(
+                                    $modelproyectos->idtbl_Proyectos, $modelproyectos->CODIGO_AMPLIADO);
+
+                            $result = $modelproyectos->save(false);
+
+                            if ($result) {
+                                $transaction->commit();
+                                Yii::log("Exito ampliando el proyecto con el codigo: " . $modelproyectos->codigo . " con el periodo " . $periodoampliado->idPeriodo, "info", "application.
+                                controllers.ProyectosController");
+                                $response = array(
+                                    'ok' => true,
+                                    'msg' => 'El proyecto se ha ampliado con éxito.',
+                                );
+                                echo CJSON::encode($response);
+                                Yii::app()->end();
+                            } else {
+                                $transaction->rollBack();
+                                Yii::log("Rollback al intentar ampliar al proyecto con el codigo: " . $modelproyectos->codigo, "warning", "application.
+                                controllers.ProyectosController");
+                                $response = array(
+                                    'ok' => false,
+                                    'msg' => 'Ha ocurrido un inconveniente al intentar ampliar el proyecto.',
+                                );
+                                echo CJSON::encode($response);
+                                Yii::app()->end();
+                            }
+                        } else {
+                            $transaction->rollBack();
+                            Yii::log("Rollback al intentar ampliar al proyecto con el codigo: " . $modelproyectos->codigo, "warning", "application.
+                            controllers.ProyectosController");
+                            $response = array(
+                                'ok' => false,
+                                'msg' => 'Ha ocurrido un inconveniente al intentar ampliar el proyecto.',
+                            );
+                            echo CJSON::encode($response);
+                            Yii::app()->end();
+                        }
+                    } else {
+                        $transaction->rollBack();
+                        Yii::log("Rollback al intentar ampliar al proyecto con el codigo: " . $modelproyectos->codigo, "warning", "application.
+                        controllers.ProyectosController");
+                        $response = array(
+                            'ok' => false,
+                            'msg' => 'Ha ocurrido un inconveniente al intentar ampliar el proyecto.',
+                        );
+                        echo CJSON::encode($response);
+                        Yii::app()->end();
+                    }
+                } else {
+                    $transaction->rollBack();
+                    Yii::log("Rollback al intentar ampliar al proyecto con el codigo: " . $modelproyectos->codigo, "warning", "application.
+                    controllers.ProyectosController");
+                    $response = array(
+                        'ok' => false,
+                        'msg' => 'Ha ocurrido un inconveniente al intentar ampliar el proyecto.',
+                    );
+                    echo CJSON::encode($response);
+                    Yii::app()->end();
+                }*/
+            }
+
+            echo CJSON::encode($response);
+            Yii::app()->end();
+        }
+
+        $this->render('cancelar', array(
+            'modelproyectos' => $modelproyectos
+        ));
+    }
+    
     /**
      * Returns the data model based on the primary key given in the GET variable.
      * If the data model is not found, an HTTP exception will be raised.

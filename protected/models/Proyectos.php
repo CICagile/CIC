@@ -11,14 +11,17 @@
  * @property integer $idtbl_objetivoproyecto
  * @property integer $tipoproyecto
  * @property integer $idtbl_adscrito
- * @property integer $estado
+ * @property integer $idtbl_EstadosProyecto
  *
  * The followings are the available model relations:
  * @property Asistentes[] $tblAsistentes
  * @property Documentos[] $documentoses
  * @property Financiamientoexterno[] $financiamientoexternos
- * @property Periodos[] $_periodos
+ * @property Periodos[] $_periodos //remove?
+ * @property Historialproyectosperiodos[] $historialproyectosperiodoses
  * @property Presupuesto[] $presupuestos
+ * @property Investigadores[] $tblInvestigadores
+ * @property Estadosproyecto $idtblEstadosProyecto
  * @property Adscrito $idtblAdscrito
  * @property Objetivoproyecto $idtblObjetivoproyecto
  * @property Tipoproyecto $tipoproyecto0
@@ -39,7 +42,7 @@ class Proyectos extends CActiveRecord {
     public $idperiodo;
     public $inicio;
     public $fin;
-    public $sectorbeneficiado;
+    public $estado;
 
 // </editor-fold>
 // Rules, relations, attribute labels, search
@@ -52,7 +55,6 @@ class Proyectos extends CActiveRecord {
     public static function model($className = __CLASS__) {
         return parent::model($className);
     }
-
 
     /**
      * @return string the associated database table name
@@ -98,6 +100,7 @@ class Proyectos extends CActiveRecord {
             '_convenios' => array(self::MANY_MANY, 'Convenio', 'tbl_proyectos_convenio(idtbl_Proyectos, idtbl_convenio)'),
             '_sectorbeneficiados' => array(self::MANY_MANY, 'Sectorbeneficiado', 'tbl_proyectos_sectorbeneficiado(idtbl_Proyectos, idtbl_sectorbeneficiado)'),
             '_periodos' => array(self::MANY_MANY, 'Periodos', 'tbl_historialproyectosperiodos(idtbl_Proyectos, idPeriodo)'),
+            'idtblEstadosProyecto' => array(self::BELONGS_TO, 'Estadosproyecto', 'idtbl_EstadosProyecto'),
         );
     }
 
@@ -116,6 +119,7 @@ class Proyectos extends CActiveRecord {
             'idtbl_adscrito' => 'Adscrito a',
             'estado' => 'Estado del proyecto',
             'idtbl_sectorbeneficiado' => 'Sector Beneficiado',
+            'estado' => 'Estado del Proyecto',
         );
     }
 
@@ -227,7 +231,6 @@ class Proyectos extends CActiveRecord {
      * y la información del periodo actual asociado al proyecto
      * @return un objeto proyecto con la información actualizada
      */
-
     public function obtenerProyectoconPeriodoActual($pIdProyecto) {
         $call = 'CALL obtenerProyectoConPeridoActual(:pIdProyecto)';
         $conexion = Yii::app()->db;
@@ -261,9 +264,9 @@ class Proyectos extends CActiveRecord {
      * @return objeto Proyecto que incluye los sectores beneficiados, pero en formato de lista html
      */
     public function obtenerProyectosAntiguos() {
-        return Proyectos::executeNonTransactionalProcedureWithNoParameters('CALL obtenerProyectosAntiguos()'); 
+        return Proyectos::executeNonTransactionalProcedureWithNoParameters('CALL obtenerProyectosAntiguos()');
     }
-    
+
     /**
      * Establece idtbl_sectorbeneficiado con un arreglo de sectores beneficiados
      * @param Integer $pIdProyecto
@@ -284,6 +287,54 @@ class Proyectos extends CActiveRecord {
     }
 
     /**
+     * Actualiza el estado de un proyecto en la base de datos
+     * FALTA PONERLE LA TRANSACCION POR PROBLEMA EN ProyectosController.php
+     * @param type $pIdProyecto id del proyecto a modificar
+     * @param type $pEstado nombre del estado, e.g. "Aprobado", "Ampliado", "Modificado"
+     * @return boolean true->ejecutado correctamente, sino false
+     */
+    public function actualizarEstadoProyecto($pIdProyecto, $pEstado) {
+        $conexion = Yii::app()->db;
+        $call = 'CALL actualizarEstadoProyecto(:pIdProyecto, :pNombreEstado)';
+
+        $command = $conexion->createCommand($call);
+        $command->bindParam(':pIdProyecto', $pIdProyecto, PDO::PARAM_INT);
+        $command->bindParam(':pNombreEstado', $pEstado, PDO::PARAM_STR);
+        $command->execute();
+
+        return true;
+    }
+    
+    /**
+     * Cambia la fecha de finalización de un proyecto, considerando un motivo que 
+     * se agrega a la tabla tbl_MotivoCancelacion
+     * 
+     * @param int $pIdProyecto
+     * @param date $pFechaCancelacion
+     * @param string $pMotivoCancelacion
+     * @return boolean resultado de la operación: true-> ejecutado correctamente, sino false
+     */
+    public function cancelarProyecto($pIdProyecto, $pFechaCancelacion, $pMotivoCancelacion){
+        $conexion = Yii::app()->db;
+        $call = 'CALL cancelarProyecto(:pIdProyecto, :pFechaCancelacion, :pMotivoCancelacion)';
+        
+        $command = $conexion->createCommand($call);
+        $command->bindParam(':pIdProyecto', $pIdProyecto, PDO::PARAM_INT);
+        $command->bindParam(':pFechaCancelacion', $pFechaCancelacion);
+        $command->bindParam(':pMotivoCancelacion', $pMotivoCancelacion, PDO::PARAM_STR);
+        $command->execute();
+        
+        /*TODO
+         * escribir procedure para cancelar (dateformat~)
+         * -> agregar a tabla tbl_cancelacionProyecto
+         * cambiar el estado del proyecto con actualizarEstadoProyecto (falta agregar el estado 3)
+         * llamar al procedure desde aquí
+         * agregar periodo al historial
+         */
+        return true;
+    }
+
+    /**
      * Gives html format using <ul> tag to a list of sectors
      * @param Array $pSectorsArray
      * @return String
@@ -297,7 +348,8 @@ class Proyectos extends CActiveRecord {
             $html_list .= '</ul>';
             return $html_list;
         }
-        else return "No se ha especificado";
+        else
+            return "No se ha especificado";
     }
 
     // <editor-fold defaultstate="collapsed" desc="Common private functions~">
@@ -321,11 +373,12 @@ class Proyectos extends CActiveRecord {
     // </editor-fold>
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Constants">
-    public $LABEL_APROBADO = 'Aprobado';
-    public $LABEL_AMPLIADO = 'Ampliado';
-    
-    public $CODIGO_APROBADO = "0";
-    public $CODIGO_AMPLIADO = "1";
+    //public $LABEL_APROBADO = 'Aprobado';
+    //public $LABEL_AMPLIADO = 'Ampliado';
+
+    public $CODIGO_APROBADO = "Aprobado";
+    public $CODIGO_AMPLIADO = "Ampliado";
+    public $CODIGO_CANCELADO = "Cancelado";
 
 // </editor-fold>
 }

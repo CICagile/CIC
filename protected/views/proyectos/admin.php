@@ -47,7 +47,7 @@ $this->menu=array(
                 ),
              array(
                     'class'=>'CButtonColumn',
-                    'template'=>'{view}{update}{agregarasistente}{ampliar}',
+                    'template'=>'{view}{update}{agregarasistente}{ampliar}{cancelar}',
                     'viewButtonUrl'=>'Yii::app()->controller->createUrl("proyectos/ver", array("id"=>$data["idtbl_Proyectos"]))',
                     'viewButtonLabel' => 'Ver información detallada del proyecto.',
                     'updateButtonUrl'=>'Yii::app()->controller->createUrl("proyectos/actualizar", array("id"=>$data["idtbl_Proyectos"]))',
@@ -65,7 +65,13 @@ $this->menu=array(
                             'label'=>'Ampliar el proyecto.',
                             'imageUrl'=>Yii::app()->request->baseUrl.'/images/time_add.png',
                             'url'=>'Yii::app()->createUrl("proyectos/ampliarproyecto", array("id"=>$data["idtbl_Proyectos"]))',
-                        ),  
+                        ),
+                        'cancelar' => array
+                        (
+                          'label'=>'Cancelar el proyecto.',  
+                          'imageUrl'=>Yii::app()->request->baseUrl.'/images/cancelbp.png',
+                          'url'=>'Yii::app()->createUrl("proyectos/cancelarproyecto", array("id"=>$data["idtbl_Proyectos"]))',  
+                        ),
                     ),
                     
                 ),
