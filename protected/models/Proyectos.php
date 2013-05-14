@@ -304,7 +304,7 @@ class Proyectos extends CActiveRecord {
 
         return true;
     }
-    
+
     /**
      * Cambia la fecha de finalización de un proyecto, considerando un motivo que 
      * se agrega a la tabla tbl_MotivoCancelacion
@@ -315,15 +315,18 @@ class Proyectos extends CActiveRecord {
      * @return boolean resultado de la operación: true-> ejecutado correctamente, sino false
      */
     public function cancelarProyecto($pIdProyecto, $pFechaCancelacion, $pMotivoCancelacion){
+        //$codigo_cancelado = Proyectos::$CODIGO_CANCELADO;
         $conexion = Yii::app()->db;
-        $call = 'CALL cancelarProyecto(:pIdProyecto, :pFechaCancelacion, :pMotivoCancelacion)';
+        $call = 'CALL cancelarProyecto(:pIdProyecto, :pFechaCancelacion, :pMotivoCancelacion, :pNuevoEstado)';
         $transaccion = Yii::app()->db->beginTransaction();
+        
         try{
         
         $command = $conexion->createCommand($call);
         $command->bindParam(':pIdProyecto', $pIdProyecto, PDO::PARAM_INT);
-        $command->bindParam(':pFechaCancelacion', $pFechaCancelacion);
+        $command->bindParam(':pFechaCancelacion',  $pFechaCancelacion);
         $command->bindParam(':pMotivoCancelacion', $pMotivoCancelacion, PDO::PARAM_STR);
+        $command->bindParam(':pNuevoEstado',Proyectos::$CODIGO_CANCELADO, PDO::PARAM_STR);
         $command->execute();
         $transaccion->commit();
         } catch (Exception $e) {
@@ -386,7 +389,7 @@ class Proyectos extends CActiveRecord {
 
     public $CODIGO_APROBADO = "Aprobado";
     public $CODIGO_AMPLIADO = "Ampliado";
-    public $CODIGO_CANCELADO = "Cancelado";
+    public static $CODIGO_CANCELADO = "Cancelado";
 
 // </editor-fold>
 }

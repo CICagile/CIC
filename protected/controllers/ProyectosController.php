@@ -570,16 +570,15 @@ class ProyectosController extends Controller {
                     'msg' => 'Debe indicar un motivo para la cancelación.',
                 );
             }else {
-                $fecha_cancelacion = $_POST["cancelacion"];
+                $fecha_cancelacion = $_POST["cancelacion"] . '';
                 $motivo_cancelacion = $_POST["detalle_motivo"];
                 
-                
-                if($modelproyectos.Proyectos::model()->cancelarProyecto($id, $fecha_cancelacion, $motivo_cancelacion)){
+                if($modelproyectos->cancelarProyecto($id, $fecha_cancelacion, $motivo_cancelacion)){
                         
                 
                 $response = array(
                                     'ok' => true,
-                                    'msg' => $fecha_cancelacion . ' ' . $motivo_cancelacion,
+                                    'msg' => "Proyecto cancelado exitosamente", //$fecha_cancelacion . ' ' . $motivo_cancelacion,
                                 );
                 }else{
                     $response = array(
