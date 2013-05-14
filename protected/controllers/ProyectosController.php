@@ -596,8 +596,11 @@ class ProyectosController extends Controller {
     public function actionAgregarInvestigador($id){
         $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
         $model->scenario = 'agregar-investigador';
+        
+        
+        
         $this->render('agregarinvestigador', array(
-            null
+            'model' => $model,
         ));
     }//fin agregar investigador
 

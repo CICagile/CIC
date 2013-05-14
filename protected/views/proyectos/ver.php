@@ -11,6 +11,7 @@ $this->breadcrumbs=array(
 $this->menu=array(	
         array('label'=>'Actualizar información del proyecto', 'url'=>array('actualizar', 'id'=>$model->idtbl_Proyectos)),
 	array('label'=>'Agregar asistente', 'url'=>array('agregarasistente', 'id'=>$model->idtbl_Proyectos)),
+        array('label'=>'Agregar investigador', 'url'=>array('agregarinvestigador', 'id'=>$model->idtbl_Proyectos)),
         array('label'=>'Ver Proyectos', 'url'=>array('admin')),
         array('label'=>'Nuevo Proyecto', 'url'=>array('crear')),
         
