@@ -2,6 +2,7 @@
 /* @var $this ProyectosController */
 /* @var $model Proyectos */
 /* @var $dataProvider CArrayDataProvider */
+/* @var $errores array */
 $this->breadcrumbs=array(
 	'Proyectos'=>array('admin'),
 	$model->codigo,
