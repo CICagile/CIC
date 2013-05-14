@@ -360,6 +360,8 @@ class ProyectosController extends Controller {
     public function actionAdmin() {
         // Create filter model and set properties
         $filtersForm = new FiltersForm;
+        $atributos = array();
+        $atributos = $filtersForm->getAttributes();
         $dataProvider = new CArrayDataProvider(array());
 
         if (isset($_GET['FiltersForm']))
