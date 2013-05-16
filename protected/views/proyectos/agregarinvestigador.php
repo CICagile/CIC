@@ -1,6 +1,9 @@
 <?php
 /* @var $this ProyectosController */
 /* @var $model Proyectos */
+/* @var $investigador Investigador */
+/* @var $periodo Periodos */
+/* @var $horas array */
 $this->breadcrumbs=array(
 	'Proyectos'=>array('admin'),
 	$model->codigo,
@@ -15,17 +18,33 @@ $this->menu=array(
 
 ?>
 
+<?php $form=$this->widget('ext.dynamicform.DynamicForm', array(
+	'id'=>'dynamic-horas',
+	'options' => array(
+            'limit' => 100,
+            'createColor' => 'green',
+            'removeColor' => 'red',
+            'duration' => 450,
+            'data' => $horas,
+        ),
+        'form' => 'formhoras',
+        'plus' => 'plus',
+        'minus'=> 'minus'
+));?>
+
 <div class="form">
 <?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'proyectos-agregarasistente-form',
-	'enableAjaxValidation'=>false,
+	'id'=>'agregarinvestigador-form',
+	'enableAjaxValidation'=>true,
 )); ?>
         
     <h2>Agregar investigador al Proyecto: <?php echo $model->codigo?></h2>
     <p>Periodo del proyecto: <?php echo $this->FechaMysqltoPhp($model->inicio)
     .' hasta '.$this->FechaMysqltoPhp($model->fin)?></p>
 
-	<p class="note">Campos con <span class="required">*</span> son obligatorios.</p>	
+	<p class="note">Campos con <span class="required">*</span> son obligatorios.</p>
+        
+        <?php echo $form->errorSummary(array($periodo,$investigador),'Se han detectado los siguientes errores:'); ?>
         
         <div class="row">
         <label for="codigo">Proyecto</label>  
@@ -34,77 +53,88 @@ $this->menu=array(
                
         <div class="row">
         <label for="investigador">Investigador (cédula)<span class="required">* </span></label>
-        <?php           
-        $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
-            'attribute'=>'investigador',
-            'name'=>'investigador', 
-            'id'=>'investigador',
-            'source'=>$this->createUrl('proyectos/codigoautocomplete'),
-            // additional javascript options for the autocomplete plugin
+        <?php $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
+            'attribute'=>'cedula',
+            'model'=>$investigador,
+            'source'=>$this->createUrl('proyectos/investigadorautocomplete'),
             'options'=>array(
-                    'showAnim'=>'fold',
+                'showAnim'=>'fold',
             ),
-        ));
-        ?>
-         <div class="errorMessage" id="asistente_error"></div>	
+            'htmlOptions'=>array(
+                'size'=>20, 'maxlength'=>20
+            )
+            )); ?>
+        <?php echo $form->error($investigador,'cedula'); ?>
         </div>
         
         
-         <div class="row">
-		<label for="rol">Rol del asistente<span class="required">*</span></label>
-		<?php echo $form->dropDownList(RolAsistente::model(), 'nombre',
-                        CHtml::listData(RolAsistente::model()->findAll(), 'nombre', 'nombre'), array('empty'=>'Elija un rol', 'id'=>'rol', 'name' => 'rol')) ?>		 
-                 <div class="errorMessage" id="rol_error" name="rol_error"></div>
-	</div>
+        <div class="row">
+            <?php echo $form->labelEx($investigador,'rol') ?>
+            <?php echo $form->dropDownList($investigador, 'rol',
+                        CHtml::listData(RolesInvestigadores::model()->findAll(), 'nombre', 'nombre'), array('empty'=>'Elija un rol')) ?>
+            <?php echo $form->error($investigador,'rol', NULL, $enableAjaxValidation=false); ?>
+        </div>
         
         <div class="row">
-		<label for="inicio">Fecha inicio de la asistencia<span class="required">*</span></label>
+		<?php echo $form->labelEx($periodo,'inicio'); ?>
 		<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-                        'name' => 'inicio',
-                        'id' => 'inicio',
-                        'value' => '',
+                        'name' => CHtml::activeName($periodo, 'inicio'),
+                        'value' => $periodo->attributes['inicio'],
                         'language' => 'es',
                         'options' => array(                            
                             'showAnim'=>'fold',
                             'dateFormat'=>'dd-mm-yy',
                             'changeYear'=>true,
-                            'changeMonth'=>true,                           
+                            'changeMonth'=>true,
                         ),
                         'htmlOptions'=>array(                            
-                            'readonly' => 'readonly',                            
+                            'readonly' => 'readonly'
                         ),
                     ));?>
-                 <div class="errorMessage" id="inicio_error"></div>
+                <?php echo $form->error($periodo,'inicio'); ?>
+		
 	</div>
         
         <div class="row">
-		<label for="fin">Fecha fin de la asistencia<span class="required">*</span></label>
+		<?php echo $form->labelEx($periodo,'fin'); ?>
 		<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-                        'name' => 'fin',
-                        'id' => 'fin',
-                        'value' => '',
+                        'name' => CHtml::activeName($periodo, 'fin'),
+                        'value' => $periodo->attributes['fin'],
                         'language' => 'es',
                         'options' => array(                            
                             'showAnim'=>'fold',
                             'dateFormat'=>'dd-mm-yy',
                             'changeYear'=>true,
-                            'changeMonth'=>true,                           
+                            'changeMonth'=>true,
                         ),
                         'htmlOptions'=>array(                            
-                            'readonly' => 'readonly',                            
+                            'readonly' => 'readonly'
                         ),
                     ));?>
-                 <div class="errorMessage" id="fin_error"></div>
+                <?php echo $form->error($periodo,'fin'); ?>
 	</div>
         
-        <div class="row">
-            <label for="horas">Cantidad de horas semanales<span class="required">*</span></label>
-            <input type="text" name="horas" id="horas">
-            <div class="errorMessage" id="horas_error"></div>
-	</div>
+        <div id="formhoras" class="row-box">
+            <div class="row">
+                <?php echo $form->labelEx($investigador,'horas'); ?>
+                <?php echo CHtml::textField("cantidad_horas"); ?>
+                <?php echo $form->error($investigador,'horas'); ?>
+            </div>
+        
+            <div class="row">
+                <?php echo CHtml::label('Tipo de Horas','tipo_horas'); ?>
+                <?php echo CHtml::dropDownList('tipo_horas', 'empty',
+                        CHtml::listData(TipoHoraInvestigador::model()->findAll(), 'nombre', 'nombre'), array('empty'=>'Elija una opción')) ?>
+                <?php echo $form->error($investigador,'horas', NULL, false); ?>
+            </div>
+            <span style="clear:none;float:right;"><a id="minus" href="">[-]</a> <a id="plus" href="">[+]</a></span>
+            <br>
+        </div>
 
 	
+	<div class="row buttons">
 		<?php echo CHtml::submitButton('Agregar'); ?>
+	</div>
 
 <?php $this->endWidget(); ?>
 

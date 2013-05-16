@@ -595,12 +595,18 @@ class ProyectosController extends Controller {
      */
     public function actionAgregarInvestigador($id){
         $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
+        $investigador = new Investigador;
+        $periodo = new Periodos;
         $model->scenario = 'agregar-investigador';
+        $datos_horas = array();
         
         
         
         $this->render('agregarinvestigador', array(
             'model' => $model,
+            'investigador' => $investigador,
+            'periodo' => $periodo,
+            'horas' => array_values($datos_horas),
         ));
     }//fin agregar investigador
 
@@ -642,23 +648,17 @@ class ProyectosController extends Controller {
         public function actionInvestigadorAutoComplete()
         {
             if (isset($_GET['term'])) {
-                $criteria = new CDbCriteria;
-                $criteria->alias = "P";
-                $criteria->select = '*';
-                $criteria->join = 'INNER JOIN tbl_HistorialProyectosPeriodos HPP ON pr.idtbl_Proyectos = HPP.idtbl_Proyectos
-                                   INNER JOIN tbl_Periodos P ON HPP.idPeriodo = P.idPeriodo';
-                $criteria->condition = "pr.codigo LIKE '" . $_GET['term'] . "%' AND p.inicio <= SYSDATE() AND p.fin > SYSDATE()";
-                
-                $dataProvider = new CActiveDataProvider(get_class(Proyectos::model()), array(
-                    'criteria'=>$criteria,
-                ));
-                $proyectos = $dataProvider->getData();
+                $conexion = Yii::app()->db;
+                $call = 'CALL buscarinvestigadorPorCedula2(:ced)';
+                $comando = $conexion->createCommand($call);
+                $comando->bindParam(':ced',$_GET['term'],PDO::PARAM_STR);
+                $result_set = $comando->query();
+                $investigadores = $result_set->readAll();
                 $return_array = array();
-                foreach($proyectos as $proyecto) {
+                foreach($investigadores as $investigador) {
                     $return_array[] = array(
-                        'label'=>$proyecto->nombre,
-                        'value'=>$proyecto->codigo,
-                        'id'=>$proyecto->idtbl_Proyectos,
+                        'label'=>$investigador['nombre'],
+                        'value'=>$investigador['cedula'],
                     );
                 }
                 echo CJSON::encode($return_array);

@@ -33,7 +33,8 @@ class Investigador  extends CModel{
     public function rules()
     {
         return array(
-            array('nombre,apellido1,cedula,correo,experiencia,grado,proyecto,rol','required','on'=>'nuevo','message'=>'{attribute} no puede dejarse en blanco.'),
+            array('cedula', 'required','message'=>'{attribute} no puede dejarse en blanco.'),
+            array('nombre,apellido1,correo,experiencia,grado,proyecto,rol','required','on'=>'nuevo','message'=>'{attribute} no puede dejarse en blanco.'),
             array('nombre,apellido1,apellido2,proyecto','length','max'=>20),
             array('cedula','length','min'=>9,'max'=>20),
             array('telefono, correo', 'length', 'max'=>40),
@@ -42,6 +43,7 @@ class Investigador  extends CModel{
             array('nombre, apellido1, apellido2, ', 'match', 'pattern'=>'/^[\p{L} ]+$/u'),
             array('proyecto','validarCodigoProyecto','on'=>'nuevo'),
             array('horas','validarHorasInvestigador','on'=>'nuevo','min'=>1),
+            array('horas','validarHorasInvestigador','on'=>'agregar-investigador','min'=>1),
             array('ingreso','numerical','integerOnly'=>true, 'min'=>1901, 'max'=>2155, 'message' => '{attribute} es inválido.'),
         );
     }//fin rules
