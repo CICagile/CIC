@@ -27,6 +27,8 @@ class Investigador  extends CModel{
     
     public $horas = null;
     
+    // <editor-fold defaultstate="collapsed" desc="Validaciones">
+    
     /**
      *@return array Reglas de validación para los atributos del modelo. 
      */
@@ -132,6 +134,8 @@ class Investigador  extends CModel{
             }//fin si el carnet es único
         }//fin si el carnet es diferente
     }//fin validar cedula unica
+    
+// </editor-fold>
     
     /**
      * @return array Etiquetas personalizadas de los atributos del modelo.
