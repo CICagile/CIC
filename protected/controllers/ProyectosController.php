@@ -597,10 +597,34 @@ class ProyectosController extends Controller {
         $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
         $investigador = new Investigador;
         $periodo = new Periodos;
-        $model->scenario = 'agregar-investigador';
+        $investigador->scenario = 'agregar-investigador';
         $datos_horas = array();
         
-        
+        if (isset($_POST['Proyectos']) && isset($_POST['Investigador']) && isset($_POST['Periodos']) && isset($_POST['formhoras'])){
+            $horas = array();
+            $datos_horas = $_POST['formhoras']['formhoras'];
+            $investigador->attributes = $_POST['Investigador'];
+            $periodo->attributes = $_POST['Periodos'];
+            foreach ($datos_horas as $dato)
+            {
+                if (array_key_exists($dato['tipo_horas'],$horas))
+                {
+                    $investigador->addError('horas',  'El tipo de horas no se puede repetir.');//TODO: Esto se debería validar dentro del modelo.
+                    break;
+                }//fin si el tipo de horas se repite.
+                else
+                {
+                    $horas[$dato['tipo_horas']] = $dato['cantidad_horas'];
+                }//fin si el tipo de horas no se repite
+            }//fin for
+            $investigador->horas = $horas;
+            $periodo->validarFechaInicioAsistencia($model->codigo);
+            $periodo->validarFechaFinAsistencia($model->codigo);
+            if($investigador->validate(NULL,false) && $periodo->validate(NULL,false)){
+                if ($model->agregarInvestigadorProyecto($model->codigo, $investigador->cedula, $investigador->rol, $periodo->inicio, $periodo->fin, $investigador->horas))
+                        $this->redirect(array('ver','id'=>$model->idtbl_Proyectos));
+            }
+        }//fin si hizo click en el boton Agregar
         
         $this->render('agregarinvestigador', array(
             'model' => $model,
