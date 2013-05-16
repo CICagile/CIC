@@ -623,6 +623,8 @@ class ProyectosController extends Controller {
             if($investigador->validate(NULL,false) && $periodo->validate(NULL,false)){
                 if ($model->agregarInvestigadorProyecto($model->codigo, $investigador->cedula, $investigador->rol, $periodo->inicio, $periodo->fin, $investigador->horas))
                         $this->redirect(array('ver','id'=>$model->idtbl_Proyectos));
+                else
+                            throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
             }
         }//fin si hizo click en el boton Agregar
         

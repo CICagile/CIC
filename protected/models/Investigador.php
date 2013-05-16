@@ -35,7 +35,7 @@ class Investigador  extends CModel{
     public function rules()
     {
         return array(
-            array('cedula', 'required','message'=>'{attribute} no puede dejarse en blanco.'),
+            array('cedula,rol', 'required', 'on'=>'agregar-investigador','message'=>'{attribute} no puede dejarse en blanco.'),
             array('nombre,apellido1,correo,experiencia,grado,proyecto,rol','required','on'=>'nuevo','message'=>'{attribute} no puede dejarse en blanco.'),
             array('nombre,apellido1,apellido2,proyecto','length','max'=>20),
             array('cedula','length','min'=>9,'max'=>20),
