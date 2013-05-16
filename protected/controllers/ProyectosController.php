@@ -435,7 +435,7 @@ class ProyectosController extends Controller {
     public function actionAmpliarProyecto($id) {
         $modelproyectos = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
         if ($modelproyectos === null)
-            throw new CHttpException(404, 'La página solicitado no se ha encontrado.');
+            throw new CHttpException(404, 'La página solicitaao no se ha encontrado.');
 
         if (Yii::app()->request->isAjaxRequest && isset($_POST["ampliacion"])) {
 
