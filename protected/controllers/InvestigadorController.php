@@ -118,7 +118,7 @@ class InvestigadorController extends Controller
                             $this->redirect(array('index'));
                         else
                             throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
-                    }//fin si los datos del asistente són válidos
+                    }//fin si los datos del investigador són válidos
 		}
 
 		$this->render('create',array(
