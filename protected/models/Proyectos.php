@@ -321,7 +321,7 @@ class Proyectos extends CActiveRecord {
         $transaccion = Yii::app()->db->beginTransaction();
         
         try{
-        
+        /* ver error 2013/05/18 00:53:29 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`db_cic`.`tbl_historialproyectosperiodos`, CONSTRAINT `historialproyectosXestadosproyecto` FOREIGN KEY (`idtbl_EstadosProyecto`) REFERENCES `tbl_estadosproyecto` (`idtbl_EstadosProyecto`) ON D). The SQL statement executed was: CALL actualizarPeriodoProyecto(:pIdProyecto, NULL, :pFechaFinal, :pDetalleEstado, :pNombreEstado). */
         $command = $conexion->createCommand($call);
         $command->bindParam(':pIdProyecto', $pIdProyecto, PDO::PARAM_INT);
         $command->bindParam(':pFechaFinal',  $pFechaCancelacion);
