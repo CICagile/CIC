@@ -317,16 +317,16 @@ class Proyectos extends CActiveRecord {
     public function cancelarProyecto($pIdProyecto, $pFechaCancelacion, $pMotivoCancelacion){
         //$codigo_cancelado = Proyectos::$CODIGO_CANCELADO;
         $conexion = Yii::app()->db;
-        $call = 'CALL cancelarProyecto(:pIdProyecto, :pFechaCancelacion, :pMotivoCancelacion, :pNuevoEstado)';
+        $call = 'CALL actualizarPeriodoProyecto(:pIdProyecto, NULL, :pFechaFinal, :pDetalleEstado, :pNombreEstado)';
         $transaccion = Yii::app()->db->beginTransaction();
         
         try{
         
         $command = $conexion->createCommand($call);
         $command->bindParam(':pIdProyecto', $pIdProyecto, PDO::PARAM_INT);
-        $command->bindParam(':pFechaCancelacion',  $pFechaCancelacion);
-        $command->bindParam(':pMotivoCancelacion', $pMotivoCancelacion, PDO::PARAM_STR);
-        $command->bindParam(':pNuevoEstado',Proyectos::$CODIGO_CANCELADO, PDO::PARAM_STR);
+        $command->bindParam(':pFechaFinal',  $pFechaCancelacion);
+        $command->bindParam(':pDetalleEstado', $pMotivoCancelacion, PDO::PARAM_STR);
+        $command->bindParam(':pNombreEstado', Proyectos::$CODIGO_CANCELADO, PDO::PARAM_STR);
         $command->execute();
         $transaccion->commit();
         } catch (Exception $e) {
