@@ -317,7 +317,7 @@ class Proyectos extends CActiveRecord {
     public function cancelarProyecto($pIdProyecto, $pFechaCancelacion, $pMotivoCancelacion){
         //$codigo_cancelado = Proyectos::$CODIGO_CANCELADO;
         $conexion = Yii::app()->db;
-        $call = 'CALL actualizarPeriodoProyecto(:pIdProyecto, NULL, :pFechaFinal, :pDetalleEstado, :pNombreEstado)';
+        $call = 'CALL actualizarPeriodoProyecto(:pIdProyecto, NULL, :pFechaFinal, :pNombreEstado, :pDetalleEstado)';
         $transaccion = Yii::app()->db->beginTransaction();
         
         try{
