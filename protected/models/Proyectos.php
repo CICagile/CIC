@@ -260,10 +260,15 @@ class Proyectos extends CActiveRecord {
         $call = 'CALL obtenerProyectosActivos(:sector)';
         $conexion = Yii::app()->db;
         $command = $conexion->createCommand($call);
-        $command->bindParam(':sector', $sector, PDO::PARAM_INT);
+         $command->bindParam(':sector', $sector, PDO::PARAM_STR);
+        $result = $command->queryAll();
+        if (empty($result))
+            return null;
+        else
+            return $result;
       }
-   /* public function obtenerProyectosActivos($sector) {
-        return Proyectos::executeNonTransactionalProcedureWithNoParameters('CALL obtenerProyectosActivos(:sector)');
+   /* public function obtenerProyectosActivos() {
+        return Proyectos::executeNonTransactionalProcedureWithNoParameters('CALL obtenerProyectosActivos(NULL)');
         
     }*/
     /**

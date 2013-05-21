@@ -362,12 +362,17 @@ class ProyectosController extends Controller {
         $filtersForm = new FiltersForm;
         $atributos=array(5);
         $dataProvider = new CArrayDataProvider(array());
-
+        
         if (isset($_GET['FiltersForm']))
             $filtersForm->filters = $_GET['FiltersForm'];
         $atributos = $filtersForm->getAttributes();
-        $long = sizeof($atributos);
-        $modelos = Proyectos::model()->obtenerProyectosActivos(NULL);
+        $long = sizeof($atributos['filters']);
+        if ($long == 0)
+            $modelos = Proyectos::model()->obtenerProyectosActivos(NULL);
+        else if ($atributos['filters']['sectorbeneficiado'] == "")
+            $modelos = Proyectos::model()->obtenerProyectosActivos(NULL); 
+        else
+            $modelos = Proyectos::model()->obtenerProyectosActivos($atributos['filters']['sectorbeneficiado']);
         if (!$modelos == null) {
             $filteredData = $filtersForm->filter($modelos);
             $dataProvider = new CArrayDataProvider($filteredData, array(
