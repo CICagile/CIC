@@ -70,7 +70,7 @@ class Proyectos extends CActiveRecord {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('nombre, codigo, idtbl_objetivoproyecto, tipoproyecto, idtbl_adscrito, idtbl_sectorbeneficiado, estado', 'required', 'message' => '{attribute} es requerido.'),
+            array('nombre, codigo, idtbl_objetivoproyecto, tipoproyecto, idtbl_adscrito, idtbl_sectorbeneficiado', 'required', 'message' => '{attribute} es requerido.'),
             array('codigo', 'unique', 'className' => 'Proyectos', 'message' => 'Ya existe un proyecto con ese código.'),
             array('idtbl_objetivoproyecto, tipoproyecto, idtbl_adscrito, estado', 'numerical', 'integerOnly' => true), /* removido idtbl_sectorbeneficiado, */
             array('nombre', 'length', 'min' => 3, 'max' => 500, 'tooShort' => 'El {attribute} debe ser mayor a {min} caracteres.', 'tooLong' => 'El {attribute} debe ser menor a {max} caracteres.'),
@@ -336,11 +336,7 @@ class Proyectos extends CActiveRecord {
         }
         
         /*TODO
-         * escribir procedure para cancelar (dateformat~)
-         * -> agregar a tabla tbl_cancelacionProyecto
-         * cambiar el estado del proyecto con actualizarEstadoProyecto (falta agregar el estado 3)
-         * llamar al procedure desde aquí
-         * agregar periodo al historial
+            asistentes issues
          */
         return true;
     }
