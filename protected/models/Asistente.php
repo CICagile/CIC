@@ -32,6 +32,7 @@ class Asistente  extends CModel{
             // NOTE: you should only define rules for those attributes that
             // will receive user inputs.
             return array(
+                array('carnet,rol,horas','required','on'=>'agregar'),
                 array('nombre, apellido1, cedula, numerocuenta, banco, cuentacliente, carnet, carrera, telefono, correo, codigo, rol, horas', 'required', 'message'=>'{attribute} no puede dejarse en blanco.', 'on'=>'nuevo'),
                 array('nombre, apellido1, cedula, numerocuenta, banco, cuentacliente, carnet, carrera, telefono, correo', 'required', 'message'=>'{attribute} no puede dejarse en blanco.', 'on'=>'actDP'),
                 array('horas, rol','required','message'=>'{attribute} no puede dejarse en blanco.','on'=>'actInfoProy'),
@@ -49,7 +50,7 @@ class Asistente  extends CModel{
                 array('correo', 'email', 'message'=>'Dirección de correo inválida'),
                 array('nombre, apellido1, apellido2, ', 'match', 'pattern'=>'/^[\p{L} ]+$/u'),
                 array('numerocuenta,codigo', 'match', 'pattern'=>'/^[\p{N}-]+$/u'),
-                array('codigo','validarCodigoProyecto','on'=>'nuevo')
+                array('codigo','validarCodigoProyecto','on'=>'nuevo'),
             );
 	}
                
