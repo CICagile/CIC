@@ -554,38 +554,32 @@ class ProyectosController extends Controller {
 
     public function actionAgregarAsistente($id) {
         $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
+        $asistente = new Asistente;
+        $periodo = new Periodos;
+        
+        $asistente->scenario = 'agregar';
 
-        if (isset($_POST['Proyectos'])) {
-
-            $carnet = $_POST['asistente'];
-            $idrol = $this->obtenerIdRol($_POST['rol']);
-            $fechainicio = $this->FechaPhptoMysql($_POST['inicio']);
-            $fechafin = $this->FechaPhptoMysql($_POST['fin']);
-            $horas = $_POST['horas'];
-
-            if ($model->agregarAsistenteProyecto($model->idtbl_Proyectos, $carnet, $idrol, $fechainicio, $fechafin, $horas)) {
-                Yii::log("Asociacion exitosa del asistente: " . $carnet . " al proyecto: " . $model->idtbl_Proyectos, "info", "application.
-    controllers.ProyectosController");
-                $response = array(
-                    'ok' => true,
-                    'msg' => "Asociacion exitosa del asistente: " . $carnet . " al proyecto: " . $model->codigo
-                );
-                echo CJSON::encode($response);
-                Yii::app()->end();
-            } else {
-                Yii::log("Error al asociar asistente: " . $carnet . " al proyecto: " . $model->idtbl_Proyectos, "warning", "application.
-    controllers.ProyectosController");
-                $response = array(
-                    'ok' => false,
-                    'msg' => "Ha ocurrido un error al intentar asociar el asistente " . $carnet . " al proyecto: " . $model->codigo
-                );
-                echo CJSON::encode($response);
-                Yii::app()->end();
-            }
-        }
+        if (isset($_POST['Proyectos']) && isset($_POST['Asistente']) && isset($_POST['Periodos'])) {
+            $asistente->attributes = $_POST['Asistente'];
+            $periodo->attributes = $_POST['Periodos'];
+            $horas_nuevas = $asistente->horas;
+            $asistente->horas = 0;
+            if (!$asistente->validarActualizacionDeHoras($horas_nuevas))
+                $asistente->horas = $horas_nuevas;
+            $periodo->validarFechaInicioAsistencia($model->codigo);
+            $periodo->validarFechaFinAsistencia($model->codigo);
+            if ($asistente->validate(NULL,false) && $periodo->validate(NULL, false)) {
+                if ($model->agregarAsistenteProyecto($model->idtbl_Proyectos, $asistente->carnet, $asistente->rol, $periodo->inicio, $periodo->fin, $asistente->horas))
+                        $this->redirect(array('ver','id'=>$model->idtbl_Proyectos));
+                else
+                        throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
+            }//fin si los modelos son validos
+        }//fin si hizo el POST
 
         $this->render('agregarasistente', array(
             'model' => $model,
+            'asistente' => $asistente,
+            'periodo' => $periodo,
         ));
     }
     
@@ -844,14 +838,14 @@ class ProyectosController extends Controller {
             $response = array(
                 'ok' => false,
                 'msg' => "Indique el carnet del asistente.");
-        } else if (!$this->existeCarnet($carne)) {
+        /*} else if (!$this->existeCarnet($carne)) {
             $response = array(
                 'ok' => false,
                 'msg' => "El carnet #" . $carne . " no corresponde a ningun asistente.");
         } else if ($this->existeAsistenteProyecto($carne, $idproyecto)) {
             $response = array(
                 'ok' => false,
-                'msg' => "El asistente con carnet #" . $carne . " ya esta vinculado a este proyecto");
+                'msg' => "El asistente con carnet #" . $carne . " ya esta vinculado a este proyecto");*/
         } else {
             $response = array(
                 'ok' => true,
