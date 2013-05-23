@@ -357,30 +357,26 @@ class Asistente  extends CModel{
      * @return int Retorna el número total de horas de asistencia que hace en todos los proyectos.
      */
     public function contarHorasAsistenciaActuales() {
-        $select = "SELECT idtbl_Asistentes id FROM tbl_Asistentes WHERE carnet = '" . $this->carnet . "'";
-        $comando = Yii::app()->db->createCommand($select);
-        $read = $comando->query()->read();
-        $id = $read['id'];
-        $call = 'CALL verificarHorasAcumuladasProyectos(:id)';
+        $call = 'CALL contarHorasAsistenciaActuales(:carnet)';
         $comando = Yii::app()->db->createCommand($call);
-        $comando->bindParam(':id',$id,PDO::PARAM_INT);
+        $comando->bindParam(':carnet',$this->carnet,PDO::PARAM_STR);
         $query = $comando->query();
         if ($query->rowCount === 1) {
             $read = $query->read();
-            return $read['SUM(horas)'];
+            return $read['horas'];
         }
         else
             return 0;
     }//fin contarHorasActuales
     
     /**
-         * Llama al stored procedure encargado de actualizar las horas que un asistente con cierto carnet cumple semanalmente en este proyecto.
-         * @param int pID es el PK del proyecto del cual se cambian las horas
-         * @return boolean Retorna true si la operación fué exitosa y false en caso contrario.
-         */
+     * Llama al stored procedure encargado de cambiar las horas que un asistente con cierto carnet cumple semanalmente en este proyecto.
+     * El cambio no afecta el periodo de las horas.
+     * @return boolean Retorna true si la operación fué exitosa y false en caso contrario.
+     */
         public function cambiarHorasAsistencia() {
             $conexion = Yii::app()->db;
-            $call = "CALL actualizarHorasAsistencia(:carnet, :pkProyecto, :horas)";
+            $call = "CALL cambiarHorasAsistencia(:carnet, :pkProyecto, :horas)";
             $transaccion = $conexion->beginTransaction();
             try {
                 $comando = $conexion->createCommand($call);
@@ -400,11 +396,12 @@ class Asistente  extends CModel{
         
         /**
          * Cambia el rol que desempeña un asistente en un proyecto.
+         * El cambio no afecta el periodo del rol.
          * @return boolean True si la operación tuvo éxito y false de lo contrario.
          */
         public function cambiarRolProyecto(){
             $conexion = Yii::app()->db;
-            $call = 'CALL actualizarRolAsistente(:pkProyecto, :carnet, :rol)';
+            $call = 'CALL cambiarRolAsistente(:pkProyecto, :carnet, :rol)';
             $transaccion = $conexion->beginTransaction();
             try {
                 $comando = $conexion->createCommand($call);
