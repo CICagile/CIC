@@ -8,7 +8,7 @@
  */
 class Investigador  extends CModel{
     
-    //Atributos
+    //Propiedades
     public $nombre;
     public $apellido1;
     public $apellido2;
