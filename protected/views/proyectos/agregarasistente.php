@@ -36,7 +36,7 @@ $this->menu=array(
 	</div>
                
         <div class="row">
-        <label for="investigador">Asistente (carnet)<span class="required">* </span></label>
+        <label for="asistente">Asistente (carnet)<span class="required">* </span></label>
         <?php $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
             'attribute'=>'carnet',
             'model'=>$asistente,
