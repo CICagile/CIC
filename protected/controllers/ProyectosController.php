@@ -473,9 +473,9 @@ class ProyectosController extends Controller {
                         if ($result) {
 
                             //Cambiamos el estado del proyecto
-                            //$modelproyectos->actualizarEstadoProyecto(
-                            //        $modelproyectos->idtbl_Proyectos, $modelproyectos->CODIGO_AMPLIADO);
-                            //$modelproyectos->estado = $modelproyectos->CODIGO_AMPLIADO;
+                            $modelproyectos->actualizarEstadoProyecto(
+                                    $modelproyectos->idtbl_Proyectos, $modelproyectos->CODIGO_AMPLIADO);
+                            $modelproyectos->estado = $modelproyectos->CODIGO_AMPLIADO;
 
                             $result = $modelproyectos->save(false);
 
