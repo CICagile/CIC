@@ -22,7 +22,7 @@ $this->menu=array(
 	'enableAjaxValidation'=>true,
 )); ?>
         
-    <h2>Agregar investigador al Proyecto: <?php echo $model->codigo?></h2>
+    <h2>Agregar asistente al Proyecto: <?php echo $model->codigo?></h2>
     <p>Periodo del proyecto: <?php echo $this->FechaMysqltoPhp($model->inicio)
     .' hasta '.$this->FechaMysqltoPhp($model->fin)?></p>
 
@@ -55,7 +55,7 @@ $this->menu=array(
         <div class="row">
             <?php echo $form->labelEx($asistente,'rol') ?>
             <?php echo $form->dropDownList($asistente, 'rol',
-                        CHtml::listData(RolAsistente::model()->findAll(), 'nombre', 'nombre'), array('empty'=>'Elija un rol')) ?>
+                        CHtml::listData(RolAsistente::model()->findAll(), 'idtbl_RolesAsistentes', 'nombre'), array('empty'=>'Elija un rol')) ?>
             <?php echo $form->error($asistente,'rol', NULL, $enableAjaxValidation=false); ?>
         </div>
         
