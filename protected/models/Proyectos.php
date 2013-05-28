@@ -276,13 +276,13 @@ class Proyectos extends CActiveRecord {
         $conexion = Yii::app()->db;
         $command = $conexion->createCommand($call);
         $command->bindParam(':pIdProyecto', $pIdProyecto, PDO::PARAM_INT);
-        $model = $command->queryAll();
+        $sectores = $command->queryAll();
 
-        if ($model == false)
+        if ($sectores == false)
             return null;
         else {
             $this->scenario = 'cargarModelo';
-            $this->idtbl_sectorbeneficiado = $model;
+            $this->idtbl_sectorbeneficiado = $sectores;
         }
     }
 
@@ -321,7 +321,6 @@ class Proyectos extends CActiveRecord {
         $transaccion = Yii::app()->db->beginTransaction();
         
         try{
-        /* ver error 2013/05/18 00:53:29 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`db_cic`.`tbl_historialproyectosperiodos`, CONSTRAINT `historialproyectosXestadosproyecto` FOREIGN KEY (`idtbl_EstadosProyecto`) REFERENCES `tbl_estadosproyecto` (`idtbl_EstadosProyecto`) ON D). The SQL statement executed was: CALL actualizarPeriodoProyecto(:pIdProyecto, NULL, :pFechaFinal, :pDetalleEstado, :pNombreEstado). */
         $command = $conexion->createCommand($call);
         $command->bindParam(':pIdProyecto', $pIdProyecto, PDO::PARAM_INT);
         $command->bindParam(':pFechaFinal',  $pFechaCancelacion);
@@ -342,6 +341,43 @@ class Proyectos extends CActiveRecord {
     }
 
     /**
+     * Asocia las fechas de inicio y final con el modelo de proyectos
+     * Se utiliza al actualizar un proyecto, para tener disponibles las fechas
+     * @param int $pIdProyecto id del proyecto a buscar
+     */
+    public function obtenerFechasInicialFinalProyecto($pIdProyecto){
+        //TODO: implement
+        //$this->$attrsFechas = resultado
+    }
+    
+    /**
+     * Actualiza las fechas de inicio y final de un proyecto
+     * @param int $pIdProyecto id del proyecto cuyas fechas actualizaremos
+     * @param date $pFechaInicio nueva fecha inicial
+     * @param date $pFechaFin nueva fecha final
+     */
+    public function actualizarFechasProyecto($pIdProyecto, $pFechaInicio, $pFechaFin){
+         $conexion = Yii::app()->db;
+        $call = 'CALL actualizarPeriodoProyecto(:pIdProyecto, :pFechaInicial, :pFechaFinal, NULL, NULL)';
+        $transaccion = Yii::app()->db->beginTransaction();
+        
+        try{
+        $command = $conexion->createCommand($call);
+        $command->bindParam(':pIdProyecto', $pIdProyecto, PDO::PARAM_INT);
+        $command->bindParam(':pFechaInicial',  $pFechaInicio);
+        $command->bindParam(':pFechaFinal',  $pFechaFin);
+        $command->execute();
+        $transaccion->commit();
+        return true;
+        
+        } catch (Exception $e) {
+            $transaccion->rollback();
+            Yii::log("Rollback al cancelar el proyecto " . $pIdProyecto->codigo, "error", "application.controllers.ModelProyectos");
+            return false;
+        }
+    }
+    
+    /**
      * Gives html format using <ul> tag to a list of sectors
      * @param Array $pSectorsArray
      * @return String
@@ -358,7 +394,7 @@ class Proyectos extends CActiveRecord {
         else
             return "No se ha especificado";
     }
-
+    
     // <editor-fold defaultstate="collapsed" desc="Common private functions~">
     /**
      * Common actions made to execute any nontransactional procedure without parameters
