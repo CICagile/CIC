@@ -176,35 +176,56 @@ class Asistente  extends CModel{
 // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Validaciones">
-        /**
-	 * @return array validation rules for model attributes.
-	 */
-	public function rules()
-	{
-            // NOTE: you should only define rules for those attributes that
-            // will receive user inputs.
-            return array(
-                array('carnet,rol,horas','required','on'=>'agregar'),
-                array('nombre, apellido1, cedula, numerocuenta, banco, cuentacliente, carnet, carrera, telefono, correo, codigo, rol, horas', 'required', 'message'=>'{attribute} no puede dejarse en blanco.', 'on'=>'nuevo'),
-                array('nombre, apellido1, cedula, numerocuenta, banco, cuentacliente, carnet, carrera, telefono, correo', 'required', 'message'=>'{attribute} no puede dejarse en blanco.', 'on'=>'actDP'),
-                array('horas, rol','required','message'=>'{attribute} no puede dejarse en blanco.','on'=>'actInfoProy'),
-                array('nombre, apellido1, apellido2, codigo', 'length', 'max'=>20),
-                array('cedula','length','min'=>9,'max'=>20,'safe'=>true),
-                array('carnet','length', 'min'=>7,'max'=>15,'safe'=>true),
-                array('carrera, rol','length', 'max'=>60,'safe'=>true),
-                array('telefono, correo', 'length', 'max'=>40,'safe'=>true),
-                array('numerocuenta', 'length', 'max'=>30,'safe'=>true),
-                array('banco', 'length', 'max'=>70,'safe'=>true),
-                array('cuentacliente', 'length', 'min'=>17, 'max'=>17,'safe'=>true),
-                array('telefono, cedula, cuentacliente, carnet', 'match', 'pattern'=>'/^[\p{N}]+$/u', 'message'=>'{attribute} sólo puede estar compuesto por dígitos.'),
-                array('horas', 'match', 'pattern'=>'/^[0-9]+(.(5?)(0*))?$/', 'message'=>'{attribute} no son válidas.'),
-                array('horas', 'numerical', 'max'=>20, 'min'=>1, 'tooBig'=>'Se permite un máximo de {max} horas de asistencia', 'tooSmall'=>'Se permite un mínimo de {min} horas.'),
-                array('correo', 'email', 'message'=>'Dirección de correo inválida'),
-                array('nombre, apellido1, apellido2, ', 'match', 'pattern'=>'/^[\p{L} ]+$/u'),
-                array('numerocuenta,codigo', 'match', 'pattern'=>'/^[\p{N}-]+$/u'),
-                array('codigo','validarCodigoProyecto','on'=>'nuevo'),
-            );
-	}
+    /**
+        * @return array validation rules for model attributes.
+        */
+    public function rules()
+    {
+        // NOTE: you should only define rules for those attributes that
+        // will receive user inputs.
+        return array(
+            array('carnet,rol,horas','required','on'=>'agregar'),
+            array('nombre, apellido1, cedula, numerocuenta, banco, cuentacliente, carnet, carrera, telefono, correo, codigo, rol, horas', 'required', 'message'=>'{attribute} no puede dejarse en blanco.', 'on'=>'nuevo'),
+            array('nombre, apellido1, cedula, numerocuenta, banco, cuentacliente, carnet, carrera, telefono, correo', 'required', 'message'=>'{attribute} no puede dejarse en blanco.', 'on'=>'actDP'),
+            array('horas, rol','required','message'=>'{attribute} no puede dejarse en blanco.','on'=>'actInfoProy'),
+            array('nombre, apellido1, apellido2, codigo', 'length', 'max'=>20),
+            array('cedula','length','min'=>9,'max'=>20,'safe'=>true),
+            array('carnet','length', 'min'=>7,'max'=>15,'safe'=>true),
+            array('carrera, rol','length', 'max'=>60,'safe'=>true),
+            array('telefono, correo', 'length', 'max'=>40,'safe'=>true),
+            array('numerocuenta', 'length', 'max'=>30,'safe'=>true),
+            array('banco', 'length', 'max'=>70,'safe'=>true),
+            array('cuentacliente', 'length', 'min'=>17, 'max'=>17,'safe'=>true),
+            array('telefono, cedula, cuentacliente, carnet', 'match', 'pattern'=>'/^[\p{N}]+$/u', 'message'=>'{attribute} sólo puede estar compuesto por dígitos.'),
+            array('horas', 'match', 'pattern'=>'/^[0-9]+(.(5?)(0*))?$/', 'message'=>'{attribute} no son válidas.'),
+            array('horas', 'numerical', 'max'=>20, 'min'=>1, 'tooBig'=>'Se permite un máximo de {max} horas de asistencia', 'tooSmall'=>'Se permite un mínimo de {min} horas.'),
+            array('correo', 'email', 'message'=>'Dirección de correo inválida'),
+            array('nombre, apellido1, apellido2, ', 'match', 'pattern'=>'/^[\p{L} ]+$/u'),
+            array('numerocuenta,codigo', 'match', 'pattern'=>'/^[\p{N}-]+$/u'),
+            array('codigo','validarCodigoProyecto','on'=>'nuevo'),
+            array('carnet','validarAsistenteNoRepetido','on'=>'agregar'),
+        );
+    }
+   
+    /**
+     * Valida que el asistente no esté activo en el proyecto.
+     * @param array $attribute Atributos que valida
+     * @param array $params Parametros de la validacion
+     */
+    public function validarAsistenteNoRepetido($attribute, $params){
+        if(isset($params['on']) && $params['on'] != $this->scenario)
+            return;
+        $call = "CALL verProyectosPorAsistente(:carnet)";
+        $comando = Yii::app()->db->createCommand($call);
+        $comando->bindParam(':carnet',$this->carnet,PDO::PARAM_STR);
+        $resultados = $comando->queryAll();
+        foreach ($resultados as $resultado){
+            if ($resultado['codigo'] == $this->codigo){
+                $this->addError('carnet', 'El asistente ya está en el proyecto.');
+                break;
+            }//fin si el asistente ya esta en el proyecto
+        }//fin for
+    }//fin validar asistente no repetido
         
     /**
      * Valida que las horas nuevas cumplan con que sean numéricas y que el asistente no sobrepase

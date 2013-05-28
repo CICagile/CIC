@@ -561,6 +561,7 @@ class ProyectosController extends Controller {
 
         if (isset($_POST['Proyectos']) && isset($_POST['Asistente']) && isset($_POST['Periodos'])) {
             $asistente->attributes = $_POST['Asistente'];
+            $asistente->codigo = $model->codigo;
             $periodo->attributes = $_POST['Periodos'];
             $horas_nuevas = $asistente->horas;
             $asistente->horas = 0;
