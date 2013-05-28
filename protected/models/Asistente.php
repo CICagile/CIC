@@ -129,7 +129,7 @@ class Asistente  extends CModel{
             'correo'
         );
     }
-    //Función que llama a un store procedure para ver todos los asistentes y 
+    //Función que llama a un stored procedure para ver todos los asistentes y 
     // maneja el filtro  
     public function search(){
            $filtersForm=new FiltersForm;
@@ -157,7 +157,7 @@ class Asistente  extends CModel{
             ));
             return $dataProvider;
     }
-    /*Metodo que llama a un store procedure que lista todos los proyectos a los que pertenece un asistente.*/
+    /*Metodo que llama a un stored procedure que lista todos los proyectos a los que pertenece un asistente.*/
     public function proyectosasistente(){
            $call = 'CALL verProyectosporAsistente(:carnetbuscado)';
            $comand=Yii::app()->db->createCommand($call);
@@ -234,26 +234,7 @@ class Asistente  extends CModel{
         public static function model(){
             return new Asistente;
         }//fin model
-     
-            
-    /**
-     * Verifica que el código digitado se encuentre en la base de datos.
-     * De esta forma se previene que elija un proyecto de la lista y luego
-     * digite un número más, ingresando de esta forma un código incorrecto. 
-     */
-    public function validarCodigoProyecto($attribute,$params) {
-        if(isset($params['on']) && $params['on'] != $this->scenario)
-            return;
-        $criteria = new CDbCriteria;
-        $criteria->alias = "pr";
-        $criteria->join = 'INNER JOIN tbl_HistorialProyectosPeriodos HPP ON pr.idtbl_Proyectos = HPP.idtbl_Proyectos
-                           INNER JOIN tbl_Periodos P ON HPP.idPeriodo = P.idPeriodo';
-        $criteria->condition = "pr.codigo = '" . $this->codigo . "' AND p.inicio <= SYSDATE() AND p.fin > SYSDATE()";
-        if (!Proyectos::model()->exists($criteria)) {
-            $this->addError('codigo', $this->getAttributeLabel('codigo') . ' no fue encontrado en la base de datos o no se encuentra activo.');
-        }//fin si el código existe en la base de datos
-    }//fin validarCodigoProyecto
-    
+
     /**
      *Esta funcion llama al SP buscarDatosPersonalesAsistentePorPK y hace una busqueda de todos
      * los datos personales de un asistente a partir del PK de un registro en la tabla tbl_Personas
@@ -315,43 +296,6 @@ class Asistente  extends CModel{
         }
         return TRUE;
     }
-    
-    /**
-     * Valida que no exista otro asistente con ese carnet en la base de datos.
-     * @param type $pCarnet Carnet del estudiante antes de la actualización. Sirve para que no de
-     * un error falso indicando que ya existe otro asistente con ese carnet.
-     */
-    public function validarCarnetUnico($pCarnet = NULL) {
-        if ($this->carnet != $pCarnet) {
-            $conexion = Yii::app()->db;
-            $sql = "SELECT * FROM tbl_Asistentes WHERE carnet = :pCarnet";
-            $comando = $conexion->createCommand($sql);
-            $comando->bindParam(':pCarnet',$this->carnet, PDO::PARAM_STR);
-            $resultado = $comando->query();
-            if ($resultado->rowCount != 0) {
-                $this->addError('carnet', 'Ya existe un asistente con el carnet ' . $this->carnet . '.');
-            }//fin si el carnet es único
-        }//fin si el carnet es diferente
-    }//fin validar que el carnet sea único
-    
-    /**
-     * Valida que no haya otro asistente con esa cédula. Si hay otra persona que tiene la misma
-     * cédula pero no está en la tabla asistentes entonces no lo cuenta.
-     * @param type $pCedula cédula que tenía antes de una actualización.
-     */
-    public function validarCedulaUnica($pCedula = NULL) {
-        if ($this->cedula != $pCedula) {
-            $conexion = Yii::app()->db;
-            $sql = "SELECT COUNT(*) cuenta FROM tbl_Personas P INNER JOIN tbl_Asistentes A ON P.idtbl_Personas = A.idtbl_Personas WHERE P.cedula = :pCedula;";
-            $comando = $conexion->createCommand($sql);
-            $comando->bindParam(':pCedula',$this->cedula, PDO::PARAM_STR);
-            $resultado = $comando->query();
-            $cuenta = $resultado->read();
-            if ($cuenta['cuenta'] != 0) {
-                $this->addError('cedula', 'Ya existe un asistente con la cédula ' . $this->cedula . '.');
-            }//fin si el carnet es único
-        }//fin si el carnet es diferente
-    }//fin validar cedula unica
     
     /**
      * Cuenta las horas de asistencia que actualmente realiza este asistente en todos los proyectos.
@@ -446,39 +390,93 @@ class Asistente  extends CModel{
             return true;
         }//fin cambiar fecha del fin de la asistencia
         
-                /**
-        * Valida que las horas nuevas cumplan con que sean numéricas y que el asistente no sobrepase
-        * las horas acumuladas establecidas. Si las horas son válidas el modelo queda con las horas nuevas
-        * y si no son válidas el modelo queda con las horas anteriores.
-        * @param string $pHorasNuevas Las horas que el usuario quiere asignarle al asistente.
-        * @param Asistente $this El modelo del asistente que representa al asistente al que se le realiza el cambio.
-        * @return boolean Retorna true si los datos son válidos y false de lo contrario.
+    // <editor-fold defaultstate="collapsed" desc="Validaciones">
+    /**
+     * Valida que las horas nuevas cumplan con que sean numéricas y que el asistente no sobrepase
+     * las horas acumuladas establecidas. Si las horas son válidas el modelo queda con las horas nuevas
+     * y si no son válidas el modelo queda con las horas anteriores.
+     * @param string $pHorasNuevas Las horas que el usuario quiere asignarle al asistente.
+     * @param Asistente $this El modelo del asistente que representa al asistente al que se le realiza el cambio.
+     * @return boolean Retorna true si los datos son válidos y false de lo contrario.
         */
-        public function validarActualizacionDeHoras($pHorasNuevas){
-            $horas_anteriores = $this->horas;
-            $horas_totales = $this->contarHorasAsistenciaActuales();
-            $horas_totales -= $horas_anteriores;
-            $horas_totales += $pHorasNuevas;
-            $this->horas = $horas_totales;
-            if ($this->validate('horas',false)) {
-                $this->horas = $pHorasNuevas;
-                if ($this->validate('horas',false)) {
-                    return true;
-                }//fin si las horas totales y las horas nuevas son válidas.
-                else {
-                    $this->horas = $horas_anteriores;
-                    return false;
-                }//fin si no son válidas
-            }//fin si las horas totales son válidas
+    public function validarActualizacionDeHoras($pHorasNuevas) {
+        $horas_anteriores = $this->horas;
+        $horas_totales = $this->contarHorasAsistenciaActuales();
+        $horas_totales -= $horas_anteriores;
+        $horas_totales += $pHorasNuevas;
+        $this->horas = $horas_totales;
+        if ($this->validate('horas', false)) {
+            $this->horas = $pHorasNuevas;
+            if ($this->validate('horas', false)) {
+                return true;
+            }//fin si las horas totales y las horas nuevas son válidas.
             else {
                 $this->horas = $horas_anteriores;
                 return false;
-            }//fin si las horas totales no son válidas
-        }// fin validación de las nuevas horas ingresadas
-        
-   
-        
-       
+            }//fin si no son válidas
+        }//fin si las horas totales son válidas
+        else {
+            $this->horas = $horas_anteriores;
+            return false;
+        }//fin si las horas totales no son válidas
+    }// fin validación de las nuevas horas ingresadas
+    
+    /**
+     * Valida que no haya otro asistente con esa cédula. Si hay otra persona que tiene la misma
+     * cédula pero no está en la tabla asistentes entonces no lo cuenta.
+     * @param type $pCedula cédula que tenía antes de una actualización.
+     */
+    public function validarCedulaUnica($pCedula = NULL) {
+        if ($this->cedula != $pCedula) {
+            $conexion = Yii::app()->db;
+            $sql = "SELECT COUNT(*) cuenta FROM tbl_Personas P INNER JOIN tbl_Asistentes A ON P.idtbl_Personas = A.idtbl_Personas WHERE P.cedula = :pCedula;";
+            $comando = $conexion->createCommand($sql);
+            $comando->bindParam(':pCedula',$this->cedula, PDO::PARAM_STR);
+            $resultado = $comando->query();
+            $cuenta = $resultado->read();
+            if ($cuenta['cuenta'] != 0) {
+                $this->addError('cedula', 'Ya existe un asistente con la cédula ' . $this->cedula . '.');
+            }//fin si el carnet es único
+        }//fin si el carnet es diferente
+    }//fin validar cedula unica
+    
+    /**
+     * Valida que no exista otro asistente con ese carnet en la base de datos.
+     * @param type $pCarnet Carnet del estudiante antes de la actualización. Sirve para que no de
+     * un error falso indicando que ya existe otro asistente con ese carnet.
+     */
+    public function validarCarnetUnico($pCarnet = NULL) {
+        if ($this->carnet != $pCarnet) {
+            $conexion = Yii::app()->db;
+            $sql = "SELECT * FROM tbl_Asistentes WHERE carnet = :pCarnet";
+            $comando = $conexion->createCommand($sql);
+            $comando->bindParam(':pCarnet',$this->carnet, PDO::PARAM_STR);
+            $resultado = $comando->query();
+            if ($resultado->rowCount != 0) {
+                $this->addError('carnet', 'Ya existe un asistente con el carnet ' . $this->carnet . '.');
+            }//fin si el carnet es único
+        }//fin si el carnet es diferente
+    }//fin validar que el carnet sea único
+    
+    /**
+     * Verifica que el código digitado se encuentre en la base de datos.
+     * De esta forma se previene que elija un proyecto de la lista y luego
+     * digite un número más, ingresando de esta forma un código incorrecto. 
+     */
+    public function validarCodigoProyecto($attribute,$params) {
+        if(isset($params['on']) && $params['on'] != $this->scenario)
+            return;
+        $criteria = new CDbCriteria;
+        $criteria->alias = "pr";
+        $criteria->join = 'INNER JOIN tbl_HistorialProyectosPeriodos HPP ON pr.idtbl_Proyectos = HPP.idtbl_Proyectos
+                           INNER JOIN tbl_Periodos P ON HPP.idPeriodo = P.idPeriodo';
+        $criteria->condition = "pr.codigo = '" . $this->codigo . "' AND p.inicio <= SYSDATE() AND p.fin > SYSDATE()";
+        if (!Proyectos::model()->exists($criteria)) {
+            $this->addError('codigo', $this->getAttributeLabel('codigo') . ' no fue encontrado en la base de datos o no se encuentra activo.');
+        }//fin si el código existe en la base de datos
+    }//fin validarCodigoProyecto
+// </editor-fold>  
+
 }//fin clase Modelo Asistente
 
 ?>
