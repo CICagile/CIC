@@ -324,7 +324,12 @@ class ProyectosController extends Controller {
             if ($result) {
                 $result_sectores = ProyectosSectorbeneficiado::updateBenefitedSectors(
                         $modelproyectos->idtbl_Proyectos, $antiguos_sectores, $modelproyectos->idtbl_sectorbeneficiado);
-             if($result_sectores){   
+                
+                $result_periodos = $modelproyectos->actualizarFechasProyecto($modelproyectos->idtbl_Proyectos,
+                        $_POST['Proyectos']['fecha_inicio'],
+                        $_POST['Proyectos']['fecha_fin']);
+                
+             if($result_sectores && $result_periodos){   
                 Yii::log("Cambio exitoso de la información del proyecto: " . $modelproyectos->codigo, "info", "application.
     controllers.ProyectosController");
                 $this->redirect(array('ver', 'id' => $modelproyectos->idtbl_Proyectos));

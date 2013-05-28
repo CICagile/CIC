@@ -7,7 +7,7 @@
         'clientOptions' => array('validateOnSubmit' => true),
             ));
     ?>
-?>
+
 
     <p class="note">Campos con <span class="required">*</span> son obligatorios.</p>
         <?php echo $form->errorSummary(array($modelproyectos)); ?>
