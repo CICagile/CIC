@@ -24,68 +24,14 @@ class Asistente  extends CModel{
     public $rol;
     public $horas;
 
-        /**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-            return array(
-                'nombre' => 'Nombre',
-                'apellido1' => 'Primer Apellido',
-                'apellido2' => 'Segundo Apellido',
-                'cedula' => 'Cédula',
-                'numerocuenta' => 'N° Cuenta',
-                'banco' => 'Banco',
-                'cuentacliente' => 'Cuenta Cliente',
-                'codigo' => 'Código del proyecto',
-                'telefono' => 'Teléfono',
-                'correo' => 'Correo Electrónico'
-            );
-	}
-        
-        
-        
-        /**
-         * Funcion de guardado.
-         * Crea un nuevo asistente en la base de datos. Usa el stored procedure 'registrarNuevoAsistente'
-         * y lo hace de forma transaccional.
-         * @param Periodos $pPeriodo El periodo inicial del asistente.
-         */
-        public function crear($pPeriodo) {
-            $conexion = Yii::app()->db;
-            $call = "CALL registrarNuevoAsistente(:nombre,:ape1,:ape2,:ced,:numc,:ccliente,:carnet,:carrera,:cod,:rol,:horas,:tel,:correo,:banco,'" . $pPeriodo->inicio . "','" . $pPeriodo->fin. "')";
-            $transaccion = Yii::app()->db->beginTransaction();
-            try {
-                $comando = $conexion->createCommand($call);
-                $comando->bindParam(':nombre', $this->nombre, PDO::PARAM_STR);
-                $comando->bindParam(':ape1', $this->apellido1, PDO::PARAM_STR);
-                $comando->bindParam(':ape2', $this->apellido2, PDO::PARAM_STR);
-                $comando->bindParam(':ced', $this->cedula, PDO::PARAM_STR);
-                $comando->bindParam(':numc', $this->numerocuenta, PDO::PARAM_STR);
-                $comando->bindParam(':ccliente', $this->cuentacliente, PDO::PARAM_STR);
-                $comando->bindParam(':carnet', $this->carnet, PDO::PARAM_STR);
-                $comando->bindParam(':carrera', $this->carrera, PDO::PARAM_STR);
-                $comando->bindParam(':cod', $this->codigo, PDO::PARAM_STR);
-                $comando->bindParam(':rol', $this->rol, PDO::PARAM_STR);
-                $comando->bindParam(':horas', $this->horas);
-                $comando->bindParam(':tel', $this->telefono, PDO::PARAM_STR);
-                $comando->bindParam(':correo', $this->correo, PDO::PARAM_STR);
-                $comando->bindParam(':banco', $this->banco, PDO::PARAM_STR);
-                $comando->execute();
-                $transaccion->commit();
-            } catch (Exception $e) {
-                Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
-                $transaccion->rollback();
-                return false;
-            }
-            return true;
-        }
-
+    /**
+     * Funciones requeridas por Yii. 
+     */
+    // <editor-fold defaultstate="collapsed" desc="Yii">
     /**
      * Retorna un array con los nombres de los atributos
      */
-    public function attributeNames()
-    {
+    public function attributeNames()     {
         return array(
             'nombre',
             'apellido1',
@@ -99,6 +45,83 @@ class Asistente  extends CModel{
             'correo'
         );
     }
+
+    public function __get($name)     {
+        if (property_exists($this, $name))         {
+            return $this->$name;
+        }         else         {
+            return parent::__get($name);
+        }
+    }
+
+
+        public function __set($name, $value)     {
+        if (property_exists($this, $name))         {
+            $this->$name = $value;
+        }         else         {
+            parent::__set($name, $value);
+        }
+    }
+
+        /**
+         * Este método retorna una instancia del modelo para cuando se ocupe
+         * acceder a sus propiedades. Por ejemplo, para conseguir el string
+         * de los labels de los atributos.
+         * @return \Asistente Una instancia del modelo asistente.
+         */
+        public static function model() {
+            return new Asistente;
+        }//fin model
+        
+    /**
+     * @return array customized attribute labels (name=>label)
+     */
+    public function attributeLabels()
+    {
+        return array(
+            'nombre' => 'Nombre',
+            'apellido1' => 'Primer Apellido',
+            'apellido2' => 'Segundo Apellido',
+            'cedula' => 'Cédula',
+            'numerocuenta' => 'N° Cuenta',
+            'banco' => 'Banco',
+            'cuentacliente' => 'Cuenta Cliente',
+            'codigo' => 'Código del proyecto',
+            'telefono' => 'Teléfono',
+            'correo' => 'Correo Electrónico'
+        );
+    }
+//</editor-fold>
+        
+    // <editor-fold defaultstate="collapsed" desc="Búsqueda">
+    /**
+     * Esta funcion llama al SP buscarDatosPersonalesAsistentePorPK y hace una busqueda de todos
+     * los datos personales de un asistente a partir del PK de un registro en la tabla tbl_Personas
+     * en la base de datos.
+     * @param string $pCarnet El carnet de un registro de la tabla Asistentes.
+     * @return array Un arreglo con los atributos del asistente. NULL si no encontro algun registro con ese pk.
+     */
+    public function buscarAsistentePorCarnet($pCarnet) {
+        $conexion = Yii::app()->db;
+        $call = 'CALL buscarDatosPersonalesAsistentePorCarnet(:pCarnet)';
+        $transaccion = Yii::app()->db->beginTransaction();
+        $resultado = NULL;
+        try {
+            $comando = $conexion->createCommand($call);
+            $comando->bindParam(':pCarnet', $pCarnet, PDO::PARAM_STR);
+            $resultado = $comando->query();
+            $transaccion->commit();
+        } catch (Exception $e) {
+            $transaccion->rollback();
+            echo $e->getMessage();
+            return NULL;
+        }
+
+
+        return $resultado->rowCount === 1 ? $resultado->read() : NULL;
+    
+    }//fin buscar asistente por pk
+    
     //Función que llama a un stored procedure para ver todos los asistentes y 
     // maneja el filtro  
     public function search(){
@@ -150,226 +173,8 @@ class Asistente  extends CModel{
             ));
             return $dataProvider;
     }
+// </editor-fold>
     
-    public function desvincular($idtbl_Proyectos,$carnet){
-            $conexion = Yii::app()->db;
-            $call = 'CALL desvincularAsistente(:asistente, :proyecto)';
-            $transaccion = $conexion->beginTransaction();
-            try {
-                $comando = $conexion->createCommand($call);
-                $comando->bindParam(':proyecto', $idtbl_Proyectos, PDO::PARAM_STR);
-                $comando->bindParam(':asistente', $carnet, PDO::PARAM_STR);
-                $comando->execute();
-                $transaccion->commit();
-            }//fin try
-            catch (Exception $e) {
-                Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
-                $transaccion->rollback();
-                return false;
-            }//fin catch
-            return true;
-    }
-
-    
-    public function __get($name)
-    {
-        if (property_exists($this, $name))
-        {
-            return $this->$name;
-        }
-        else
-        {
-            return parent::__get($name);
-        }
-    }
-    
-    public function __set($name, $value)
-    {
-        if (property_exists($this, $name))
-        {
-            $this->$name = $value;
-        }
-        else
-        {
-            parent::__set($name, $value);
-        }
-    }
-    
-      /**
-         * Este método retorna una instancia del modelo para cuando se ocupe
-         * acceder a sus propiedades. Por ejemplo, para conseguir el string
-         * de los labels de los atributos.
-         * @return \Asistente Una instancia del modelo asistente.
-         */
-        public static function model(){
-            return new Asistente;
-        }//fin model
-
-    /**
-     *Esta funcion llama al SP buscarDatosPersonalesAsistentePorPK y hace una busqueda de todos
-     * los datos personales de un asistente a partir del PK de un registro en la tabla tbl_Personas
-     * en la base de datos.
-     * @param string $pCarnet El carnet de un registro de la tabla Asistentes.
-     * @return array Un arreglo con los atributos del asistente. NULL si no encontro algun registro con ese pk.
-     */
-    public function buscarAsistentePorCarnet($pCarnet) {
-        $conexion = Yii::app()->db;
-        $call = 'CALL buscarDatosPersonalesAsistentePorCarnet(:pCarnet)';
-            $transaccion = Yii::app()->db->beginTransaction();
-            $resultado = NULL;
-            try {
-                $comando = $conexion->createCommand($call);
-                $comando->bindParam(':pCarnet', $pCarnet, PDO::PARAM_STR);
-                $resultado = $comando->query();
-                $transaccion->commit();
-            } catch (Exception $e) {
-                $transaccion->rollback();
-                echo $e->getMessage();
-                return NULL;
-            }
-            
-            return $resultado->rowCount === 1 ? $resultado->read() : NULL;
-            
-    }//fin buscar asistente por pk
-    
-    /**
-     * Cambia los datos personales de un asistente en la base de datos
-     * por los que se proporcionan en el formulario.
-     * @param string $pPK El carnet anterior del Asistente.
-     * @return boolean True si no ocurrio ningún error y false de lo contrario.
-     */
-    public function actualizarDatosPersonales($pCarnet) {
-        $conexion = Yii::app()->db;
-        $call = 'CALL actualizarDatosPersonalesAsistente(:pCarnet,:nombre,:apellido1,:apellido2,:cedula,:numerocuenta,:cuentacliente,:carnet,:carrera,:banco,:telefono,:correo)';
-        $transaction = Yii::app()->db->beginTransaction();
-        try {
-            $comando = $conexion->createCommand($call);
-            $comando->bindParam(':pCarnet',$pCarnet, PDO::PARAM_INT);
-            $comando->bindParam(':nombre',$this->nombre, PDO::PARAM_STR);
-            $comando->bindParam(':apellido1',$this->apellido1, PDO::PARAM_STR);
-            $comando->bindParam(':apellido2',$this->apellido2, PDO::PARAM_STR);
-            $comando->bindParam(':cedula',$this->cedula, PDO::PARAM_STR);
-            $comando->bindParam(':numerocuenta',$this->numerocuenta, PDO::PARAM_STR);
-            $comando->bindParam(':cuentacliente',$this->cuentacliente, PDO::PARAM_STR);
-            $comando->bindParam(':carnet',$this->carnet, PDO::PARAM_STR);
-            $comando->bindParam(':carrera',$this->carrera, PDO::PARAM_STR);
-            $comando->bindParam(':banco',$this->banco, PDO::PARAM_STR);
-            $comando->bindParam(':telefono',$this->telefono, PDO::PARAM_STR);
-            $comando->bindParam(':correo',$this->correo, PDO::PARAM_STR);
-            $comando->execute();
-            $transaction->commit();
-        }
-        catch (Exception $e) {
-             Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
-            $transaction->rollback();
-            return FALSE;
-        }
-        return TRUE;
-    }
-    
-    /**
-     * Cuenta las horas de asistencia que actualmente realiza este asistente en todos los proyectos.
-     * @return int Retorna el número total de horas de asistencia que hace en todos los proyectos.
-     */
-    public function contarHorasAsistenciaActuales() {
-        $call = 'CALL contarHorasAsistenciaActuales(:carnet)';
-        $comando = Yii::app()->db->createCommand($call);
-        $comando->bindParam(':carnet',$this->carnet,PDO::PARAM_STR);
-        $query = $comando->query();
-        if ($query->rowCount === 1) {
-            $read = $query->read();
-            return $read['horas'];
-        }
-        else
-            return 0;
-    }//fin contarHorasActuales
-    
-    /**
-     * Funciones que sirven para cambiar datos erróneos que se hayan ingresado. Sólo actualizan los campos sin afectar periodos.
-     */
-    // <editor-fold defaultstate="collapsed" desc="Correción de datos">
-    /**
-     * Llama al stored procedure encargado de cambiar las horas que un asistente con cierto carnet cumple semanalmente en este proyecto.
-     * El cambio no afecta el periodo de las horas.
-     * @return boolean Retorna true si la operación fué exitosa y false en caso contrario.
-     */
-    public function cambiarHorasAsistencia() {
-        $conexion = Yii::app()->db;
-        $call = "CALL cambiarHorasAsistencia(:carnet, :pkProyecto, :horas)";
-        $transaccion = $conexion->beginTransaction();
-        try {
-            $comando = $conexion->createCommand($call);
-            $comando->bindParam(':carnet', $this->carnet);
-            $comando->bindParam(':pkProyecto', $this->codigo);
-            $comando->bindParam(':horas', $this->horas);
-            $comando->execute();
-            $transaccion->commit();
-        }//fin try
-        catch (Exception $e) {
-            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
-            $transaccion->rollback();
-            return false;
-        }//fin catch
-        return true;
-    }
-
-//fin cambiar horas asistencia
-
-
-    /**
-     * Cambia el rol que desempeña un asistente en un proyecto.
-     * El cambio no afecta el periodo del rol.
-     * @return boolean True si la operación tuvo éxito y false de lo contrario.
-         */
-    public function cambiarRolProyecto() {
-        $conexion = Yii::app()->db;
-        $call = 'CALL cambiarRolAsistente(:pkProyecto, :carnet, :rol)';
-        $transaccion = $conexion->beginTransaction();
-        try {
-            $comando = $conexion->createCommand($call);
-            $comando->bindParam(':pkProyecto', $this->codigo, PDO::PARAM_INT);
-            $comando->bindParam(':carnet', $this->carnet, PDO::PARAM_STR);
-            $comando->bindParam(':rol', $this->rol, PDO::PARAM_STR);
-            $comando->execute();
-            $transaccion->commit();
-        }//fin try
-        catch (Exception $e) {
-            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
-            $transaccion->rollback();
-            return false;
-        }//fin catch
-        return true;
-    }
-
-//cambia el rol del asistente en un proyecto.// </editor-fold>
-
-    
-        /**
-         * Cambia la fecha del fin de la asistencia por la que especifique el usuario. Los periodos de rol, horas y asistencia
-         * son afectados en la base de datos.
-         * @param string $pFecha Fecha nueva del fin de la asistencia.
-         * @return boolean Retorna true si la transacción tuvo éxito o false de lo contrario.
-         */
-        public function cambiarFinAsistencia($pFecha) {
-            $conexion = Yii::app()->db;
-            $call = 'CALL actualizarFinAsistencia(:pk, :carnet, :fecha)';
-            $transaccion = $conexion->beginTransaction();
-            try {
-                $comando = $conexion->createCommand($call);
-                $comando->bindParam(':pk', $this->codigo, PDO::PARAM_INT);
-                $comando->bindParam(':carnet', $this->carnet, PDO::PARAM_STR);
-                $comando->bindParam(':fecha', $pFecha, PDO::PARAM_STR);
-                $comando->execute();
-                $transaccion->commit();
-            }//fin try
-            catch (Exception $e) {
-                Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
-                $transaccion->rollback();
-                return false;
-            }//fin catch
-            return true;
-        }//fin cambiar fecha del fin de la asistencia
-        
     // <editor-fold defaultstate="collapsed" desc="Validaciones">
         /**
 	 * @return array validation rules for model attributes.
@@ -485,7 +290,200 @@ class Asistente  extends CModel{
             $this->addError('codigo', $this->getAttributeLabel('codigo') . ' no fue encontrado en la base de datos o no se encuentra activo.');
         }//fin si el código existe en la base de datos
     }//fin validarCodigoProyecto
-// </editor-fold>  
+// </editor-fold>
+    
+    /**
+     * Funciones que sirven para cambiar datos erróneos que se hayan ingresado. Sólo actualizan los campos, sin afectar periodos.
+     */
+    // <editor-fold defaultstate="collapsed" desc="Correción de datos">
+    /**
+     * Llama al stored procedure encargado de cambiar las horas que un asistente con cierto carnet cumple semanalmente en este proyecto.
+     * El cambio no afecta el periodo de las horas.
+     * @return boolean Retorna true si la operación fué exitosa y false en caso contrario.
+     */
+    public function cambiarHorasAsistencia() {
+        $conexion = Yii::app()->db;
+        $call = "CALL cambiarHorasAsistencia(:carnet, :pkProyecto, :horas)";
+        $transaccion = $conexion->beginTransaction();
+        try {
+            $comando = $conexion->createCommand($call);
+            $comando->bindParam(':carnet', $this->carnet);
+            $comando->bindParam(':pkProyecto', $this->codigo);
+            $comando->bindParam(':horas', $this->horas);
+            $comando->execute();
+            $transaccion->commit();
+        }//fin try
+        catch (Exception $e) {
+            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
+            $transaccion->rollback();
+            return false;
+        }//fin catch
+        return true;
+    }
+
+//fin cambiar horas asistencia
+
+
+    /**
+     * Cambia el rol que desempeña un asistente en un proyecto.
+     * El cambio no afecta el periodo del rol.
+     * @return boolean True si la operación tuvo éxito y false de lo contrario.
+         */
+    public function cambiarRolProyecto() {
+        $conexion = Yii::app()->db;
+        $call = 'CALL cambiarRolAsistente(:pkProyecto, :carnet, :rol)';
+        $transaccion = $conexion->beginTransaction();
+        try {
+            $comando = $conexion->createCommand($call);
+            $comando->bindParam(':pkProyecto', $this->codigo, PDO::PARAM_INT);
+            $comando->bindParam(':carnet', $this->carnet, PDO::PARAM_STR);
+            $comando->bindParam(':rol', $this->rol, PDO::PARAM_STR);
+            $comando->execute();
+            $transaccion->commit();
+        }//fin try
+        catch (Exception $e) {
+            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
+            $transaccion->rollback();
+            return false;
+        }//fin catch
+        return true;
+    }//cambia el rol del asistente en un proyecto.
+// </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Actualización de datos">
+    /**
+     * Cambia la fecha del fin de la asistencia por la que especifique el usuario. Los periodos de rol, horas y asistencia
+     * son afectados en la base de datos.
+     * @param string $pFecha Fecha nueva del fin de la asistencia.
+     * @return boolean Retorna true si la transacción tuvo éxito o false de lo contrario.
+     */
+    public function cambiarFinAsistencia($pFecha) {
+        $conexion = Yii::app()->db;
+        $call = 'CALL actualizarFinAsistencia(:pk, :carnet, :fecha)';
+        $transaccion = $conexion->beginTransaction();
+        try {
+            $comando = $conexion->createCommand($call);
+            $comando->bindParam(':pk', $this->codigo, PDO::PARAM_INT);
+            $comando->bindParam(':carnet', $this->carnet, PDO::PARAM_STR);
+            $comando->bindParam(':fecha', $pFecha, PDO::PARAM_STR);
+            $comando->execute();
+            $transaccion->commit();
+        }//fin try
+        catch (Exception $e) {
+            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
+            $transaccion->rollback();
+            return false;
+        }//fin catch
+        return true;
+    }//fin cambiar fecha del fin de la asistencia
+    
+    /**
+     * Cambia los datos personales de un asistente en la base de datos
+     * por los que se proporcionan en el formulario.
+     * @param string $pPK El carnet anterior del Asistente.
+     * @return boolean True si no ocurrio ningún error y false de lo contrario.
+     */
+    public function actualizarDatosPersonales($pCarnet) {
+        $conexion = Yii::app()->db;
+        $call = 'CALL actualizarDatosPersonalesAsistente(:pCarnet,:nombre,:apellido1,:apellido2,:cedula,:numerocuenta,:cuentacliente,:carnet,:carrera,:banco,:telefono,:correo)';
+        $transaction = Yii::app()->db->beginTransaction();
+        try {
+            $comando = $conexion->createCommand($call);
+            $comando->bindParam(':pCarnet',$pCarnet, PDO::PARAM_INT);
+            $comando->bindParam(':nombre',$this->nombre, PDO::PARAM_STR);
+            $comando->bindParam(':apellido1',$this->apellido1, PDO::PARAM_STR);
+            $comando->bindParam(':apellido2',$this->apellido2, PDO::PARAM_STR);
+            $comando->bindParam(':cedula',$this->cedula, PDO::PARAM_STR);
+            $comando->bindParam(':numerocuenta',$this->numerocuenta, PDO::PARAM_STR);
+            $comando->bindParam(':cuentacliente',$this->cuentacliente, PDO::PARAM_STR);
+            $comando->bindParam(':carnet',$this->carnet, PDO::PARAM_STR);
+            $comando->bindParam(':carrera',$this->carrera, PDO::PARAM_STR);
+            $comando->bindParam(':banco',$this->banco, PDO::PARAM_STR);
+            $comando->bindParam(':telefono',$this->telefono, PDO::PARAM_STR);
+            $comando->bindParam(':correo',$this->correo, PDO::PARAM_STR);
+            $comando->execute();
+            $transaction->commit();
+        }
+        catch (Exception $e) {
+             Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
+            $transaction->rollback();
+            return FALSE;
+        }
+        return TRUE;
+    }
+    
+    public function desvincular($idtbl_Proyectos,$carnet){
+            $conexion = Yii::app()->db;
+            $call = 'CALL desvincularAsistente(:asistente, :proyecto)';
+            $transaccion = $conexion->beginTransaction();
+            try {
+                $comando = $conexion->createCommand($call);
+                $comando->bindParam(':proyecto', $idtbl_Proyectos, PDO::PARAM_STR);
+                $comando->bindParam(':asistente', $carnet, PDO::PARAM_STR);
+                $comando->execute();
+                $transaccion->commit();
+            }//fin try
+            catch (Exception $e) {
+                Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
+                $transaccion->rollback();
+                return false;
+            }//fin catch
+            return true;
+    }
+// </editor-fold>
+    
+    /**
+     * Funcion de guardado.
+     * Crea un nuevo asistente en la base de datos. Usa el stored procedure 'registrarNuevoAsistente'
+     * y lo hace de forma transaccional.
+     * @param Periodos $pPeriodo El periodo inicial del asistente.
+     */
+    public function crear($pPeriodo) {
+        $conexion = Yii::app()->db;
+        $call = "CALL registrarNuevoAsistente(:nombre,:ape1,:ape2,:ced,:numc,:ccliente,:carnet,:carrera,:cod,:rol,:horas,:tel,:correo,:banco,'" . $pPeriodo->inicio . "','" . $pPeriodo->fin. "')";
+        $transaccion = Yii::app()->db->beginTransaction();
+        try {
+            $comando = $conexion->createCommand($call);
+            $comando->bindParam(':nombre', $this->nombre, PDO::PARAM_STR);
+            $comando->bindParam(':ape1', $this->apellido1, PDO::PARAM_STR);
+            $comando->bindParam(':ape2', $this->apellido2, PDO::PARAM_STR);
+            $comando->bindParam(':ced', $this->cedula, PDO::PARAM_STR);
+            $comando->bindParam(':numc', $this->numerocuenta, PDO::PARAM_STR);
+            $comando->bindParam(':ccliente', $this->cuentacliente, PDO::PARAM_STR);
+            $comando->bindParam(':carnet', $this->carnet, PDO::PARAM_STR);
+            $comando->bindParam(':carrera', $this->carrera, PDO::PARAM_STR);
+            $comando->bindParam(':cod', $this->codigo, PDO::PARAM_STR);
+            $comando->bindParam(':rol', $this->rol, PDO::PARAM_STR);
+            $comando->bindParam(':horas', $this->horas);
+            $comando->bindParam(':tel', $this->telefono, PDO::PARAM_STR);
+            $comando->bindParam(':correo', $this->correo, PDO::PARAM_STR);
+            $comando->bindParam(':banco', $this->banco, PDO::PARAM_STR);
+            $comando->execute();
+            $transaccion->commit();
+        } catch (Exception $e) {
+            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
+            $transaccion->rollback();
+            return false;
+        }
+        return true;
+    }//fin crear
+    
+    /**
+     * Cuenta las horas de asistencia que actualmente realiza este asistente en todos los proyectos.
+     * @return int Retorna el número total de horas de asistencia que hace en todos los proyectos.
+     */
+    public function contarHorasAsistenciaActuales() {
+        $call = 'CALL contarHorasAsistenciaActuales(:carnet)';
+        $comando = Yii::app()->db->createCommand($call);
+        $comando->bindParam(':carnet',$this->carnet,PDO::PARAM_STR);
+        $query = $comando->query();
+        if ($query->rowCount === 1) {
+            $read = $query->read();
+            return $read['horas'];
+        }
+        else
+            return 0;
+    }//fin contarHorasActuales
 
 }//fin clase Modelo Asistente
 
