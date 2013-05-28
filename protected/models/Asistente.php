@@ -315,55 +315,65 @@ class Asistente  extends CModel{
     }//fin contarHorasActuales
     
     /**
+     * Funciones que sirven para cambiar datos erróneos que se hayan ingresado. Sólo actualizan los campos sin afectar periodos.
+     */
+    // <editor-fold defaultstate="collapsed" desc="Correción de datos">
+    /**
      * Llama al stored procedure encargado de cambiar las horas que un asistente con cierto carnet cumple semanalmente en este proyecto.
      * El cambio no afecta el periodo de las horas.
      * @return boolean Retorna true si la operación fué exitosa y false en caso contrario.
      */
-        public function cambiarHorasAsistencia() {
-            $conexion = Yii::app()->db;
-            $call = "CALL cambiarHorasAsistencia(:carnet, :pkProyecto, :horas)";
-            $transaccion = $conexion->beginTransaction();
-            try {
-                $comando = $conexion->createCommand($call);
-                $comando->bindParam(':carnet', $this->carnet);
-                $comando->bindParam(':pkProyecto', $this->codigo);
-                $comando->bindParam(':horas', $this->horas);
-                $comando->execute();
-                $transaccion->commit();
-            }//fin try
-            catch (Exception $e) {
-                Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
-                $transaccion->rollback();
-                return false;
-            }//fin catch
-            return true;
-        }//fin cambiar horas asistencia
-        
-        /**
-         * Cambia el rol que desempeña un asistente en un proyecto.
-         * El cambio no afecta el periodo del rol.
-         * @return boolean True si la operación tuvo éxito y false de lo contrario.
+    public function cambiarHorasAsistencia() {
+        $conexion = Yii::app()->db;
+        $call = "CALL cambiarHorasAsistencia(:carnet, :pkProyecto, :horas)";
+        $transaccion = $conexion->beginTransaction();
+        try {
+            $comando = $conexion->createCommand($call);
+            $comando->bindParam(':carnet', $this->carnet);
+            $comando->bindParam(':pkProyecto', $this->codigo);
+            $comando->bindParam(':horas', $this->horas);
+            $comando->execute();
+            $transaccion->commit();
+        }//fin try
+        catch (Exception $e) {
+            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
+            $transaccion->rollback();
+            return false;
+        }//fin catch
+        return true;
+    }
+
+//fin cambiar horas asistencia
+
+
+    /**
+     * Cambia el rol que desempeña un asistente en un proyecto.
+     * El cambio no afecta el periodo del rol.
+     * @return boolean True si la operación tuvo éxito y false de lo contrario.
          */
-        public function cambiarRolProyecto(){
-            $conexion = Yii::app()->db;
-            $call = 'CALL cambiarRolAsistente(:pkProyecto, :carnet, :rol)';
-            $transaccion = $conexion->beginTransaction();
-            try {
-                $comando = $conexion->createCommand($call);
-                $comando->bindParam(':pkProyecto', $this->codigo, PDO::PARAM_INT);
-                $comando->bindParam(':carnet', $this->carnet, PDO::PARAM_STR);
-                $comando->bindParam(':rol', $this->rol, PDO::PARAM_STR);
-                $comando->execute();
-                $transaccion->commit();
-            }//fin try
-            catch (Exception $e) {
-                Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
-                $transaccion->rollback();
-                return false;
-            }//fin catch
-            return true;
-        }//cambia el rol del asistente en un proyecto.
-        
+    public function cambiarRolProyecto() {
+        $conexion = Yii::app()->db;
+        $call = 'CALL cambiarRolAsistente(:pkProyecto, :carnet, :rol)';
+        $transaccion = $conexion->beginTransaction();
+        try {
+            $comando = $conexion->createCommand($call);
+            $comando->bindParam(':pkProyecto', $this->codigo, PDO::PARAM_INT);
+            $comando->bindParam(':carnet', $this->carnet, PDO::PARAM_STR);
+            $comando->bindParam(':rol', $this->rol, PDO::PARAM_STR);
+            $comando->execute();
+            $transaccion->commit();
+        }//fin try
+        catch (Exception $e) {
+            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
+            $transaccion->rollback();
+            return false;
+        }//fin catch
+        return true;
+    }
+
+//cambia el rol del asistente en un proyecto.// </editor-fold>
+
+    
         /**
          * Cambia la fecha del fin de la asistencia por la que especifique el usuario. Los periodos de rol, horas y asistencia
          * son afectados en la base de datos.
