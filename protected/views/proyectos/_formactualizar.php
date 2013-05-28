@@ -7,7 +7,6 @@
         'clientOptions' => array('validateOnSubmit' => true),
             ));
     ?>
-<?php $BENEFIT_MULTIPLE_CHOICE = 'Mantenga presionada la tecla CTRL para seleccionar múltiples opciones';
 ?>
 
     <p class="note">Campos con <span class="required">*</span> son obligatorios.</p>
@@ -23,8 +22,52 @@
         <?php echo $form->labelEx($modelproyectos, 'nombre'); ?>
 <?php echo $form->textArea($modelproyectos, 'nombre', array('size' => 60, 'maxlength' => 500, 'style' => 'width:100%; heigth:100%;')); ?>
 <?php echo $form->error($modelproyectos, 'nombre'); ?>
-    </div>		
+    </div>
+    
+ <div class="row">
+        <?php echo $form->labelEx($modelproyectos, 'fecha_inicio_search'); ?>
+        <?php
+        $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+            'name' => 'fecha_inicio',
+            //'value' => $modelperiodos->attributes['inicio'],
+            'language' => 'es',
+            'options' => array(
+                'showAnim' => 'fold',
+                'dateFormat' => 'dd-mm-yy',
+                'changeYear' => true,
+                'changeMonth' => true,
+            ),
+            'htmlOptions' => array(
+                'readonly' => 'readonly'
+            ),
+        ));
+        ?>
+        <?php /*echo $form->error($modelperiodos, 'inicio');*/ ?>
 
+    </div>
+
+    <div class="row">
+        <?php echo $form->labelEx($modelproyectos, 'fecha_fin_search'); ?>
+        <?php
+        $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+            'name' => 'fecha_fin', //CHtml::activeName($modelperiodos, 'fin'),
+            //'value' => $modelperiodos->attributes['fin'],
+            'language' => 'es',
+            'options' => array(
+                'showAnim' => 'fold',
+                'dateFormat' => 'dd-mm-yy',
+                'changeYear' => true,
+                'changeMonth' => true,
+            ),
+            'htmlOptions' => array(
+                'readonly' => 'readonly'
+            ),
+        ));
+        ?>
+        <?php /*echo $form->error($modelperiodos, 'fin');*/ ?>
+
+    </div>
+    
     <div class="row">
         <?php echo $form->labelEx($modelproyectos, 'tipoproyecto'); ?>
         <?php echo $form->dropDownList($modelproyectos, 'tipoproyecto', CHtml::listData(TipoProyecto::model()->findAll(), 'idtbl_tipoproyecto', 'nombre'), array('empty' => 'Elija el tipo de proyecto', 'id' => 'Proyectos_tipoproyecto'))

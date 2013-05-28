@@ -8,9 +8,6 @@
             ));
     ?>
 
-<?php $BENEFIT_MULTIPLE_CHOICE = 'Mantenga presionada la tecla CTRL para seleccionar múltiples opciones';
-?>
-
     <div class="errorMessage" id="formResult"></div>
     <div id="AjaxLoader" style="display: none"><img src="<?php echo Yii::app()->request->baseUrl; ?>/images/spinner.gif"></img></div>
 
