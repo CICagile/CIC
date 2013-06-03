@@ -326,8 +326,8 @@ class ProyectosController extends Controller {
                         $modelproyectos->idtbl_Proyectos, $antiguos_sectores, $modelproyectos->idtbl_sectorbeneficiado);
                 
                 $result_periodos = $modelproyectos->actualizarFechasProyecto($modelproyectos->idtbl_Proyectos,
-                        $_POST['Proyectos']['fecha_inicio'],
-                        $_POST['Proyectos']['fecha_fin']);
+                        $_POST['fecha_inicio'],
+                        $_POST['fecha_fin']);
                 
              if($result_sectores && $result_periodos){   
                 Yii::log("Cambio exitoso de la información del proyecto: " . $modelproyectos->codigo, "info", "application.

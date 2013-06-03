@@ -6,6 +6,8 @@
         'enableAjaxValidation' => true,
         'clientOptions' => array('validateOnSubmit' => true),
             ));
+    
+    $modelproyectos->obtenerFechasInicialFinalProyecto($modelproyectos->codigo);
     ?>
 
 
@@ -30,6 +32,7 @@
         $this->widget('zii.widgets.jui.CJuiDatePicker', array(
             'name' => 'fecha_inicio',
             //'value' => $modelperiodos->attributes['inicio'],
+            'value' => $modelproyectos->inicio['inicio'],
             'language' => 'es',
             'options' => array(
                 'showAnim' => 'fold',
@@ -51,7 +54,7 @@
         <?php
         $this->widget('zii.widgets.jui.CJuiDatePicker', array(
             'name' => 'fecha_fin', //CHtml::activeName($modelperiodos, 'fin'),
-            //'value' => $modelperiodos->attributes['fin'],
+            'value' => $modelproyectos->fin['fin'],
             'language' => 'es',
             'options' => array(
                 'showAnim' => 'fold',
