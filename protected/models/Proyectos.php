@@ -315,7 +315,6 @@ class Proyectos extends CActiveRecord {
      * @return boolean resultado de la operación: true-> ejecutado correctamente, sino false
      */
     public function cancelarProyecto($pIdProyecto, $pFechaCancelacion, $pMotivoCancelacion) {
-        //$codigo_cancelado = Proyectos::$CODIGO_CANCELADO;
         $conexion = Yii::app()->db;
         $call = 'CALL actualizarPeriodoProyecto(:pIdProyecto, NULL, :pFechaFinal, :pNombreEstado, :pDetalleEstado)';
         $transaccion = Yii::app()->db->beginTransaction();
@@ -342,13 +341,11 @@ class Proyectos extends CActiveRecord {
 
     /**
      * Asocia las fechas de inicio y final con el modelo de proyectos
+     * No utilizado actualmente, borrar funcion o modificar este comentario de ser necesario
      * Se utiliza al actualizar un proyecto, para tener disponibles las fechas
      * @param int $pIdProyecto id del proyecto a buscar
      */
     public function obtenerFechasInicialFinalProyecto($pCodigoProyecto) {
-        //TODO: implement
-        //$this->$attrsFechas = resultado
-
         $conexion = Yii::app()->db;
         $call = 'CALL buscarFechaInicioProyecto(:pCodigo)';
 
@@ -363,12 +360,6 @@ class Proyectos extends CActiveRecord {
 
         $this->inicio = $fecha_inicio;
         $this->fin = $fecha_fin;
-
-        /*if ($fecha_inicio != null && $fecha_fin != null) {
-            return true;
-        } else {
-            return false;
-        }*/
     }
 
     /**

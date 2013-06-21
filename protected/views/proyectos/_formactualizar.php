@@ -7,7 +7,7 @@
         'clientOptions' => array('validateOnSubmit' => true),
             ));
     
-    $modelproyectos->obtenerProyectoconPeriodoActual($modelproyectos->idtbl_Proyectos); //obtenerFechasInicialFinalProyecto($modelproyectos->codigo);
+    $modelproyectos->obtenerProyectoconPeriodoActual($modelproyectos->idtbl_Proyectos);
     $modelperiodos->inicio = $modelproyectos->inicio;
     $modelperiodos->fin = $modelproyectos->fin;
     ?>
@@ -34,7 +34,6 @@
         $this->widget('zii.widgets.jui.CJuiDatePicker', array(
             'name' => CHtml::activeName($modelperiodos, 'inicio'),
             'value' => $modelperiodos->attributes['inicio'],
-           // 'value' => $modelproyectos->inicio['inicio'],
             'language' => 'es',
             'options' => array(
                 'showAnim' => 'fold',
@@ -56,7 +55,7 @@
         <?php
         $this->widget('zii.widgets.jui.CJuiDatePicker', array(
             'name' => CHtml::activeName($modelperiodos, 'fin'),
-            'value' => $modelperiodos->attributes['fin'],//$modelproyectos->fin['fin'],
+            'value' => $modelperiodos->attributes['fin'],
             'language' => 'es',
             'options' => array(
                 'showAnim' => 'fold',
