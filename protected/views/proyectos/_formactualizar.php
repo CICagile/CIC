@@ -7,9 +7,9 @@
         'clientOptions' => array('validateOnSubmit' => true),
             ));
     
-    $modelproyectos->obtenerFechasInicialFinalProyecto($modelproyectos->codigo);
-    $modelperiodos->inicio = $modelproyectos->inicio['inicio'];
-    $modelperiodos->fin = $modelproyectos->fin['fin'];
+    $modelproyectos->obtenerProyectoconPeriodoActual($modelproyectos->idtbl_Proyectos); //obtenerFechasInicialFinalProyecto($modelproyectos->codigo);
+    $modelperiodos->inicio = $modelproyectos->inicio;
+    $modelperiodos->fin = $modelproyectos->fin;
     ?>
 
 
@@ -94,6 +94,7 @@
     <?php echo $form->error($modelproyectos, 'idtbl_adscrito'); ?>
     </div>  
     
+    <div class="row">
     <?php
     
     //leftOption contiene todos los sectores beneficiados
@@ -112,6 +113,8 @@
         'doubleList' => $rightOption,
         'doubleName' => 'Proyectos[idtbl_sectorbeneficiado][]'));
     ?>
+    <?php echo $form->error($modelproyectos, 'idtbl_sectorbeneficiado'); ?>
+    </div>
     
 
 
