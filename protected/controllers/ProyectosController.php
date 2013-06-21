@@ -296,6 +296,7 @@ class ProyectosController extends Controller {
     public function actionActualizar($id) {
         $modelproyectos = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
         $antiguos_sectores = $modelproyectos->idtbl_sectorbeneficiado;
+        $modelperiodos = new Periodos;
         
         if ($modelproyectos === null)
             throw new CHttpException(404, 'La página solicitado no se ha encontrado.');
@@ -310,10 +311,10 @@ class ProyectosController extends Controller {
                 unset($modelproyectos->idtbl_sectorbeneficiado);*/
                 
             if ($modelproyectos->codigo == $_POST['Proyectos']['codigo']) {//Para este caso no procedo a validar el codigo del proyecto
-                echo CActiveForm::validate($modelproyectos, array('nombre', 'idtbl_objetivoproyecto', 'tipoproyecto', 'idtbl_adscrito', 'estado', 'idtbl_sectorbeneficiado'));
+                echo CActiveForm::validate(array($modelproyectos, $modelperiodos), array('nombre', 'idtbl_objetivoproyecto', 'tipoproyecto', 'idtbl_adscrito', 'estado', 'idtbl_sectorbeneficiado', 'inicio', 'fin'));
             }
             else
-                echo CActiveForm::validate($modelproyectos);
+                echo CActiveForm::validate(array($modelproyectos, $modelperiodos));
             
             Yii::app()->end();
         }
@@ -326,8 +327,8 @@ class ProyectosController extends Controller {
                         $modelproyectos->idtbl_Proyectos, $antiguos_sectores, $modelproyectos->idtbl_sectorbeneficiado);
                 
                 $result_periodos = $modelproyectos->actualizarFechasProyecto($modelproyectos->idtbl_Proyectos,
-                        $_POST['fecha_inicio'],
-                        $_POST['fecha_fin']);
+                        $_POST['Periodos']['inicio'],
+                        $_POST['Periodos']['fin']);
                 
              if($result_sectores && $result_periodos){   
                 Yii::log("Cambio exitoso de la información del proyecto: " . $modelproyectos->codigo, "info", "application.
@@ -342,7 +343,8 @@ class ProyectosController extends Controller {
         }
 
         $this->render('actualizar', array(
-            'modelproyectos' => $modelproyectos
+            'modelproyectos' => $modelproyectos,
+            'modelperiodos' => $modelperiodos,
         ));
     }
 

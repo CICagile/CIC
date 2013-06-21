@@ -8,11 +8,13 @@
             ));
     
     $modelproyectos->obtenerFechasInicialFinalProyecto($modelproyectos->codigo);
+    $modelperiodos->inicio = $modelproyectos->inicio['inicio'];
+    $modelperiodos->fin = $modelproyectos->fin['fin'];
     ?>
 
 
     <p class="note">Campos con <span class="required">*</span> son obligatorios.</p>
-        <?php echo $form->errorSummary(array($modelproyectos)); ?>
+        <?php echo $form->errorSummary(array($modelproyectos, $modelperiodos)); ?>
 
     <div class="row">
         <?php echo $form->labelEx($modelproyectos, 'codigo'); ?>
@@ -27,12 +29,12 @@
     </div>
     
  <div class="row">
-        <?php echo $form->labelEx($modelproyectos, 'fecha_inicio_search'); ?>
+        <?php echo $form->labelEx($modelperiodos, 'inicio'); ?>
         <?php
         $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-            'name' => 'fecha_inicio',
-            //'value' => $modelperiodos->attributes['inicio'],
-            'value' => $modelproyectos->inicio['inicio'],
+            'name' => CHtml::activeName($modelperiodos, 'inicio'),
+            'value' => $modelperiodos->attributes['inicio'],
+           // 'value' => $modelproyectos->inicio['inicio'],
             'language' => 'es',
             'options' => array(
                 'showAnim' => 'fold',
@@ -45,16 +47,16 @@
             ),
         ));
         ?>
-        <?php /*echo $form->error($modelperiodos, 'inicio');*/ ?>
+        <?php echo $form->error($modelperiodos, 'inicio'); ?>
 
     </div>
 
     <div class="row">
-        <?php echo $form->labelEx($modelproyectos, 'fecha_fin_search'); ?>
+        <?php echo $form->labelEx($modelperiodos, 'fin'); ?>
         <?php
         $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-            'name' => 'fecha_fin', //CHtml::activeName($modelperiodos, 'fin'),
-            'value' => $modelproyectos->fin['fin'],
+            'name' => CHtml::activeName($modelperiodos, 'fin'),
+            'value' => $modelperiodos->attributes['fin'],//$modelproyectos->fin['fin'],
             'language' => 'es',
             'options' => array(
                 'showAnim' => 'fold',
@@ -67,7 +69,7 @@
             ),
         ));
         ?>
-        <?php /*echo $form->error($modelperiodos, 'fin');*/ ?>
+        <?php echo $form->error($modelperiodos, 'fin'); ?>
 
     </div>
     
