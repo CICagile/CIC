@@ -68,14 +68,14 @@ $columns = array (
     array(
         'class'=>'CButtonColumn',
         'template'=>'{view}{update}',
-        /*'buttons'=>array(
+        'buttons'=>array(
             'guardar'=>array(
                 'label'=>'Guardar',
                 'imageUrl'=>Yii::app()->request->baseUrl . '/images/Save.png',
                 'url'=>'Yii::app()->createUrl("Proyectos/actualizarInfoAsistentes",
                     array("id"=>"'.$model->idtbl_Proyectos.'","rol"=>$data["rol"],"horas"=>$data["horas"],"fin"=>$data["fin"],"carnet"=>$data["carnet"]))',
             ),
-        ),*/
+        ),
         'viewButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("id"=>$data["carnet"]))',
         'viewButtonLabel' => 'Ver información detallada del asistente',
         'updateButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/updateDP", array("id"=>$data["carnet"]))',

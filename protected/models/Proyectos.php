@@ -43,6 +43,7 @@ class Proyectos extends CActiveRecord {
     public $inicio;
     public $fin;
     public $estado;
+    public $sector_beneficiado;
 
 // </editor-fold>
 // Rules, relations, attribute labels, search
@@ -255,10 +256,21 @@ class Proyectos extends CActiveRecord {
      * obtiene los proyectos activos 
      * @return resultado obtenido de la base de datos al realizar la ejecución
      */
-    public function obtenerProyectosActivos() {
+      public function obtenerProyectosActivos($sector) {
+        $call = 'CALL obtenerProyectosActivos(:sector)';
+        $conexion = Yii::app()->db;
+        $command = $conexion->createCommand($call);
+         $command->bindParam(':sector', $sector, PDO::PARAM_STR);
+        $result = $command->queryAll();
+        if (empty($result))
+            return null;
+        else
+            return $result;
+      }
+   /* public function obtenerProyectosActivos() {
         return Proyectos::executeNonTransactionalProcedureWithNoParameters('CALL obtenerProyectosActivos(NULL)');
-    }
-
+        
+    }*/
     /**
      * obtiene los proyectos cuyo periodo de vigencia ha expirado
      * @return objeto Proyecto que incluye los sectores beneficiados, pero en formato de lista html
