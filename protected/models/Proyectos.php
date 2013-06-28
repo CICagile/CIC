@@ -192,6 +192,7 @@ class Proyectos extends CActiveRecord {
             $comando->execute();
             $transaccion->commit();
         } catch (Exception $e) {
+            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Proyectos");
             $transaccion->rollback();
             return false;
         }
