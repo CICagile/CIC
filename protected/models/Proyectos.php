@@ -178,17 +178,8 @@ class Proyectos extends CActiveRecord {
      * @return boolean resultado de la transaccion
      */
     public function agregarAsistenteProyecto($pidproyecto, $pcarnet, $pidrol, $pfechaini, $pfechafin, $phoras) {
-        $codigo = $this->codigo;
-        $call = 'CALL haParticipadoAsistenteProyecto(:carnet,:proyecto)';
         $conexion = Yii::app()->db;
-        $comando = $conexion->createCommand($call);
-        $comando->bindParam(':carnet', $pcarnet, PDO::PARAM_STR);
-        $comando->bindParam(':proyecto', $codigo, PDO::PARAM_STR);
-        $resultado = $comando->query()->read();
-        $comando->cancel();
-        $call = $resultado['cuenta'] > 0 ? 
-                'CALL reagregarAsistenteProyecto(:carnet,:idproyecto,:horas,:idrol,:fechaini,:fechafin)' : 
-                'CALL agregarAsistenteProyecto(:idproyecto,:carnet,:idrol,:fechaini,:fechafin, :horas)';
+        $call = 'CALL agregarAsistenteProyecto(:idproyecto,:carnet,:idrol,:fechaini,:fechafin, :horas)';
         $transaccion = Yii::app()->db->beginTransaction();
         try {
             $comando = $conexion->createCommand($call);
