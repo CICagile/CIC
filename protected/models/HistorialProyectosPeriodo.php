@@ -4,8 +4,16 @@
  * This is the model class for table "tbl_historialproyectosperiodos".
  *
  * The followings are the available columns in table 'tbl_historialproyectosperiodos':
+ * @property integer $idtbl_historialproyectosperiodos
  * @property integer $idtbl_Proyectos
  * @property integer $idPeriodo
+ * @property integer $idtbl_EstadosProyecto
+ *
+ * The followings are the available model relations:
+ * @property Detalleestadoproyecto[] $detalleestadoproyectos
+ * @property Estadosproyecto $idtblEstadosProyecto
+ * @property Periodos $idPeriodo0
+ * @property Proyectos $idtblProyectos
  */
 class HistorialProyectosPeriodo extends CActiveRecord
 {
@@ -35,11 +43,11 @@ class HistorialProyectosPeriodo extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('idtbl_Proyectos, idPeriodo', 'required'),
-			array('idtbl_Proyectos, idPeriodo', 'numerical', 'integerOnly'=>true),
+			array('idtbl_Proyectos, idPeriodo, idtbl_EstadosProyecto', 'required'),
+			array('idtbl_Proyectos, idPeriodo, idtbl_EstadosProyecto', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('idtbl_Proyectos, idPeriodo', 'safe', 'on'=>'search'),
+			array('idtbl_historialproyectosperiodos, idtbl_Proyectos, idPeriodo, idtbl_EstadosProyecto', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -51,6 +59,10 @@ class HistorialProyectosPeriodo extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'detalleestadoproyectos' => array(self::HAS_MANY, 'Detalleestadoproyecto', 'idtbl_historialproyectosperiodos'),
+			'idtblEstadosProyecto' => array(self::BELONGS_TO, 'Estadosproyecto', 'idtbl_EstadosProyecto'),
+			'idPeriodo0' => array(self::BELONGS_TO, 'Periodos', 'idPeriodo'),
+			'idtblProyectos' => array(self::BELONGS_TO, 'Proyectos', 'idtbl_Proyectos'),
 		);
 	}
 
@@ -60,8 +72,10 @@ class HistorialProyectosPeriodo extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
+			'idtbl_historialproyectosperiodos' => 'Idtbl Historialproyectosperiodos',
 			'idtbl_Proyectos' => 'Idtbl Proyectos',
 			'idPeriodo' => 'Id Periodo',
+			'idtbl_EstadosProyecto' => 'Idtbl Estados Proyecto',
 		);
 	}
 
@@ -76,8 +90,10 @@ class HistorialProyectosPeriodo extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
+		$criteria->compare('idtbl_historialproyectosperiodos',$this->idtbl_historialproyectosperiodos);
 		$criteria->compare('idtbl_Proyectos',$this->idtbl_Proyectos);
 		$criteria->compare('idPeriodo',$this->idPeriodo);
+		$criteria->compare('idtbl_EstadosProyecto',$this->idtbl_EstadosProyecto);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

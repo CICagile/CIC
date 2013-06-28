@@ -23,7 +23,7 @@ $this->menu=array(
 <h3>Detalle del proyecto.</h3>
 
 <?php
-/*$sectores_beneficiados = Proyectos::listFormatBenefitedSectors($model->idtbl_sectorbeneficiado);
+$sectores_beneficiados = Proyectos::listFormatBenefitedSectors($model->idtbl_sectorbeneficiado);
 $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(            
@@ -48,7 +48,7 @@ $this->widget('zii.widgets.CDetailView', array(
                 ),
 	),
 )); 
-   */   
+    
 ?>
 
 <br/>
