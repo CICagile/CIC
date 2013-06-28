@@ -485,6 +485,7 @@ class ProyectosController extends Controller {
                         $historialproyectosperiodo = new HistorialProyectosPeriodo();
                         $historialproyectosperiodo->idtbl_Proyectos = $modelproyectos->idtbl_Proyectos;
                         $historialproyectosperiodo->idPeriodo = $periodoampliado->idPeriodo;
+                        $historialproyectosperiodo->idtbl_EstadosProyecto = $modelproyectos->ID_AMPLIADO;
 
                         $result = $historialproyectosperiodo->save(false);
 
