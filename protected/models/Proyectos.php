@@ -42,9 +42,8 @@ class Proyectos extends CActiveRecord {
     public $idperiodo;
     public $inicio;
     public $fin;
-    
     public $estado;
-
+    public $sector_beneficiado;
 
 // </editor-fold>
 // Rules, relations, attribute labels, search
@@ -57,7 +56,6 @@ class Proyectos extends CActiveRecord {
     public static function model($className = __CLASS__) {
         return parent::model($className);
     }
-
 
     /**
      * @return string the associated database table name
@@ -279,7 +277,6 @@ class Proyectos extends CActiveRecord {
      * y la información del periodo actual asociado al proyecto
      * @return un objeto proyecto con la información actualizada
      */
-
     public function obtenerProyectoconPeriodoActual($pIdProyecto) {
         $call = 'CALL obtenerProyectoConPeridoActual(:pIdProyecto)';
         $conexion = Yii::app()->db;
@@ -304,18 +301,29 @@ class Proyectos extends CActiveRecord {
      * obtiene los proyectos activos 
      * @return resultado obtenido de la base de datos al realizar la ejecución
      */
-    public function obtenerProyectosActivos() {
+      public function obtenerProyectosActivos($sector) {
+        $call = 'CALL obtenerProyectosActivos(:sector)';
+        $conexion = Yii::app()->db;
+        $command = $conexion->createCommand($call);
+         $command->bindParam(':sector', $sector, PDO::PARAM_STR);
+        $result = $command->queryAll();
+        if (empty($result))
+            return null;
+        else
+            return $result;
+      }
+   /* public function obtenerProyectosActivos() {
         return Proyectos::executeNonTransactionalProcedureWithNoParameters('CALL obtenerProyectosActivos(NULL)');
-    }
-
+        
+    }*/
     /**
      * obtiene los proyectos cuyo periodo de vigencia ha expirado
      * @return objeto Proyecto que incluye los sectores beneficiados, pero en formato de lista html
      */
     public function obtenerProyectosAntiguos() {
-        return Proyectos::executeNonTransactionalProcedureWithNoParameters('CALL obtenerProyectosAntiguos()'); 
+        return Proyectos::executeNonTransactionalProcedureWithNoParameters('CALL obtenerProyectosAntiguos()');
     }
-    
+
     /**
      * Establece idtbl_sectorbeneficiado con un arreglo de sectores beneficiados
      * @param Integer $pIdProyecto
@@ -325,13 +333,115 @@ class Proyectos extends CActiveRecord {
         $conexion = Yii::app()->db;
         $command = $conexion->createCommand($call);
         $command->bindParam(':pIdProyecto', $pIdProyecto, PDO::PARAM_INT);
-        $model = $command->queryAll();
+        $sectores = $command->queryAll();
 
-        if ($model == false)
+        if ($sectores == false)
             return null;
         else {
             $this->scenario = 'cargarModelo';
-            $this->idtbl_sectorbeneficiado = $model;
+            $this->idtbl_sectorbeneficiado = $sectores;
+        }
+    }
+
+    /**
+     * Actualiza el estado de un proyecto en la base de datos
+     * FALTA PONERLE LA TRANSACCION POR PROBLEMA EN ProyectosController.php
+     * @param type $pIdProyecto id del proyecto a modificar
+     * @param type $pEstado nombre del estado, e.g. "Aprobado", "Ampliado", "Modificado"
+     * @return boolean true->ejecutado correctamente, sino false
+     */
+    public function actualizarEstadoProyecto($pIdProyecto, $pEstado) {
+        $conexion = Yii::app()->db;
+        $call = 'CALL actualizarEstadoProyecto(:pIdProyecto, :pNombreEstado)';
+
+        $command = $conexion->createCommand($call);
+        $command->bindParam(':pIdProyecto', $pIdProyecto, PDO::PARAM_INT);
+        $command->bindParam(':pNombreEstado', $pEstado, PDO::PARAM_STR);
+        $command->execute();
+
+        return true;
+    }
+
+    /**
+     * Cambia la fecha de finalización de un proyecto, considerando un motivo que 
+     * se agrega a la tabla tbl_MotivoCancelacion
+     * 
+     * @param int $pIdProyecto
+     * @param date $pFechaCancelacion
+     * @param string $pMotivoCancelacion
+     * @return boolean resultado de la operación: true-> ejecutado correctamente, sino false
+     */
+    public function cancelarProyecto($pIdProyecto, $pFechaCancelacion, $pMotivoCancelacion) {
+        $conexion = Yii::app()->db;
+        $call = 'CALL actualizarPeriodoProyecto(:pIdProyecto, NULL, :pFechaFinal, :pNombreEstado, :pDetalleEstado)';
+        $transaccion = Yii::app()->db->beginTransaction();
+
+        try {
+            $command = $conexion->createCommand($call);
+            $command->bindParam(':pIdProyecto', $pIdProyecto, PDO::PARAM_INT);
+            $command->bindParam(':pFechaFinal', $pFechaCancelacion);
+            $command->bindParam(':pDetalleEstado', $pMotivoCancelacion, PDO::PARAM_STR);
+            $command->bindParam(':pNombreEstado', Proyectos::$CODIGO_CANCELADO, PDO::PARAM_STR);
+            $command->execute();
+            $transaccion->commit();
+        } catch (Exception $e) {
+            $transaccion->rollback();
+            Yii::log("Rollback al cancelar el proyecto " . $pIdProyecto->codigo, "error", "application.controllers.ModelProyectos");
+            return false;
+        }
+
+        /* TODO
+          asistentes issues
+         */
+        return true;
+    }
+
+    /**
+     * Asocia las fechas de inicio y final con el modelo de proyectos
+     * No utilizado actualmente, borrar funcion o modificar este comentario de ser necesario
+     * Se utiliza al actualizar un proyecto, para tener disponibles las fechas
+     * @param int $pIdProyecto id del proyecto a buscar
+     */
+    public function obtenerFechasInicialFinalProyecto($pCodigoProyecto) {
+        $conexion = Yii::app()->db;
+        $call = 'CALL buscarFechaInicioProyecto(:pCodigo)';
+
+        $command = $conexion->createCommand($call);
+        $command->bindParam(':pCodigo', $pCodigoProyecto, PDO::PARAM_STR);
+        $fecha_inicio = $command->queryRow();
+
+        $call = 'CALL buscarFechaFinProyecto(:pCodigo)';        
+        $command = $conexion->createCommand($call);
+        $command->bindParam(':pCodigo', $pCodigoProyecto, PDO::PARAM_STR);
+        $fecha_fin = $command->queryRow();
+
+        $this->inicio = $fecha_inicio;
+        $this->fin = $fecha_fin;
+    }
+
+    /**
+     * Actualiza las fechas de inicio y final de un proyecto
+     * @param int $pIdProyecto id del proyecto cuyas fechas actualizaremos
+     * @param date $pFechaInicio nueva fecha inicial
+     * @param date $pFechaFin nueva fecha final
+     */
+    public function actualizarFechasProyecto($pIdProyecto, $pFechaInicio, $pFechaFin) {
+        $conexion = Yii::app()->db;
+        $call = 'CALL actualizarPeriodoProyecto(:pIdProyecto, :pFechaInicial, :pFechaFinal, NULL, NULL)';
+        $transaccion = Yii::app()->db->beginTransaction();
+
+        try {
+            $command = $conexion->createCommand($call);
+            $command->bindParam(':pIdProyecto', $pIdProyecto, PDO::PARAM_INT);
+            $command->bindParam(':pFechaInicial', $pFechaInicio);
+            $command->bindParam(':pFechaFinal', $pFechaFin);
+            $command->execute();
+            $transaccion->commit();
+            return true;
+        } catch (Exception $e) {
+            $transaccion->rollback();
+            Yii::log("Rollback al cancelar el proyecto " . $pIdProyecto->codigo, "error", "application.controllers.ModelProyectos");
+            return false;
         }
     }
 
@@ -349,7 +459,8 @@ class Proyectos extends CActiveRecord {
             $html_list .= '</ul>';
             return $html_list;
         }
-        else return "No se ha especificado";
+        else
+            return "No se ha especificado";
     }
 
     // <editor-fold defaultstate="collapsed" desc="Common private functions~">
@@ -373,11 +484,12 @@ class Proyectos extends CActiveRecord {
     // </editor-fold>
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Constants">
-    public $LABEL_APROBADO = 'Aprobado';
-    public $LABEL_AMPLIADO = 'Ampliado';
-    
-    public $CODIGO_APROBADO = "0";
-    public $CODIGO_AMPLIADO = "1";
+    //public $LABEL_APROBADO = 'Aprobado';
+    //public $LABEL_AMPLIADO = 'Ampliado';
+
+    public $CODIGO_APROBADO = "Aprobado";
+    public $CODIGO_AMPLIADO = "Ampliado";
+    public static $CODIGO_CANCELADO = "Cancelado";
 
 // </editor-fold>
 }

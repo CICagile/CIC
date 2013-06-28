@@ -37,9 +37,17 @@ $this->menu=array(
                       'header' => 'Fecha fin',
                       'name' => 'fin',                      
                 ), 
-                array(
+                  array(
+                      'header' => 'Sector Beneficiado',
+                      'type'=>'raw',
+                      'name' => 'sectorbeneficiado', 
+                      /*'value'=>'CHtml::dropDownList("setorbeneficiado[$row]", $data["sectorbeneficiado"],
+                       CHtml::listData(SectorBeneficiado::model()->findAll(), "nombre", "nombre"), array("empty"=>"Elija un sector beneficiado"))',*/
+                      
+                ),
+             array(
                     'class'=>'CButtonColumn',
-                    'template'=>'{view}{update}{agregarasistente}{ampliar}',
+                    'template'=>'{view}{update}{agregarasistente}{ampliar}{cancelar}',
                     'viewButtonUrl'=>'Yii::app()->controller->createUrl("proyectos/ver", array("id"=>$data["idtbl_Proyectos"]))',
                     'viewButtonLabel' => 'Ver información detallada del proyecto.',
                     'updateButtonUrl'=>'Yii::app()->controller->createUrl("proyectos/actualizar", array("id"=>$data["idtbl_Proyectos"]))',
@@ -61,8 +69,8 @@ $this->menu=array(
                         'cancelar' => array
                         (
                           'label'=>'Cancelar el proyecto.',  
-                          'imageUrl'=>Yii::app()->request->baseUrl.'/images/cancelp.png',
-                          'url'=>'Yii::app()->createUrl("proyectos/ampliarproyecto", array("id"=>$data["idtbl_Proyectos"]))',  
+                          'imageUrl'=>Yii::app()->request->baseUrl.'/images/cancelbp.png',
+                          'url'=>'Yii::app()->createUrl("proyectos/cancelarproyecto", array("id"=>$data["idtbl_Proyectos"]))',  
                         ),
                     ),
                     

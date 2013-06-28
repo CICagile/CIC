@@ -298,6 +298,7 @@ class ProyectosController extends Controller {
     public function actionActualizar($id) {
         $modelproyectos = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
         $antiguos_sectores = $modelproyectos->idtbl_sectorbeneficiado;
+        $modelperiodos = new Periodos;
         
         if ($modelproyectos === null)
             throw new CHttpException(404, 'La página solicitado no se ha encontrado.');
@@ -312,10 +313,10 @@ class ProyectosController extends Controller {
                 unset($modelproyectos->idtbl_sectorbeneficiado);*/
                 
             if ($modelproyectos->codigo == $_POST['Proyectos']['codigo']) {//Para este caso no procedo a validar el codigo del proyecto
-                echo CActiveForm::validate($modelproyectos, array('nombre', 'idtbl_objetivoproyecto', 'tipoproyecto', 'idtbl_adscrito', 'estado', 'idtbl_sectorbeneficiado'));
+                echo CActiveForm::validate(array($modelproyectos, $modelperiodos), array('nombre', 'idtbl_objetivoproyecto', 'tipoproyecto', 'idtbl_adscrito', 'estado', 'idtbl_sectorbeneficiado', 'inicio', 'fin'));
             }
             else
-                echo CActiveForm::validate($modelproyectos);
+                echo CActiveForm::validate(array($modelproyectos, $modelperiodos));
             
             Yii::app()->end();
         }
@@ -326,7 +327,12 @@ class ProyectosController extends Controller {
             if ($result) {
                 $result_sectores = ProyectosSectorbeneficiado::updateBenefitedSectors(
                         $modelproyectos->idtbl_Proyectos, $antiguos_sectores, $modelproyectos->idtbl_sectorbeneficiado);
-             if($result_sectores){   
+                
+                $result_periodos = $modelproyectos->actualizarFechasProyecto($modelproyectos->idtbl_Proyectos,
+                        $_POST['Periodos']['inicio'],
+                        $_POST['Periodos']['fin']);
+                
+             if($result_sectores && $result_periodos){   
                 Yii::log("Cambio exitoso de la información del proyecto: " . $modelproyectos->codigo, "info", "application.
     controllers.ProyectosController");
                 $this->redirect(array('ver', 'id' => $modelproyectos->idtbl_Proyectos));
@@ -339,7 +345,8 @@ class ProyectosController extends Controller {
         }
 
         $this->render('actualizar', array(
-            'modelproyectos' => $modelproyectos
+            'modelproyectos' => $modelproyectos,
+            'modelperiodos' => $modelperiodos,
         ));
     }
 
@@ -362,13 +369,19 @@ class ProyectosController extends Controller {
     public function actionAdmin() {
         // Create filter model and set properties
         $filtersForm = new FiltersForm;
+        $atributos=array(5);
         $dataProvider = new CArrayDataProvider(array());
-
+        
         if (isset($_GET['FiltersForm']))
             $filtersForm->filters = $_GET['FiltersForm'];
-
-        $modelos = Proyectos::model()->obtenerProyectosActivos();
-
+        $atributos = $filtersForm->getAttributes();
+        $long = sizeof($atributos['filters']);
+        if ($long == 0)
+            $modelos = Proyectos::model()->obtenerProyectosActivos(NULL);
+        else if ($atributos['filters']['sectorbeneficiado'] == "")
+            $modelos = Proyectos::model()->obtenerProyectosActivos(NULL); 
+        else
+            $modelos = Proyectos::model()->obtenerProyectosActivos($atributos['filters']['sectorbeneficiado']);
         if (!$modelos == null) {
             $filteredData = $filtersForm->filter($modelos);
             $dataProvider = new CArrayDataProvider($filteredData, array(
@@ -377,10 +390,12 @@ class ProyectosController extends Controller {
                         'sort' => array(
                             'attributes' => array(
                                 'idtbl_Proyectos',
-                                'codigo',
+                               // 'codigo',
                                 'nombre',
                                 'inicio',
                                 'fin',
+                                'sectorbeneficiado',
+                                
                             ),
                         ),
                         'pagination' => array(
@@ -431,7 +446,11 @@ class ProyectosController extends Controller {
             'dataProvider' => $dataProvider,
         ));
     }
-
+/**
+ *
+ * @param type $id
+ * @throws CHttpException 
+ */
     public function actionAmpliarProyecto($id) {
         $modelproyectos = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
         if ($modelproyectos === null)
@@ -471,6 +490,8 @@ class ProyectosController extends Controller {
                         if ($result) {
 
                             //Cambiamos el estado del proyecto
+                            $modelproyectos->actualizarEstadoProyecto(
+                                    $modelproyectos->idtbl_Proyectos, $modelproyectos->CODIGO_AMPLIADO);
                             $modelproyectos->estado = $modelproyectos->CODIGO_AMPLIADO;
 
                             $result = $modelproyectos->save(false);
@@ -540,6 +561,59 @@ class ProyectosController extends Controller {
         ));
     }
 
+    
+    /**
+     * Permite cancelar un proyecto, con las acciones correspondientes para los asistentes
+     * e investigadores asociados
+     * @param type $id corresponde al id del proyecto a cancelar
+     * @throws CHttpException 
+     */
+     public function actionCancelarProyecto($id) {
+        $modelproyectos = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
+        if ($modelproyectos === null)
+            throw new CHttpException(404, 'La página solicitado no se ha encontrado.');
+
+        if (Yii::app()->request->isAjaxRequest && isset($_POST["cancelacion"])
+                && isset($_POST["detalle_motivo"])) {
+
+            if (trim($_POST["cancelacion"]) == NULL) {
+                $response = array(
+                    'ok' => false,
+                    'msg' => 'Debe seleccionar la fecha de cancelación.',
+                );
+            }else if(trim($_POST["detalle_motivo"]) == NULL){ 
+                $response = array(
+                    'ok' => false,
+                    'msg' => 'Debe indicar un motivo para la cancelación.',
+                );
+            }else {
+                $fecha_cancelacion = $_POST["cancelacion"] . '';
+                $motivo_cancelacion = $_POST["detalle_motivo"];
+                
+                if($modelproyectos->cancelarProyecto($id, $fecha_cancelacion, $motivo_cancelacion)){
+                        
+                
+                $response = array(
+                                    'ok' => true,
+                                    'msg' => "Proyecto cancelado exitosamente", //$fecha_cancelacion . ' ' . $motivo_cancelacion,
+                                );
+                }else{
+                    $response = array(
+                                    'ok' => false,
+                                    'msg' => "Error al cancelar el proyecto",
+                                );
+                }
+            }
+
+            echo CJSON::encode($response);
+            Yii::app()->end();
+        }
+
+        $this->render('cancelar', array(
+            'modelproyectos' => $modelproyectos
+        ));
+    }
+    
     /**
      * Returns the data model based on the primary key given in the GET variable.
      * If the data model is not found, an HTTP exception will be raised.
