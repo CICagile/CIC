@@ -137,6 +137,37 @@ class Investigador  extends CModel{
     
 // </editor-fold>
     
+      
+    // <editor-fold defaultstate="collapsed" desc="Busqueda">
+    
+       public function search(){
+           $filtersForm=new FiltersForm;
+            if (isset($_GET['FiltersForm']))
+                $filtersForm->filters=$_GET['FiltersForm'];
+           $call = 'CALL verInvestigador()';
+           $rawData=Yii::app()->db->createCommand($call)->queryAll();
+           $filteredData=$filtersForm->filter($rawData);
+           $dataProvider=new CArrayDataProvider($filteredData, array(
+                'keyField'=>'Cedula',
+                'id'=>'user',
+                'sort'=>array(
+                    'attributes'=>array(
+                        'cedula',
+                        'nombre',
+                        'apellido1',
+                        'apellido2',
+                        'telefono',
+                        'correo',
+                    ),
+                ),
+                'pagination'=>array(
+                    'pageSize'=>10,
+                ),
+            ));
+            return $dataProvider;
+    }
+    // </editor-fold>
+    
     /**
      * @return array Etiquetas personalizadas de los atributos del modelo.
      */

@@ -1,5 +1,5 @@
 <?php
-//$model = new Asistente();
+$model = new Investigador();
 $this->breadcrumbs=array(
 	'Investigadores'=>array('admin'),
 	'Lista de Investigadores',
@@ -9,11 +9,11 @@ $this->menu=array(
 	array('label'=>'Registrar nuevo investigador', 'url'=>array('create')),
 	
 );
-/*/Arreglo con las columnas que se mostrarán en el CGridView
+//Arreglo con las columnas que se mostrarán en el CGridView
 $columns = array(
     array(
-        'header'=>CHtml::encode('Carnet'),
-        'name'=>'carnet',
+        'header'=>CHtml::encode('Cedula'),
+        'name'=>'Cedula',
     ),
     array(
         'header'=>CHtml::encode('Nombre'),
@@ -35,14 +35,12 @@ $columns = array(
         'header'=>CHtml::encode('Correo Electrónico'),
         'name'=>'correo',
     ),
-    array(
+   /*array(
         'class'=>'CButtonColumn',
         'template'=>'{view}{update}',
-        'viewButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("id"=>$data["carnet"]))',
-        'viewButtonLabel' => 'Ver información detallada del asistente.',
-        'updateButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/updateDP", array("id"=>$data["carnet"]))',
-        'updateButtonLabel' => 'Actualizar información del asistente.',
-    ),
+       'viewButtonUrl'=>'Yii::app()->controller->createUrl("Investigador/view", array("id"=>$data["Cedula"]))',
+        'viewButtonLabel' => 'Ver información detallada del investigador.',
+    ),*/
    );
 
 Yii::app()->clientScript->registerScript('search', "$('.search-button').click(function()
@@ -51,20 +49,19 @@ Yii::app()->clientScript->registerScript('search', "$('.search-button').click(fu
 	return false;
     });
     $('.search-form form').submit(function(){
-	$.fn.yiiGridView.update('asistente-grid', {
+	$.fn.yiiGridView.update('investigador-grid', {
 		data: $(this).serialize()
 	});
 	return false;
 });
-");
-*/?>
+");?>
 
-<!--h1>Lista de Asistentes</h1--!>
+<h1>Lista de Investigadores</h1>
 
-<?php /*$this->widget('zii.widgets.grid.CGridView', array(
-        'id'=>'asistente-grid',
+<?php $this->widget('zii.widgets.grid.CGridView', array(
+        'id'=>'investigador-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$filtersForm,
 	'columns'=>$columns,
-       )); */
+       )); 
 ?>
