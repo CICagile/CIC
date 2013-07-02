@@ -82,6 +82,12 @@
 	</div>
         
         <div class="row">
+		<?php echo $form->labelEx($model,'ingreso'); ?>
+		<?php echo $form->textField($model,'ingreso',array('size'=>4,'maxlength'=>4)); ?>
+		<?php echo $form->error($model,'ingreso'); ?>
+	</div>
+        
+        <div class="row">
 		<?php echo $form->labelEx($model,'proyecto'); ?>
                 <?php $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
                         'attribute'=>'proyecto',

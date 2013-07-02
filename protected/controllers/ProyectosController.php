@@ -27,7 +27,7 @@ class ProyectosController extends Controller {
         return array(
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
                 'actions' => array('ver', 'ActualizarInfoAsistentes', 'crear', 'actualizar', 'agregarasistente', 'AsistenteAutoComplete',
-                    'ValidarAgregarAsistente', 'adminantiguos', 'verantiguos', 'ampliarproyecto', 'cancelarproyecto'),
+                    'ValidarAgregarAsistente', 'adminantiguos', 'verantiguos', 'ampliarproyecto', 'agregarInvestigador', 'investigadorAutoComplete', 'cancelarproyecto'),
                 'users' => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -46,6 +46,7 @@ class ProyectosController extends Controller {
 
     public function actionVer($id) {
         $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
+        $model->scenario = 'ver';
         //Proyectos::model()->obtenerSectoresBeneficiadosConFormato();
         if ($model === null)
             throw new CHttpException(404, 'La página solicitado no se ha encontrado.');
@@ -82,6 +83,7 @@ class ProyectosController extends Controller {
         $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
         $dataProvider = $model->buscarAsistentesActivosDeProyecto();
         $errores = array();
+        $model->scenario = 'editar-asistentes';
 
         if (isset($_POST['horas']) && isset($_POST['rol']) && isset($_POST['fin'])) {
             $datos_asistentes = $dataProvider->data;
@@ -95,7 +97,7 @@ class ProyectosController extends Controller {
                 $dataProvider = $model->buscarAsistentesActivosDeProyecto(); //vuelve a cargar los datos desde la base en caso de que algunos datos sí se hayan actualizado.
         }//fin si asistente se modificó.
 
-        $this->render('viewEditable', array(
+        $this->render('ver', array(
             'model' => $model,
             'dataProvider' => $dataProvider,
             'errores' => $errores,
@@ -254,6 +256,7 @@ class ProyectosController extends Controller {
                         $historialproyectoperiodo = new HistorialProyectosPeriodo();
                         $historialproyectoperiodo->idPeriodo = $modelperiodos->idPeriodo;
                         $historialproyectoperiodo->idtbl_Proyectos = $modelproyectos->idtbl_Proyectos;
+                        $historialproyectoperiodo->idtbl_EstadosProyecto = $modelproyectos->CODIGO_APROBADO;
 
                         $resultado = $resultado ? $historialproyectoperiodo->save() : $resultado;
 
@@ -296,6 +299,7 @@ class ProyectosController extends Controller {
     public function actionActualizar($id) {
         $modelproyectos = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
         $antiguos_sectores = $modelproyectos->idtbl_sectorbeneficiado;
+        $modelperiodos = new Periodos;
         
         if ($modelproyectos === null)
             throw new CHttpException(404, 'La página solicitado no se ha encontrado.');
@@ -310,10 +314,10 @@ class ProyectosController extends Controller {
                 unset($modelproyectos->idtbl_sectorbeneficiado);*/
                 
             if ($modelproyectos->codigo == $_POST['Proyectos']['codigo']) {//Para este caso no procedo a validar el codigo del proyecto
-                echo CActiveForm::validate($modelproyectos, array('nombre', 'idtbl_objetivoproyecto', 'tipoproyecto', 'idtbl_adscrito', 'estado', 'idtbl_sectorbeneficiado'));
+                echo CActiveForm::validate(array($modelproyectos, $modelperiodos), array('nombre', 'idtbl_objetivoproyecto', 'tipoproyecto', 'idtbl_adscrito', 'estado', 'idtbl_sectorbeneficiado', 'inicio', 'fin'));
             }
             else
-                echo CActiveForm::validate($modelproyectos);
+                echo CActiveForm::validate(array($modelproyectos, $modelperiodos));
             
             Yii::app()->end();
         }
@@ -324,7 +328,12 @@ class ProyectosController extends Controller {
             if ($result) {
                 $result_sectores = ProyectosSectorbeneficiado::updateBenefitedSectors(
                         $modelproyectos->idtbl_Proyectos, $antiguos_sectores, $modelproyectos->idtbl_sectorbeneficiado);
-             if($result_sectores){   
+                
+                $result_periodos = $modelproyectos->actualizarFechasProyecto($modelproyectos->idtbl_Proyectos,
+                        $_POST['Periodos']['inicio'],
+                        $_POST['Periodos']['fin']);
+                
+             if($result_sectores && $result_periodos){   
                 Yii::log("Cambio exitoso de la información del proyecto: " . $modelproyectos->codigo, "info", "application.
     controllers.ProyectosController");
                 $this->redirect(array('ver', 'id' => $modelproyectos->idtbl_Proyectos));
@@ -337,7 +346,8 @@ class ProyectosController extends Controller {
         }
 
         $this->render('actualizar', array(
-            'modelproyectos' => $modelproyectos
+            'modelproyectos' => $modelproyectos,
+            'modelperiodos' => $modelperiodos,
         ));
     }
 
@@ -445,7 +455,7 @@ class ProyectosController extends Controller {
     public function actionAmpliarProyecto($id) {
         $modelproyectos = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
         if ($modelproyectos === null)
-            throw new CHttpException(404, 'La página solicitado no se ha encontrado.');
+            throw new CHttpException(404, 'La página solicitaao no se ha encontrado.');
 
         if (Yii::app()->request->isAjaxRequest && isset($_POST["ampliacion"])) {
 
@@ -475,6 +485,7 @@ class ProyectosController extends Controller {
                         $historialproyectosperiodo = new HistorialProyectosPeriodo();
                         $historialproyectosperiodo->idtbl_Proyectos = $modelproyectos->idtbl_Proyectos;
                         $historialproyectosperiodo->idPeriodo = $periodoampliado->idPeriodo;
+                        $historialproyectosperiodo->idtbl_EstadosProyecto = $modelproyectos->ID_AMPLIADO;
 
                         $result = $historialproyectosperiodo->save(false);
 
@@ -483,7 +494,7 @@ class ProyectosController extends Controller {
                             //Cambiamos el estado del proyecto
                             $modelproyectos->actualizarEstadoProyecto(
                                     $modelproyectos->idtbl_Proyectos, $modelproyectos->CODIGO_AMPLIADO);
-                            //$modelproyectos->estado = $modelproyectos->CODIGO_AMPLIADO;
+                            $modelproyectos->estado = $modelproyectos->CODIGO_AMPLIADO;
 
                             $result = $modelproyectos->save(false);
 
@@ -578,96 +589,22 @@ class ProyectosController extends Controller {
                     'msg' => 'Debe indicar un motivo para la cancelación.',
                 );
             }else {
-                $fecha_cancelacion = $_POST["cancelacion"];
+                $fecha_cancelacion = $_POST["cancelacion"] . '';
+                $motivo_cancelacion = $_POST["detalle_motivo"];
+                
+                if($modelproyectos->cancelarProyecto($id, $fecha_cancelacion, $motivo_cancelacion)){
+                        
                 
                 $response = array(
                                     'ok' => true,
-                                    'msg' => $_POST["cancelacion"] . ' ' . $_POST["detalle_motivo"],
+                                    'msg' => "Proyecto cancelado exitosamente", //$fecha_cancelacion . ' ' . $motivo_cancelacion,
                                 );
-                /*
-                $transaction = Yii::app()->db->beginTransaction();
-                $periodoantiguo = Periodos::model()->findByPk($modelproyectos->idperiodo);
-                $periodoantiguo->fin = date("Y-m-d");
-                $result = $periodoantiguo->save(false);
-
-                if ($result) {
-
-                    $periodoampliado = new Periodos();
-                    $periodoampliado->inicio = $periodoantiguo->inicio;
-                    $periodoampliado->fin = $this->FechaPhptoMysql($fecha_cancelacion);
-
-                    $result = $periodoampliado->save(false);
-
-                    if ($result) {
-
-                        $historialproyectosperiodo = new HistorialProyectosPeriodo();
-                        $historialproyectosperiodo->idtbl_Proyectos = $modelproyectos->idtbl_Proyectos;
-                        $historialproyectosperiodo->idPeriodo = $periodoampliado->idPeriodo;
-
-                        $result = $historialproyectosperiodo->save(false);
-
-                        if ($result) {
-
-                            //Cambiamos el estado del proyecto
-                            $modelproyectos->actualizarEstadoProyecto(
-                                    $modelproyectos->idtbl_Proyectos, $modelproyectos->CODIGO_AMPLIADO);
-
-                            $result = $modelproyectos->save(false);
-
-                            if ($result) {
-                                $transaction->commit();
-                                Yii::log("Exito ampliando el proyecto con el codigo: " . $modelproyectos->codigo . " con el periodo " . $periodoampliado->idPeriodo, "info", "application.
-                                controllers.ProyectosController");
-                                $response = array(
-                                    'ok' => true,
-                                    'msg' => 'El proyecto se ha ampliado con éxito.',
-                                );
-                                echo CJSON::encode($response);
-                                Yii::app()->end();
-                            } else {
-                                $transaction->rollBack();
-                                Yii::log("Rollback al intentar ampliar al proyecto con el codigo: " . $modelproyectos->codigo, "warning", "application.
-                                controllers.ProyectosController");
-                                $response = array(
-                                    'ok' => false,
-                                    'msg' => 'Ha ocurrido un inconveniente al intentar ampliar el proyecto.',
-                                );
-                                echo CJSON::encode($response);
-                                Yii::app()->end();
-                            }
-                        } else {
-                            $transaction->rollBack();
-                            Yii::log("Rollback al intentar ampliar al proyecto con el codigo: " . $modelproyectos->codigo, "warning", "application.
-                            controllers.ProyectosController");
-                            $response = array(
-                                'ok' => false,
-                                'msg' => 'Ha ocurrido un inconveniente al intentar ampliar el proyecto.',
-                            );
-                            echo CJSON::encode($response);
-                            Yii::app()->end();
-                        }
-                    } else {
-                        $transaction->rollBack();
-                        Yii::log("Rollback al intentar ampliar al proyecto con el codigo: " . $modelproyectos->codigo, "warning", "application.
-                        controllers.ProyectosController");
-                        $response = array(
-                            'ok' => false,
-                            'msg' => 'Ha ocurrido un inconveniente al intentar ampliar el proyecto.',
-                        );
-                        echo CJSON::encode($response);
-                        Yii::app()->end();
-                    }
-                } else {
-                    $transaction->rollBack();
-                    Yii::log("Rollback al intentar ampliar al proyecto con el codigo: " . $modelproyectos->codigo, "warning", "application.
-                    controllers.ProyectosController");
+                }else{
                     $response = array(
-                        'ok' => false,
-                        'msg' => 'Ha ocurrido un inconveniente al intentar ampliar el proyecto.',
-                    );
-                    echo CJSON::encode($response);
-                    Yii::app()->end();
-                }*/
+                                    'ok' => false,
+                                    'msg' => "Error al cancelar el proyecto",
+                                );
+                }
             }
 
             echo CJSON::encode($response);
@@ -693,40 +630,82 @@ class ProyectosController extends Controller {
 
     public function actionAgregarAsistente($id) {
         $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
+        $asistente = new Asistente;
+        $periodo = new Periodos;
+        
+        $asistente->scenario = 'agregar';
 
-        if (isset($_POST['Proyectos'])) {
-
-            $carnet = $_POST['asistente'];
-            $idrol = $this->obtenerIdRol($_POST['rol']);
-            $fechainicio = $this->FechaPhptoMysql($_POST['inicio']);
-            $fechafin = $this->FechaPhptoMysql($_POST['fin']);
-            $horas = $_POST['horas'];
-
-            if ($model->agregarAsistenteProyecto($model->idtbl_Proyectos, $carnet, $idrol, $fechainicio, $fechafin, $horas)) {
-                Yii::log("Asociacion exitosa del asistente: " . $carnet . " al proyecto: " . $model->idtbl_Proyectos, "info", "application.
-    controllers.ProyectosController");
-                $response = array(
-                    'ok' => true,
-                    'msg' => "Asociacion exitosa del asistente: " . $carnet . " al proyecto: " . $model->codigo
-                );
-                echo CJSON::encode($response);
-                Yii::app()->end();
-            } else {
-                Yii::log("Error al asociar asistente: " . $carnet . " al proyecto: " . $model->idtbl_Proyectos, "warning", "application.
-    controllers.ProyectosController");
-                $response = array(
-                    'ok' => false,
-                    'msg' => "Ha ocurrido un error al intentar asociar el asistente " . $carnet . " al proyecto: " . $model->codigo
-                );
-                echo CJSON::encode($response);
-                Yii::app()->end();
-            }
-        }
+        if (isset($_POST['Proyectos']) && isset($_POST['Asistente']) && isset($_POST['Periodos'])) {
+            $asistente->attributes = $_POST['Asistente'];
+            $asistente->codigo = $model->codigo;
+            $periodo->attributes = $_POST['Periodos'];
+            $horas_nuevas = $asistente->horas;
+            $asistente->horas = 0;
+            if (!$asistente->validarActualizacionDeHoras($horas_nuevas))
+                $asistente->horas = $horas_nuevas;
+            $periodo->validarFechaInicioAsistencia($model->codigo);
+            $periodo->validarFechaFinAsistencia($model->codigo);
+            if ($asistente->validate(NULL,false) && $periodo->validate(NULL, false)) {
+                if ($model->agregarAsistenteProyecto($model->idtbl_Proyectos, $asistente->carnet, $asistente->rol, $periodo->inicio, $periodo->fin, $asistente->horas))
+                        $this->redirect(array('ver','id'=>$model->idtbl_Proyectos));
+                else
+                        throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
+            }//fin si los modelos son validos
+        }//fin si hizo el POST
 
         $this->render('agregarasistente', array(
             'model' => $model,
+            'asistente' => $asistente,
+            'periodo' => $periodo,
         ));
     }
+    
+    /**
+     * Agrega un investigador a un proyecto.
+     * @param int $id PK del proyecto en la BD.
+     */
+    public function actionAgregarInvestigador($id){
+        $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
+        $investigador = new Investigador;
+        $periodo = new Periodos;
+        $investigador->scenario = 'agregar-investigador';
+        $datos_horas = array();
+        
+        if (isset($_POST['Proyectos']) && isset($_POST['Investigador']) && isset($_POST['Periodos']) && isset($_POST['formhoras'])){
+            $horas = array();
+            $datos_horas = $_POST['formhoras']['formhoras'];
+            $investigador->attributes = $_POST['Investigador'];
+            $periodo->attributes = $_POST['Periodos'];
+            foreach ($datos_horas as $dato)
+            {
+                if (array_key_exists($dato['tipo_horas'],$horas))
+                {
+                    $investigador->addError('horas',  'El tipo de horas no se puede repetir.');//TODO: Esto se debería validar dentro del modelo.
+                    break;
+                }//fin si el tipo de horas se repite.
+                else
+                {
+                    $horas[$dato['tipo_horas']] = $dato['cantidad_horas'];
+                }//fin si el tipo de horas no se repite
+            }//fin for
+            $investigador->horas = $horas;
+            $periodo->validarFechaInicioAsistencia($model->codigo);
+            $periodo->validarFechaFinAsistencia($model->codigo);
+            if($investigador->validate(NULL,false) && $periodo->validate(NULL,false)){
+                if ($model->agregarInvestigadorProyecto($model->codigo, $investigador->cedula, $investigador->rol, $periodo->inicio, $periodo->fin, $investigador->horas))
+                        $this->redirect(array('ver','id'=>$model->idtbl_Proyectos));
+                else
+                            throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
+            }
+        }//fin si hizo click en el boton Agregar
+        
+        $this->render('agregarinvestigador', array(
+            'model' => $model,
+            'investigador' => $investigador,
+            'periodo' => $periodo,
+            'horas' => array_values($datos_horas),
+        ));
+    }//fin agregar investigador
 
     public function actionAsistenteAutoComplete() {
         if (isset($_GET['term'])) {
@@ -759,305 +738,29 @@ class ProyectosController extends Controller {
             echo CJSON::encode($return_array);
         }
     }
-
-    public function actionValidarAgregarAsistente() {
-        if (isset($_POST['action'])) {
-            $action = $_POST['action'];
-            $response = array();
-            if ($action == 'validate_form_agregar') {//validate form on submit
-                $responseform = array();
-                $datacod = $_POST['codigo'];
-                $carne = $_POST['carne'];
-                $responseform[] = $this->validarAsistente($carne, $datacod);
-                $rol = $_POST['rol'];
-                $responseform[] = $this->validarRol($rol);
-                $datafechainicio = $_POST['fecha_inicio'];
-                $responseform[] = $this->validarFechaInicio($datafechainicio, $datacod);
-                $datafechafin = $_POST['fecha_fin'];
-                $responseform[] = $this->validarFechaFin($datafechafin, $datacod, $datafechainicio);
-                $horas = $_POST['horas'];
-                $responseform[] = $this->validarHorasAsistencia($horas, $carne);
-
-                $response = array('ok' => true, 'msg' => '');
-                foreach ($responseform as $res) {
-                    if (!$res['ok']) {
-                        $response['ok'] = false;
-                        $response['msg'] = $response['msg'] . "</br>-" . $res['msg'];
-                    }
-                }
-            } else if ($action == 'validate_asistente') {
-                if (isset($_POST['carne'])) {
-                    $data = $_POST['carne'];
-                    $datacod = $_POST['codigo'];
-                    $response = $this->validarAsistente($data, $datacod);
-                }
-            }//validate-asistente                
-            else if ($action == 'validate_rol') {
-                if (isset($_POST['rol'])) {
-                    $data = $_POST['rol'];
-                    $response = $this->validarRol($data);
-                }
-            }//validate-rol
-            else if ($action == 'validate_fecha_inicio') {
-                if (isset($_POST['fecha_inicio']) && isset($_POST['codigo'])) {
-                    $datafechainicio = $_POST['fecha_inicio'];
-                    $datacod = $_POST['codigo'];
-                    $response = $this->validarFechaInicio($datafechainicio, $datacod);
-                }
-            }//validate-fecha-inicio
-            else if ($action == 'validate_fecha_fin') {
-                if (isset($_POST['fecha_fin']) && isset($_POST['fecha_inicio']) && isset($_POST['codigo'])) {
-                    $datafechainicio = $_POST['fecha_inicio'];
-                    $datafechafin = $_POST['fecha_fin'];
-                    $datacod = $_POST['codigo'];
-                    $response = $this->validarFechaFin($datafechafin, $datacod, $datafechainicio);
-                }
-            }//validate-fecha-fin 
-            else if ($action == 'validate_horas') {
-                if (isset($_POST['horas'])) {
-                    $data = $_POST['horas'];
-                    $response = $this->validarHorasAsistencia($data);
-                }
-            }//validate-horas
-            echo CJSON::encode($response);
-        }
-    }
-
-    protected function validarHorasAsistencia($phoras, $pcarne = null) {
-        $response = array();
-        define('MIN_VALUE', 1);   //Cantidad de horas minimas de asistencia por semana
-        define('MAX_VALUE', 20);  //Cantidad de horas maximas de asistencia por semana
-        $horas = trim($phoras);
-        if ($horas == '') {//Si no ingresa el numero de horas
-            $response = array(
-                'ok' => false,
-                'msg' => "Ingrese la cantidad de horas");
-        } else if (!is_numeric($horas)) {
-            $response = array(
-                'ok' => false,
-                'msg' => "Debe ingresar un numero.");
-        } else if ($this->convertirStringNumerico($horas) < MIN_VALUE || $this->convertirStringNumerico($horas) > MAX_VALUE) {
-            $response = array(
-                'ok' => false,
-                'msg' => "La cantidad de horas semanales debe estar en un rango de 1-20 horas.");
-        } else if (!$this->validarMediaHora($horas)) {
-            $response = array(
-                'ok' => false,
-                'msg' => "Solo puede ingresar horas completas o con media hora.");
-        } else if (!is_null($pcarne)) {//Esta validacion solo se ejecuta en submit action del form
-            if ($this->validarCantidadHorasAcumuladas($horas, $pcarne) > MAX_VALUE) {
-                $response = array(
-                    'ok' => false,
-                    'msg' => "La cantidad de horas que desea agregar a este Asistente excede la cantidad horas maximas permitidas (" . MAX_VALUE . ") en distintos proyectos del CIC por semana.");
-            } else {
-                $response = array(
-                    'ok' => true,
-                    'msg' => "Valido.");
-            }
-        } else {
-            $response = array(
-                'ok' => true,
-                'msg' => "Valido.");
-        }
-        return $response;
-    }
-
-    protected function validarFechaInicio($pfecha, $pidproyecto) {
-        $response = array();
-        $fecha = trim($pfecha);
-        $codigo = trim($pidproyecto);
-        if ($fecha == '') {
-            $response = array(
-                'ok' => false,
-                'msg' => "La fecha de inicio no puede estar en blanco.");
-        } else if (!$this->validarFechaRangoAsistenciaProyecto($fecha, $codigo)) {
-            $response = array(
-                'ok' => false,
-                'msg' => "La fecha de inicio asistencia seleccionada no cumple con el periodo del proyecto.");
-        } else {
-            $response = array(
-                'ok' => true,
-                'msg' => "Valido.");
-        }
-        return $response;
-    }
-
-    protected function validarFechaFin($pfechafin, $pidproyecto, $pfechainicio) {
-        $response = array();
-        $codigo = trim($pidproyecto);
-        if ($pfechafin == '') {
-            $response = array(
-                'ok' => false,
-                'msg' => "La fecha de finalización no puede estar en blanco.");
-        } else if (strtotime($pfechafin) <= strtotime($pfechainicio)) {
-            $response = array(
-                'ok' => false,
-                'msg' => "La fecha de finalización de la asistencia no puede ser menor o igual que la fecha de inicio.");
-        } else if (!$this->validarFechaRangoAsistenciaProyecto($pfechafin, $codigo)) {
-            $response = array(
-                'ok' => false,
-                'msg' => "La fecha de finalizacion de asistencia seleccionada no cumple con el periodo del proyecto.");
-        } else {
-            $response = array(
-                'ok' => true,
-                'msg' => "Valido.");
-        }
-        return $response;
-    }
-
-    protected function validarAsistente($pcarne, $pidproyecto) {
-        $response = array();
-        $carne = trim($pcarne);
-        $idproyecto = trim($pidproyecto);
-        if ($carne == '') {
-            $response = array(
-                'ok' => false,
-                'msg' => "Indique el carnet del asistente.");
-        } else if (!$this->existeCarnet($carne)) {
-            $response = array(
-                'ok' => false,
-                'msg' => "El carnet #" . $carne . " no corresponde a ningun asistente.");
-        } else if ($this->existeAsistenteProyecto($carne, $idproyecto)) {
-            $response = array(
-                'ok' => false,
-                'msg' => "El asistente con carnet #" . $carne . " ya esta vinculado a este proyecto");
-        } else {
-            $response = array(
-                'ok' => true,
-                'msg' => "Valido.");
-        }
-        return $response;
-    }
-
-    protected function validarRol($prol) {
-        $response = array();
-        $rol = trim($prol);
-        if ($rol == '') {//Si no selecciona un rol
-            $response = array(
-                'ok' => false,
-                'msg' => "Seleccione un rol.");
-        } else if (!$this->existeRol($rol)) {
-            $response = array(
-                'ok' => false,
-                'msg' => "El rol que ha seleccionado es invalido.");
-        } else {
-            $response = array(
-                'ok' => true,
-                'msg' => "Valido.");
-        }
-        return $response;
-    }
-
-    protected function existeRol($prol) { //Permite determinar si un Rol existe a partir del nombre del rol.
-        $criteria = new CDbCriteria();
-        $criteria->compare('nombre', $prol);
-        $roles = RolAsistente::model()->findAll($criteria);
-        if (count($roles) == 0)
-            return false;
-        else
-            return true;
-    }
-
-    protected function obtenerIdRol($prol) {
-        $criteria = new CDbCriteria();
-        $criteria->compare('nombre', $prol);
-        $roles = RolAsistente::model()->findAll($criteria);
-        $idrol = $prol;
-        foreach ($roles as $rol) {
-            $idrol = $rol->idtbl_RolesAsistentes;
-        }
-        return $idrol;
-    }
-
-    protected function existeCarnet($carne) {//Permite determinar si un Carnet existe.
-        $criteria = new CDbCriteria();
-        $criteria->compare('carnet', $carne);
-        $result = Asistentes::model()->findAll($criteria);
-        if (count($result) == 0)
-            return false;
-        else
-            return true;
-    }
-
-    protected function existeAsistenteProyecto($pcarne, $idproyecto) {
-
-        $res = false;
-        $model = new Proyectos();
-        $model->idtbl_Proyectos = $idproyecto;
-        $arraydataprovider = $model->buscarAsistentesActivosDeProyecto();
-        $asistentes = $arraydataprovider->rawData;
-
-        foreach ($asistentes as $asistente) {
-            if ($asistente['carnet'] == $pcarne) {
-                $res = true;
-            }
-        }
-
-        return $res;
-
-        /* Esta versión no valida si el asistente está activo por lo que no deja asociar a un asistente
-         * que alguna vez estuvo activo, luego inactivo y luego se quiere reintegrar al proyecto. */
-//        $asistente = Asistentes::model()->findByAttributes(array('carnet' => $pcarne));        
-//        $proyectosasistente = $asistente->proyectos;
-//        $res = false;
-//        foreach ($proyectosasistente as $proy)
-//        {
-//            if($proy->idtbl_Proyectos == $idproyecto)
-//            {
-//                $res = true;
-//            }
-//        }             
-    }
-
-    protected function validarFechaRangoAsistenciaProyecto($pfecha, $pidproyecto) {
-        $proyecto = Proyectos::model()->obtenerProyectoconPeriodoActual($pidproyecto);
-        $fecha = $this->FechaPhptoMysql($pfecha);
-
-        $proyectoini = $proyecto->inicio;
-        $proyectofin = $proyecto->fin;
-
-        if (strtotime($proyectoini) > strtotime($fecha)) {
-            return false;
-        } else if (strtotime($proyectofin) < strtotime($fecha)) {
-            return false;
-        }
-        else
-            return true;
-    }
-
-    protected function convertirStringNumerico($pstring) {//Para utilizar esta funcion se debe comprobar con anticipacion que el var es numerico
-        if ((float) $pstring != (int) $pstring)
-            return (float) $pstring;
-        else
-            return (int) $pstring;
-    }
-
-    protected function validarMediaHora($pnumber) {
-        if (preg_match("/^[0-9]+(\.5)?$/", $pnumber))
-            return true;
-        else
-            return false;
-    }
-
-    protected function validarCantidadHorasAcumuladas($phoras, $pcarne) {
-        define('ZERO_VALUE', 0);
-        $asistente = Asistentes::model()->findByAttributes(array('carnet' => $pcarne));
-        if (!is_null($asistente)) {
-            $horasacumuladas = $asistente->verificarHorasAcumuladasProyectos($asistente->idtbl_Asistentes);
-            if (is_null($horasacumuladas)) {
-                $phoras = ZERO_VALUE;
-                return $phoras;
-            } else {
-                $phoras = $phoras + current($horasacumuladas);
-                return $phoras;
-            }
-        } else {
-            $phoras = ZERO_VALUE;
-            return $phoras;
-        }
-    }
     
-        
+    /**
+         * Busca el codigo de la variable GET en la BD para autocompletar un campo de texto. 
+         */
+        public function actionInvestigadorAutoComplete()
+        {
+            if (isset($_GET['term'])) {
+                $conexion = Yii::app()->db;
+                $call = 'CALL buscarinvestigadorPorCedula2(:ced)';
+                $comando = $conexion->createCommand($call);
+                $comando->bindParam(':ced',$_GET['term'],PDO::PARAM_STR);
+                $result_set = $comando->query();
+                $investigadores = $result_set->readAll();
+                $return_array = array();
+                foreach($investigadores as $investigador) {
+                    $return_array[] = array(
+                        'label'=>$investigador['nombre'],
+                        'value'=>$investigador['cedula'],
+                    );
+                }
+                echo CJSON::encode($return_array);
+            }
+        }//fin investigador autocomplete
 
     /**
      * Performs the AJAX validation.

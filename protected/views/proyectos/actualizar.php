@@ -7,11 +7,11 @@ $this->breadcrumbs=array(
 
 $this->menu=array(
         array('label'=>'Ver información de este proyecto', 'url'=>array('ver', 'id'=>$modelproyectos->idtbl_Proyectos)),
-	array('label'=>'Ver Proyectos', 'url'=>array('admin')),        	
+	array('label'=>'Ver Proyecto', 'url'=>array('ver','id'=>$modelproyectos->idtbl_Proyectos)),    	
 );
 ?>
 
 <h2>Actualizar Proyecto <?php echo $modelproyectos->codigo; ?></h2>
 
 
-<?php echo $this->renderPartial('_formactualizar', array('modelproyectos'=>$modelproyectos)); ?>
+<?php echo $this->renderPartial('_formactualizar', array('modelproyectos'=>$modelproyectos, 'modelperiodos'=>$modelperiodos)); ?>

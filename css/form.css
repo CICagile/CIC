@@ -43,6 +43,7 @@ div.form textarea,
 div.form select
 {
 	margin: 0.2em 0 0.5em 0;
+        min-height: 1.5em;
 }
 
 div.form fieldset
@@ -172,3 +173,18 @@ div.wide.form .buttons, div.wide.form .hint, div.wide.form .errorMessage
 	clear: left;
 	padding-left: 110px;
 }
+
+option{
+    padding: 0.15em 0;
+}
+/*
+ * Option transfer select
+ */
+#select_right, #select_left{
+    min-width: 16em;
+    max-height: 18em;
+}
+#options_left, #options_right, #options_left_all, #options_right_all{
+    min-width: 8em;
+}
+

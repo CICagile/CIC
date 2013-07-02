@@ -1,36 +1,34 @@
 <?php
 /* @var $this ProyectosController */
 /* @var $model Proyectos */
-/* @var $form CActiveForm */
-
-
+/* @var $asistente Asistente */
+/* @var $periodo Periodos */
 $this->breadcrumbs=array(
 	'Proyectos'=>array('admin'),
-	'Agregar Asistente',
+	$model->codigo,
 );
 
-$this->menu=array(
-	array('label'=>'Ver Proyectos', 'url'=>array('admin')),	      
-	
+$this->menu=array(	
+        array('label'=>'Actualizar información del proyecto', 'url'=>array('actualizar', 'id'=>$model->idtbl_Proyectos)),
+	array('label'=>'Agregar investigador', 'url'=>array('agregarinvestigador', 'id'=>$model->idtbl_Proyectos)),
+        array('label'=>'Ver Proyecto', 'url'=>array('ver','id'=>$model->idtbl_Proyectos)),
+        array('label'=>'Nuevo Proyecto', 'url'=>array('crear')),
 );
 ?>
 
 <div class="form">
-
 <?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'proyectos-agregarasistente-form',
-	'enableAjaxValidation'=>false,
+	'id'=>'agregarasistente-form',
+	'enableAjaxValidation'=>true,
 )); ?>
         
     <h2>Agregar asistente al Proyecto: <?php echo $model->codigo?></h2>
     <p>Periodo del proyecto: <?php echo $this->FechaMysqltoPhp($model->inicio)
     .' hasta '.$this->FechaMysqltoPhp($model->fin)?></p>
-   
-    <p id="idproyecto" style="display:none"><?php echo $model->idtbl_Proyectos?></p>
-        
-        <div class="errorSummary" id="errorSummary" style="display:none"></div>	
 
-	<p class="note">Campos con <span class="required">*</span> son requeridos.</p>	
+	<p class="note">Campos con <span class="required">*</span> son obligatorios.</p>
+        
+        <?php echo $form->errorSummary(array($periodo,$asistente),'Se han detectado los siguientes errores:'); ?>
         
         <div class="row">
         <label for="codigo">Proyecto</label>  
@@ -38,272 +36,79 @@ $this->menu=array(
 	</div>
                
         <div class="row">
-        <label for="asistente">Asistente<span class="required">* </span><span class="note">(Numero de carnet)</span></label>
-        <?php           
-        $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
-            'attribute'=>'asistente',
-            'name'=>'asistente', 
-            'id'=>'asistente',
+        <label for="asistente">Asistente (carnet)<span class="required">* </span></label>
+        <?php $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
+            'attribute'=>'carnet',
+            'model'=>$asistente,
             'source'=>$this->createUrl('proyectos/asistenteautocomplete'),
-            // additional javascript options for the autocomplete plugin
             'options'=>array(
-                    'showAnim'=>'fold',
+                'showAnim'=>'fold',
             ),
-        ));
-        ?>
-         <div class="errorMessage" id="asistente_error"></div>	
+            'htmlOptions'=>array(
+                'size'=>20, 'maxlength'=>20
+            )
+            )); ?>
+        <?php echo $form->error($asistente,'carnet'); ?>
         </div>
         
         
-         <div class="row">
-		<label for="rol">Rol del asistente<span class="required">*</span></label>
-		<?php echo $form->dropDownList(RolAsistente::model(), 'nombre',
-                        CHtml::listData(RolAsistente::model()->findAll(), 'nombre', 'nombre'), array('empty'=>'Elija un rol', 'id'=>'rol', 'name' => 'rol')) ?>		 
-                 <div class="errorMessage" id="rol_error" name="rol_error"></div>
-	</div>
+        <div class="row">
+            <?php echo $form->labelEx($asistente,'rol') ?>
+            <?php echo $form->dropDownList($asistente, 'rol',
+                        CHtml::listData(RolAsistente::model()->findAll(), 'idtbl_RolesAsistentes', 'nombre'), array('empty'=>'Elija un rol')) ?>
+            <?php echo $form->error($asistente,'rol', NULL, $enableAjaxValidation=false); ?>
+        </div>
         
         <div class="row">
-		<label for="inicio">Fecha inicio de la asistencia<span class="required">*</span></label>
+		<?php echo $form->labelEx($periodo,'inicio'); ?>
 		<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-                        'name' => 'inicio',
-                        'id' => 'inicio',
-                        'value' => '',
+                        'name' => CHtml::activeName($periodo, 'inicio'),
+                        'value' => $periodo->attributes['inicio'],
                         'language' => 'es',
                         'options' => array(                            
                             'showAnim'=>'fold',
                             'dateFormat'=>'dd-mm-yy',
                             'changeYear'=>true,
-                            'changeMonth'=>true,                           
+                            'changeMonth'=>true,
                         ),
                         'htmlOptions'=>array(                            
-                            'readonly' => 'readonly',                            
+                            'readonly' => 'readonly'
                         ),
                     ));?>
-                 <div class="errorMessage" id="inicio_error"></div>
+                <?php echo $form->error($periodo,'inicio'); ?>
+		
 	</div>
         
         <div class="row">
-		<label for="fin">Fecha fin de la asistencia<span class="required">*</span></label>
+		<?php echo $form->labelEx($periodo,'fin'); ?>
 		<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-                        'name' => 'fin',
-                        'id' => 'fin',
-                        'value' => '',
+                        'name' => CHtml::activeName($periodo, 'fin'),
+                        'value' => $periodo->attributes['fin'],
                         'language' => 'es',
                         'options' => array(                            
                             'showAnim'=>'fold',
                             'dateFormat'=>'dd-mm-yy',
                             'changeYear'=>true,
-                            'changeMonth'=>true,                           
+                            'changeMonth'=>true,
                         ),
                         'htmlOptions'=>array(                            
-                            'readonly' => 'readonly',                            
+                            'readonly' => 'readonly'
                         ),
                     ));?>
-                 <div class="errorMessage" id="fin_error"></div>
+                <?php echo $form->error($periodo,'fin'); ?>
 	</div>
         
         <div class="row">
-            <label for="horas">Cantidad de horas semanales<span class="required">*</span></label>
-            <input type="text" name="horas" id="horas">
-            <div class="errorMessage" id="horas_error"></div>
-	</div>
+            <?php echo $form->labelEx($asistente,'horas'); ?>
+            <?php echo $form->textField($asistente,'horas',array('size'=>4,'maxlength'=>4)); ?>
+            <?php echo $form->error($asistente,'horas'); ?>
+        </div>
 
+	
 	<div class="row buttons">
 		<?php echo CHtml::submitButton('Agregar'); ?>
-                <p id="infovalidacion"></p>
 	</div>
 
 <?php $this->endWidget(); ?>
 
 </div><!-- form -->
-
-<script type="text/javascript">
-    $(document).ready(function() {        
-        
-        $('#horas').val('20');
-        
-        $("#rol").blur(function() {
-            $("#rol_error").html('');
-            $("#errorSummary").html('');  
-            $("#errorSummary").css('display', 'none');
-            var form_data = {
-                action: 'validate_rol',
-                rol: $(this).val()
-            };
-            $.ajax({
-                type: "POST",
-                url: "../ValidarAgregarAsistente",
-                data: form_data,
-                dataType: 'json',
-                success: function(result) {
-                    if(result.ok){
-                        //falta agregar los  CSS de valido.
-                    }
-                    else{
-                        $("#rol_error").html(result.msg);
-                        //falta agregar los  CSS de invalido.
-                    }				
-                }
-            });
-	});
-        
-        $("#asistente").focusout(function() {
-            $("#asistente_error").html('');
-            $("#errorSummary").html('');  
-            $("#errorSummary").css('display', 'none');
-            var form_data = {
-                action: 'validate_asistente',
-                carne: $(this).val(),
-                codigo: $("#idproyecto").html()
-            };
-            $.ajax({
-                type: "POST",
-                url: "../ValidarAgregarAsistente",
-                data: form_data,
-                dataType: 'json',
-                success: function(result) {
-                    if(result.ok){
-                        //falta agregar los  CSS de valido.
-                    }
-                    else{
-                        $("#asistente_error").html(result.msg);
-                        //falta agregar los  CSS de invalido.
-                    }				
-                }
-            });
-        });
-        
-        $("#inicio").change(function() {
-            $("#inicio_error").html('');  
-            $("#errorSummary").html('');  
-            $("#errorSummary").css('display', 'none');
-            var form_data = {
-                action: 'validate_fecha_inicio',
-                fecha_inicio: $(this).val(),
-                codigo: $("#idproyecto").html()
-            };
-            $.ajax({
-                type: "POST",
-                url: "../ValidarAgregarAsistente",
-                data: form_data,
-                dataType: 'json',
-                success: function(result) {
-                    if(result.ok){
-                        //falta agregar los  CSS de valido.
-                    }
-                    else{
-                        $("#inicio_error").html(result.msg);
-                        //falta agregar los  CSS de invalido.
-                    }				
-                }
-            });
-	});
-        
-        $("#fin").change(function() {
-            $("#fin_error").html('');  
-            $("#errorSummary").html('');  
-            $("#errorSummary").css('display', 'none');
-            var form_data = {
-                action: 'validate_fecha_fin',
-                fecha_fin: $(this).val(),
-                fecha_inicio: $('#inicio').val(),
-                codigo: $("#idproyecto").html()
-            };
-            $.ajax({
-                type: "POST",
-                url: "../ValidarAgregarAsistente",
-                data: form_data,
-                dataType: 'json',
-                success: function(result) {
-                    if(result.ok){
-                        //falta agregar los  CSS de valido.
-                    }
-                    else{
-                        $("#fin_error").html(result.msg);
-                        //falta agregar los  CSS de invalido.
-                    }				
-                }
-            });
-	});
-        
-         $("#horas").blur(function() {
-            $("#horas_error").html('');
-            $("#errorSummary").html('');  
-            $("#errorSummary").css('display', 'none');
-            var form_data = {
-                action: 'validate_horas',
-                horas: $(this).val()
-            };
-            $.ajax({
-                type: "POST",
-                url: "../ValidarAgregarAsistente",
-                data: form_data,
-                dataType: 'json',
-                success: function(result) {
-                    if(result.ok){
-                        //falta agregar los  CSS de valido.
-                    }
-                    else{
-                        $("#horas_error").html(result.msg);
-                        //falta agregar los  CSS de invalido.
-                    }				
-                }
-            });
-	}); 
-        
-        $("#proyectos-agregarasistente-form").submit(function(e){
-        e.preventDefault();    
-        
-        $("#errorSummary").html('');  
-        $("#errorSummary").css('display', 'none');
-        $("#infovalidacion").html('Validando datos...');  
-        
-        var form_data = {
-            action: 'validate_form_agregar',
-            rol: $("#rol").val(),            
-            horas: $("#horas").val(),
-            fecha_inicio: $("#inicio").val(),
-            fecha_fin: $("#fin").val(),
-            codigo: $("#idproyecto").html(),
-            carne: $("#asistente").val()
-        };
-        $.ajax({
-            type: "POST",
-            url: "../ValidarAgregarAsistente",
-            data: form_data,
-            dataType: 'json',
-            success: function(result) {
-                if(result.ok){
-                        $("#infovalidacion").html('');
-                        var idproyecto = $("#idproyecto").html(); 
-                        var form_data = $("#proyectos-agregarasistente-form").serialize();
-                        $.ajax({              
-                        type: "POST",
-                        url: "../AgregarAsistente/" + idproyecto,
-                        data: form_data,
-                        dataType: 'json',
-                        success: function(result) {  
-                            if(result.ok){
-                                alert(result.msg);
-                                var url = "../ver/" + idproyecto;    
-                                $(location).attr('href',url);
-                            }
-                            else
-                               alert(result.msg); 
-                        }
-                        });
-                }
-                else{
-                    $("#errorSummary").css('display', '');
-                    $("#errorSummary").html(result.msg);
-                    $("#infovalidacion").html('');  
-                    //falta agregar los  CSS de invalido.
-                }				
-            }
-        });
-
-        });
-});
-</script>
-
-

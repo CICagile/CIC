@@ -8,7 +8,7 @@
  */
 class Investigador  extends CModel{
     
-    //Atributos
+    //Propiedades
     public $nombre;
     public $apellido1;
     public $apellido2;
@@ -19,7 +19,15 @@ class Investigador  extends CModel{
     public $grado;
     public $proyecto;
     public $rol;
+    
+    /**
+     * Año en que ingresó el investigador al ITCR. 
+     */
+    public $ingreso;
+    
     public $horas = null;
+    
+    // <editor-fold defaultstate="collapsed" desc="Validaciones">
     
     /**
      *@return array Reglas de validación para los atributos del modelo. 
@@ -27,7 +35,8 @@ class Investigador  extends CModel{
     public function rules()
     {
         return array(
-            array('nombre,apellido1,cedula,correo,experiencia,grado,proyecto,rol','required','on'=>'nuevo','message'=>'{attribute} no puede dejarse en blanco.'),
+            array('cedula,rol', 'required', 'on'=>'agregar-investigador','message'=>'{attribute} no puede dejarse en blanco.'),
+            array('nombre,apellido1,correo,experiencia,grado,proyecto,rol,cedula','required','on'=>'nuevo','message'=>'{attribute} no puede dejarse en blanco.'),
             array('nombre,apellido1,apellido2,proyecto','length','max'=>20),
             array('cedula','length','min'=>9,'max'=>20),
             array('telefono, correo', 'length', 'max'=>40),
@@ -36,6 +45,8 @@ class Investigador  extends CModel{
             array('nombre, apellido1, apellido2, ', 'match', 'pattern'=>'/^[\p{L} ]+$/u'),
             array('proyecto','validarCodigoProyecto','on'=>'nuevo'),
             array('horas','validarHorasInvestigador','on'=>'nuevo','min'=>1),
+            array('horas','validarHorasInvestigador','on'=>'agregar-investigador','min'=>1),
+            array('ingreso','numerical','integerOnly'=>true, 'min'=>1901, 'max'=>2155, 'message' => '{attribute} es inválido.'),
         );
     }//fin rules
     
@@ -124,6 +135,8 @@ class Investigador  extends CModel{
         }//fin si el carnet es diferente
     }//fin validar cedula unica
     
+// </editor-fold>
+    
     /**
      * @return array Etiquetas personalizadas de los atributos del modelo.
      */
@@ -140,7 +153,8 @@ class Investigador  extends CModel{
             'grado' => 'Grado Académico',
             'proyecto' => 'Código del Proyecto',
             'rol' => 'Rol del Investigador',
-            'horas' => 'Horas'
+            'horas' => 'Horas',
+            'ingreso' => 'Año de ingreso al ITCR',
         );
     }//fin attribute labels
     
@@ -160,7 +174,8 @@ class Investigador  extends CModel{
             'grado',
             'proyecto',
             'rol',
-            'horas'
+            'horas',
+            'ingreso',
         );
     }//fin attribute names
 
@@ -208,7 +223,7 @@ class Investigador  extends CModel{
     public function crear($pPeriodo)
     {
         $conexion = Yii::app()->db;
-        $call = "CALL registrarInvestigador(:nombre,:ape1,:ape2,:ced,:correo,:tel,:exp,:grado,:cod,:rol,'" . $pPeriodo->inicio . "','" . $pPeriodo->fin. "')";
+        $call = "CALL registrarInvestigador(:nombre,:ape1,:ape2,:ced,:correo,:tel,:exp,:grado,:cod,:rol,'" . $pPeriodo->inicio . "','" . $pPeriodo->fin. "', :ingreso)";
         $transaccion = Yii::app()->db->beginTransaction();
         try {
             $comando = $conexion->createCommand($call);
@@ -222,6 +237,7 @@ class Investigador  extends CModel{
             $comando->bindParam(':grado', $this->grado, PDO::PARAM_STR);
             $comando->bindParam(':cod', $this->proyecto, PDO::PARAM_STR);
             $comando->bindParam(':rol', $this->rol, PDO::PARAM_STR);
+            $comando->bindParam(':ingreso', $this->ingreso);
             $comando->execute();
             foreach ($this->horas as $tipo => $horas) {
                 $call = "CALL asignarHorasInvestigador(:ced,:horas,:tipo,'" . $pPeriodo->inicio . "','" . $pPeriodo->fin . "',:cod)";

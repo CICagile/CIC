@@ -71,7 +71,7 @@ class Proyectos extends CActiveRecord {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('nombre, codigo, idtbl_objetivoproyecto, tipoproyecto, idtbl_adscrito, idtbl_sectorbeneficiado, estado', 'required', 'message' => '{attribute} es requerido.'),
+            array('nombre, codigo, idtbl_objetivoproyecto, tipoproyecto, idtbl_adscrito, idtbl_sectorbeneficiado', 'required', 'message' => '{attribute} es requerido.'),
             array('codigo', 'unique', 'className' => 'Proyectos', 'message' => 'Ya existe un proyecto con ese código.'),
             array('idtbl_objetivoproyecto, tipoproyecto, idtbl_adscrito, estado', 'numerical', 'integerOnly' => true), /* removido idtbl_sectorbeneficiado, */
             array('nombre', 'length', 'min' => 3, 'max' => 500, 'tooShort' => 'El {attribute} debe ser mayor a {min} caracteres.', 'tooLong' => 'El {attribute} debe ser menor a {max} caracteres.'),
@@ -164,7 +164,7 @@ class Proyectos extends CActiveRecord {
     }
 
 // </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Functions">
+// <editor-fold defaultstate="collapsed" desc="Funciones asistentes">
     /**
      * Agrega un asistente a un proyecto
      * @param $pidproyecto id del proyecto
@@ -190,6 +190,7 @@ class Proyectos extends CActiveRecord {
             $comando->execute();
             $transaccion->commit();
         } catch (Exception $e) {
+            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Proyectos");
             $transaccion->rollback();
             return false;
         }
@@ -226,7 +227,51 @@ class Proyectos extends CActiveRecord {
                 ));
         return $dataProvider;
     }
-
+// </editor-fold>
+// <editor-fold defaultstate="collapsed" desc="Funciones investigadores">
+    /**
+     * Asocia a un investigador con este proyecto.
+     * @param string $pCodigo Código del proyecto. En este caso no es posible usar $this->codigo por lo que se pasa como parámetro.
+     * @param string $pCedula Cédula del investigador.
+     * @param string $pRol Rol del investigador.
+     * @param string $pInicio Fecha en la que inicia el investigador. Debe tener el formato dd-mm-aaaa.
+     * @param string $pFin Fecha en que finaliza el investigador con el proyecto. Debe tener el formato dd-mm-aaaa.
+     * @param array  $pHoras La cantidad de horas y su tipo que va a realizar el investigador.
+     * @return boolean Retorna true si la transacción ocurre exitosamente y false de lo contrario.
+     */
+    public function agregarInvestigadorProyecto($pCodigo, $pCedula, $pRol, $pInicio, $pFin, $pHoras) {
+        $conexion = Yii::app()->db;
+        $call = 'CALL agregarInvestigadorProyecto(:cedula, :codigo, :rol, :inicio, :fin)';
+        $transaction = Yii::app()->db->beginTransaction();
+        try {
+            $comando = $conexion->createCommand($call);
+            $comando->bindParam(':cedula', $pCedula);
+            $comando->bindParam(':codigo', $pCodigo);
+            $comando->bindParam(':rol', $pRol);
+            $comando->bindParam(':inicio', $pInicio);
+            $comando->bindParam(':fin', $pFin);
+            $comando->execute();
+            foreach ($pHoras as $tipo => $horas) {
+                $call = "CALL asignarHorasInvestigador(:ced,:horas,:tipo,:inicio,:fin,:cod)";
+                $comando = $conexion->createCommand($call);
+                $comando->bindParam(':ced', $pCedula, PDO::PARAM_STR);
+                $comando->bindParam(':horas', $horas);
+                $comando->bindParam(':tipo', $tipo, PDO::PARAM_STR);
+                $comando->bindParam(':inicio', $pInicio, PDO::PARAM_STR);
+                $comando->bindParam(':fin', $pFin, PDO::PARAM_STR);
+                $comando->bindParam(':cod', $pCodigo, PDO::PARAM_STR);
+                $comando->execute();
+            }//fin for
+            $transaction->commit();
+        } catch (Exception $e) {
+            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Proyectos");
+            $transaction->rollback();
+            return false;
+        }//fin catch
+        return true;
+    }//fin agregar investigador a proyecto
+// </editor-fold>
+// <editor-fold defaultstate="collapsed" desc="Functions">
     /**
      *  Esta funcion retorna la información del proyecto
      * y la información del periodo actual asociado al proyecto
@@ -288,13 +333,13 @@ class Proyectos extends CActiveRecord {
         $conexion = Yii::app()->db;
         $command = $conexion->createCommand($call);
         $command->bindParam(':pIdProyecto', $pIdProyecto, PDO::PARAM_INT);
-        $model = $command->queryAll();
+        $sectores = $command->queryAll();
 
-        if ($model == false)
+        if ($sectores == false)
             return null;
         else {
             $this->scenario = 'cargarModelo';
-            $this->idtbl_sectorbeneficiado = $model;
+            $this->idtbl_sectorbeneficiado = $sectores;
         }
     }
 
@@ -316,7 +361,7 @@ class Proyectos extends CActiveRecord {
 
         return true;
     }
-    
+
     /**
      * Cambia la fecha de finalización de un proyecto, considerando un motivo que 
      * se agrega a la tabla tbl_MotivoCancelacion
@@ -326,24 +371,78 @@ class Proyectos extends CActiveRecord {
      * @param string $pMotivoCancelacion
      * @return boolean resultado de la operación: true-> ejecutado correctamente, sino false
      */
-    public function cancelarProyecto($pIdProyecto, $pFechaCancelacion, $pMotivoCancelacion){
+    public function cancelarProyecto($pIdProyecto, $pFechaCancelacion, $pMotivoCancelacion) {
         $conexion = Yii::app()->db;
-        $call = 'CALL cancelarProyecto(:pIdProyecto, :pFechaCancelacion, :pMotivoCancelacion)';
-        
-        $command = $conexion->createCommand($call);
-        $command->bindParam(':pIdProyecto', $pIdProyecto, PDO::PARAM_INT);
-        $command->bindParam(':pFechaCancelacion', $pFechaCancelacion);
-        $command->bindParam(':pMotivoCancelacion', $pMotivoCancelacion, PDO::PARAM_STR);
-        $command->execute();
-        
-        /*TODO
-         * escribir procedure para cancelar (dateformat~)
-         * -> agregar a tabla tbl_cancelacionProyecto
-         * cambiar el estado del proyecto con actualizarEstadoProyecto (falta agregar el estado 3)
-         * llamar al procedure desde aquí
-         * agregar periodo al historial
+        $call = 'CALL actualizarPeriodoProyecto(:pIdProyecto, NULL, :pFechaFinal, :pNombreEstado, :pDetalleEstado)';
+        $transaccion = Yii::app()->db->beginTransaction();
+
+        try {
+            $command = $conexion->createCommand($call);
+            $command->bindParam(':pIdProyecto', $pIdProyecto, PDO::PARAM_INT);
+            $command->bindParam(':pFechaFinal', $pFechaCancelacion);
+            $command->bindParam(':pDetalleEstado', $pMotivoCancelacion, PDO::PARAM_STR);
+            $command->bindParam(':pNombreEstado', Proyectos::$CODIGO_CANCELADO, PDO::PARAM_STR);
+            $command->execute();
+            $transaccion->commit();
+        } catch (Exception $e) {
+            $transaccion->rollback();
+            Yii::log("Rollback al cancelar el proyecto " . $pIdProyecto->codigo, "error", "application.controllers.ModelProyectos");
+            return false;
+        }
+
+        /* TODO
+          asistentes issues
          */
         return true;
+    }
+
+    /**
+     * Asocia las fechas de inicio y final con el modelo de proyectos
+     * No utilizado actualmente, borrar funcion o modificar este comentario de ser necesario
+     * Se utiliza al actualizar un proyecto, para tener disponibles las fechas
+     * @param int $pIdProyecto id del proyecto a buscar
+     */
+    public function obtenerFechasInicialFinalProyecto($pCodigoProyecto) {
+        $conexion = Yii::app()->db;
+        $call = 'CALL buscarFechaInicioProyecto(:pCodigo)';
+
+        $command = $conexion->createCommand($call);
+        $command->bindParam(':pCodigo', $pCodigoProyecto, PDO::PARAM_STR);
+        $fecha_inicio = $command->queryRow();
+
+        $call = 'CALL buscarFechaFinProyecto(:pCodigo)';        
+        $command = $conexion->createCommand($call);
+        $command->bindParam(':pCodigo', $pCodigoProyecto, PDO::PARAM_STR);
+        $fecha_fin = $command->queryRow();
+
+        $this->inicio = $fecha_inicio;
+        $this->fin = $fecha_fin;
+    }
+
+    /**
+     * Actualiza las fechas de inicio y final de un proyecto
+     * @param int $pIdProyecto id del proyecto cuyas fechas actualizaremos
+     * @param date $pFechaInicio nueva fecha inicial
+     * @param date $pFechaFin nueva fecha final
+     */
+    public function actualizarFechasProyecto($pIdProyecto, $pFechaInicio, $pFechaFin) {
+        $conexion = Yii::app()->db;
+        $call = 'CALL actualizarPeriodoProyecto(:pIdProyecto, :pFechaInicial, :pFechaFinal, NULL, NULL)';
+        $transaccion = Yii::app()->db->beginTransaction();
+
+        try {
+            $command = $conexion->createCommand($call);
+            $command->bindParam(':pIdProyecto', $pIdProyecto, PDO::PARAM_INT);
+            $command->bindParam(':pFechaInicial', $pFechaInicio);
+            $command->bindParam(':pFechaFinal', $pFechaFin);
+            $command->execute();
+            $transaccion->commit();
+            return true;
+        } catch (Exception $e) {
+            $transaccion->rollback();
+            Yii::log("Rollback al cancelar el proyecto " . $pIdProyecto->codigo, "error", "application.controllers.ModelProyectos");
+            return false;
+        }
     }
 
     /**
@@ -390,7 +489,9 @@ class Proyectos extends CActiveRecord {
 
     public $CODIGO_APROBADO = "Aprobado";
     public $CODIGO_AMPLIADO = "Ampliado";
-    public $CODIGO_CANCELADO = "Cancelado";
+    public static $CODIGO_CANCELADO = "Cancelado";
+    
+    public $ID_AMPLIADO = 2;
 
 // </editor-fold>
 }
