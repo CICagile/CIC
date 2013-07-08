@@ -57,5 +57,5 @@ $columns = array (
 ?>
 
 <?php if ($dataProvider->totalItemCount > 0)
-            echo CHtml::button('Editar información de los asistentes',array('submit'=>Yii::app()->controller->createUrl("Proyectos/actualizarInfoAsistentes", array("id"=>$model->idtbl_Proyectos))));
+            echo CHtml::button('Corregir información de los asistentes',array('submit'=>Yii::app()->controller->createUrl("Proyectos/actualizarInfoAsistentes", array("id"=>$model->idtbl_Proyectos))));
 ?>
