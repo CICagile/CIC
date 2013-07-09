@@ -485,7 +485,7 @@ class Proyectos extends CActiveRecord {
     //public $LABEL_AMPLIADO = 'Ampliado';
 
     public $CODIGO_APROBADO = "Aprobado";
-    public $CODIGO_AMPLIADO = "Ampliado";
+    public static $CODIGO_AMPLIADO = "Ampliado";
     public static $CODIGO_CANCELADO = "Cancelado";
     
     public $ID_AMPLIADO = 2;
