@@ -502,6 +502,9 @@ class ProyectosController extends Controller {
         $modelproyectos = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
         if ($modelproyectos === null)
             throw new CHttpException(404, 'La página solicitado no se ha encontrado.');
+        if($modelproyectos->estado == Proyectos::$CODIGO_CANCELADO){
+            throw new CHttpException(403, 'Acción no permitida: el proyecto ya ha sido cancelado');
+        }
 
         if (Yii::app()->request->isAjaxRequest && isset($_POST["cancelacion"])
                 && isset($_POST["detalle_motivo"])) {
