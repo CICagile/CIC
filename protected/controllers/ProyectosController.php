@@ -203,7 +203,7 @@ class ProyectosController extends Controller {
         return $fechamysql;
     }
 
-    public function FechaMysqltoPhp($pfechamysql) {
+    /*public function FechaMysqltoPhp($pfechamysql) {
         try {
             $fecha = substr($pfechamysql, 0, 10);
             list($y, $m, $d) = explode('-', $fecha);
@@ -212,7 +212,7 @@ class ProyectosController extends Controller {
             
         }
         return $fecha;
-    }
+    }*/
 
     /*
      * Crea un proyecto
