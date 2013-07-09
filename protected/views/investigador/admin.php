@@ -38,7 +38,7 @@ $columns = array(
    array(
         'class'=>'CButtonColumn',
         'template'=>'{view}',
-        'viewButtonUrl'=>'Yii::app()->controller->createUrl("Investigador/view", array("id"=>$data["cedula"]))',
+        'viewButtonUrl'=>'Yii::app()->controller->createUrl("investigador/view", array("id"=>$data["cedula"]))',
         'viewButtonLabel' => 'Ver información detallada del investigador.',
     ),
    );
