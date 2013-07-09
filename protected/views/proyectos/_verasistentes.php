@@ -38,7 +38,7 @@ $columns = array (
         'template'=>'{view}{editar}{update}{delete}',
         'viewButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("id"=>$data["carnet"]))',
         'viewButtonLabel' => 'Ver información detallada del asistente',
-        'updateButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/updateDP", array("id"=>$data["carnet"]))',
+        'updateButtonUrl'=>'Yii::app()->controller->createUrl("Proyectos/editarasistencia", array("id"=>'.$model->idtbl_Proyectos.',"carnet"=>$data["carnet"]))',
         'updateButtonLabel' => 'Actualizar información de la asistencia.',
         'deleteButtonUrl'=>'Yii::app()->controller->createURL("Asistente/desvincular",array("idtbl_Proyectos"=>'.$model->idtbl_Proyectos.',"carnet"=>$data["carnet"]))',
         'deleteButtonLabel' => 'Desvincular Asistente',

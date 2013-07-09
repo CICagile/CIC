@@ -27,7 +27,8 @@ class ProyectosController extends Controller {
         return array(
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
                 'actions' => array('ver', 'ActualizarInfoAsistentes', 'crear', 'actualizar', 'agregarasistente', 'AsistenteAutoComplete',
-                    'ValidarAgregarAsistente', 'adminantiguos', 'verantiguos', 'ampliarproyecto', 'agregarInvestigador', 'investigadorAutoComplete', 'cancelarproyecto'),
+                    'ValidarAgregarAsistente', 'adminantiguos', 'verantiguos', 'ampliarproyecto', 'agregarInvestigador', 'investigadorAutoComplete',
+                    'cancelarproyecto', 'editarasistencia'),
                 'users' => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -616,6 +617,13 @@ class ProyectosController extends Controller {
         ));
     }
     
+    public function actionEditarAsistencia($id, $carnet) {
+        $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
+        echo $model->inicio;
+        echo '<br>';
+        echo 'CARNET: ' . $carnet;
+    }//fin accion editar asistencia
+    
     /**
      * Returns the data model based on the primary key given in the GET variable.
      * If the data model is not found, an HTTP exception will be raised.
@@ -707,6 +715,7 @@ class ProyectosController extends Controller {
         ));
     }//fin agregar investigador
 
+// <editor-fold defaultstate="collapsed" desc="Autocomplete">
     public function actionAsistenteAutoComplete() {
         if (isset($_GET['term'])) {
 
@@ -738,30 +747,34 @@ class ProyectosController extends Controller {
             echo CJSON::encode($return_array);
         }
     }
-    
-    /**
-         * Busca el codigo de la variable GET en la BD para autocompletar un campo de texto. 
-         */
-        public function actionInvestigadorAutoComplete()
-        {
-            if (isset($_GET['term'])) {
-                $conexion = Yii::app()->db;
-                $call = 'CALL buscarinvestigadorPorCedula2(:ced)';
-                $comando = $conexion->createCommand($call);
-                $comando->bindParam(':ced',$_GET['term'],PDO::PARAM_STR);
-                $result_set = $comando->query();
-                $investigadores = $result_set->readAll();
-                $return_array = array();
-                foreach($investigadores as $investigador) {
-                    $return_array[] = array(
-                        'label'=>$investigador['nombre'],
-                        'value'=>$investigador['cedula'],
-                    );
-                }
-                echo CJSON::encode($return_array);
-            }
-        }//fin investigador autocomplete
 
+
+    /**
+     * Busca el codigo de la variable GET en la BD para autocompletar un campo de texto. 
+         */
+    public function actionInvestigadorAutoComplete()         {
+        if (isset($_GET['term'])) {
+            $conexion = Yii::app()->db;
+            $call = 'CALL buscarinvestigadorPorCedula2(:ced)';
+            $comando = $conexion->createCommand($call);
+            $comando->bindParam(':ced', $_GET['term'], PDO::PARAM_STR);
+            $result_set = $comando->query();
+            $investigadores = $result_set->readAll();
+            $return_array = array();
+            foreach ($investigadores as $investigador) {
+                $return_array[] = array(
+                    'label' => $investigador['nombre'],
+                    'value' => $investigador['cedula'],
+                );
+            }
+            echo CJSON::encode($return_array);
+        }
+    }
+
+//fin investigador autocomplete// </editor-fold>
+
+
+// <editor-fold defaultstate="collapsed" desc="AJAX">
     /**
      * Performs the AJAX validation.
      * @param CModel the model to be validated
@@ -772,5 +785,8 @@ class ProyectosController extends Controller {
             Yii::app()->end();
         }
     }
+
+// </editor-fold>
+
 
 }
