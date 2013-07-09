@@ -115,4 +115,23 @@ class HistorialProyectosPeriodo extends CActiveRecord {
             return null;
         }
     }
+    
+    
+    public function agregarHistorialAProyecto($pIdProyecto, $pFechaInicial, $pFechaFinal, $pNombreEstado){
+         
+        $conexion = Yii::app()->db;
+        $call = 'CALL agregarHistorialProyectosPeriodo(:pIdProyecto, :pFechaInicial, :pFechaFinal, :pNombreEstado)';
+
+        $command = $conexion->createCommand($call);
+        $command->bindParam(':pIdProyecto', $pIdProyecto, PDO::PARAM_INT);
+        $command->bindParam(':pFechaInicial', $pFechaInicial);
+        $command->bindParam(':pFechaFinal', $pFechaFinal);
+        $command->bindParam(':pNombreEstado', $pNombreEstado, PDO::PARAM_STR);
+        $rows_affected = $command->execute();
+        
+        if($rows_affected <= 0)
+            return false;
+        else 
+            return true;
+    }
 }
