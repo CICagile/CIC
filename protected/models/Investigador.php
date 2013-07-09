@@ -166,6 +166,27 @@ class Investigador  extends CModel{
             ));
             return $dataProvider;
     }
+    
+     public function buscarInvestigadorporCedula($pCedula) {
+        $conexion = Yii::app()->db;
+        $call = 'CALL buscarDatosPersonalesInvestigadorporCedula(:pCedula)';
+        $transaccion = Yii::app()->db->beginTransaction();
+        $resultado = NULL;
+        try {
+            $comando = $conexion->createCommand($call);
+            $comando->bindParam(':pCedula', $pCedula, PDO::PARAM_STR);
+            $resultado = $comando->query();
+            $transaccion->commit();
+        } catch (Exception $e) {
+            $transaccion->rollback();
+            echo $e->getMessage();
+            return NULL;
+        }
+
+
+        return $resultado->rowCount === 1 ? $resultado->read() : NULL;
+    
+    }//fin buscar asistente por pk
     // </editor-fold>
     
     /**

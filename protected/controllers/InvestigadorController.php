@@ -30,7 +30,7 @@ class InvestigadorController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array(''),
+				'actions'=>array('view'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -147,6 +147,23 @@ class InvestigadorController extends Controller
                 $this->render('admin',array(
                     'filtersForm' => $filtersForm,
                 ));
+	}
+        
+        public function actionView($id)
+	{
+		$this->render('view',array(
+			'model'=>$this->loadModel($id),
+		));
+	}
+        
+        public function loadModel($id)
+	{
+		$model = new Investigador;
+                $atributos = $model->buscarInvestigadorporCedula($id);
+		if($atributos===null)
+			throw new CHttpException(404,'No se encontro la cedula ' . $id);
+                $model->attributes = $atributos;
+		return $model;
 	}
         
         /**
