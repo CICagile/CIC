@@ -221,6 +221,7 @@ class ProyectosController extends Controller {
         $modelproyectos = new Proyectos;
         $modelperiodos = new Periodos;
         $modelProyectosXSector = new ProyectosSectorbeneficiado;
+        $historialproyectoperiodo = new HistorialProyectosPeriodo();
 
         $modelproyectos->scenario = 'crearproyecto'; //Activo el escenario para las reglas de validacion especificas
 
@@ -235,56 +236,25 @@ class ProyectosController extends Controller {
             $modelproyectos->attributes = $_POST['Proyectos'];
 
             if ($modelperiodos->validate() && $modelproyectos->validate()) {
-                //$modelperiodos->inicio = $this->FechaPhptoMysql($modelperiodos->inicio);
-                //$modelperiodos->fin = $this->FechaPhptoMysql($modelperiodos->fin);
-
                 $transaction = Yii::app()->db->beginTransaction();
 
-                $resultado = true; //$modelperiodos->save(false); //Guardo el periodo sin validar, ya que lo valide con anterioridad                                                           
                 //originalmente, un estado de 0 significaba aprobado         
-                $resultado = $resultado ? $modelproyectos->save() : $resultado;
-
-                
-                if ($resultado) {//Si se guarda bien el proyecto
-                    //almacena los sectores beneficiados
-                    $resultado_sector = $modelProyectosXSector->saveAllBenefitedSectors(
-                            $modelproyectos->idtbl_Proyectos, $modelproyectos->idtbl_sectorbeneficiado);
-
-                    if ($resultado_sector) {
-                        //Guardo el historial de periodos del proyecto
-                        $historialproyectoperiodo = new HistorialProyectosPeriodo();
-                        $resultado2 = $historialproyectoperiodo->agregarHistorialAProyecto(
-                                $modelproyectos->idtbl_Proyectos, 
-                                $modelperiodos->inicio, 
-                                $modelperiodos->fin, 
-                                $modelproyectos->CODIGO_APROBADO);
-
-                        //$historialproyectoperiodo->idPeriodo = $modelperiodos->idPeriodo;
-                        //$historialproyectoperiodo->idtbl_Proyectos = $modelproyectos->idtbl_Proyectos;
-                        //$historialproyectoperiodo->idtbl_EstadosProyecto = $historialproyectoperiodo->obtenerIdEstadoPeriodoProyecto($modelproyectos->CODIGO_APROBADO);
-                        //$resultado = $resultado ? $historialproyectoperiodo->save() : $resultado;
-
-                        if ($resultado2) {//Si se guarda bien el historial de periodos del proyecto
-                            $transaction->commit();
-                            Yii::log("Creación exitosa del proyecto con el código: " . $modelproyectos->codigo, "info", "application.
-    controllers.ProyectosController");
-                            $this->redirect(array('admin'));
-                        } else {
-                            $transaction->rollBack();
-                            Yii::log("Rollback al intentar crear el proyecto con el código: " . $modelproyectos->codigo . " IdProyecto:" . $historialproyectoperiodo->idtbl_Proyectos . "-" . $modelproyectos->idtbl_Proyectos, "warning", "application.
-    controllers.ProyectosController");
-                            throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
-                        }
-                    } else { //-
-                        $transaction->rollBack();
-                        Yii::log("Rollback. Error al almacenar el sector: " . $modelproyectos->codigo . "-" . $modelProyectosXSector->idtbl_sectorbeneficiado . "+" . $modelProyectosXSector->idtbl_Proyectos, "warning", "application.
-    controllers.ProyectosController");
-                        throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
-                    }//-
+                $resultado = $modelproyectos->save();
+                $resultado_sector = $modelProyectosXSector->saveAllBenefitedSectors(
+                        $modelproyectos->idtbl_Proyectos, $modelproyectos->idtbl_sectorbeneficiado);
+                $resultado_historial = $historialproyectoperiodo->agregarHistorialAProyecto(
+                        $modelproyectos->idtbl_Proyectos, $modelperiodos->inicio, $modelperiodos->fin, $modelproyectos->CODIGO_APROBADO);
+                if ($resultado && $resultado_sector && $resultado_historial) {
+                    $transaction->commit();
+                    Yii::log("Creación exitosa del proyecto con el código: "
+                            . $modelproyectos->codigo, "info", "application.controllers.ProyectosController");
+                    $this->redirect(array('admin'));
                 } else {
                     $transaction->rollBack();
-                    Yii::log("Rollback al intentar crear el proyecto con el código: " . $modelproyectos->codigo . "-" . $modelProyectosXSector->idtbl_sectorbeneficiado . "+" . $modelProyectosXSector->idtbl_Proyectos, "warning", "application.
-    controllers.ProyectosController");
+                    Yii::log("Rollback al intentar crear el proyecto con el código: "
+                            . $modelproyectos->codigo . " IdProyecto:"
+                            . $historialproyectoperiodo->idtbl_Proyectos . "-"
+                            . $modelproyectos->idtbl_Proyectos, "warning", "application.controllers.ProyectosController");
                     throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
                 }
             }

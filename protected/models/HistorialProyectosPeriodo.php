@@ -129,8 +129,10 @@ class HistorialProyectosPeriodo extends CActiveRecord {
         $command->bindParam(':pNombreEstado', $pNombreEstado, PDO::PARAM_STR);
         $rows_affected = $command->execute();
         
-        if($rows_affected <= 0)
+        if($rows_affected <= 0){
+            Yii::log("Error al agregar nuevo historial a proyecto. IdProyecto:" . $pIdProyecto , "error", "application.models.HistorialProyectosPeriodo");
             return false;
+        }
         else 
             return true;
     }
