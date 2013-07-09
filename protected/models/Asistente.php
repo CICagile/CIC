@@ -201,7 +201,7 @@ class Asistente  extends CModel{
             array('horas', 'numerical', 'max'=>20, 'min'=>1, 'tooBig'=>'Se permite un máximo de {max} horas de asistencia', 'tooSmall'=>'Se permite un mínimo de {min} horas.'),
             array('correo', 'email', 'message'=>'Dirección de correo inválida'),
             array('nombre, apellido1, apellido2, ', 'match', 'pattern'=>'/^[\p{L} ]+$/u'),
-            array('numerocuenta,codigo', 'match', 'pattern'=>'/^[\p{N}-]+$/u'),
+            array('numerocuenta', 'match', 'pattern'=>'/^[\p{N}-]+$/u'), //,codigo
             array('codigo','validarCodigoProyecto','on'=>'nuevo'),
             array('carnet','validarAsistenteNoRepetido','on'=>'agregar'),
         );

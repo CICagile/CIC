@@ -40,7 +40,8 @@ class HistorialProyectosPeriodo extends CActiveRecord {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('idtbl_Proyectos, idPeriodo, idtbl_EstadosProyecto', 'required'),
+            array('idtbl_Proyectos, idPeriodo', 'required'),
+            array('idtbl_EstadosProyecto', 'required', 'on'=>'crear'),
             array('idtbl_Proyectos, idPeriodo, idtbl_EstadosProyecto', 'numerical', 'integerOnly' => true),
             // The following rule is used by search().
             // Please remove those attributes that should not be searched.
