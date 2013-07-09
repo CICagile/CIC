@@ -386,7 +386,7 @@ class Proyectos extends CActiveRecord {
             $transaccion->commit();
         } catch (Exception $e) {
             $transaccion->rollback();
-            Yii::log("Rollback al cancelar el proyecto " . $pIdProyecto->codigo, "error", "application.controllers.ModelProyectos");
+            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Proyectos");
             return false;
         }
 
@@ -440,7 +440,7 @@ class Proyectos extends CActiveRecord {
             return true;
         } catch (Exception $e) {
             $transaccion->rollback();
-            Yii::log("Rollback al cancelar el proyecto " . $pIdProyecto->codigo, "error", "application.controllers.ModelProyectos");
+            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Proyectos");
             return false;
         }
     }
