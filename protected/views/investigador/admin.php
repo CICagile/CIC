@@ -35,12 +35,12 @@ $columns = array(
         'header'=>CHtml::encode('Correo Electrónico'),
         'name'=>'correo',
     ),
-   /*array(
+   array(
         'class'=>'CButtonColumn',
         'template'=>'{view}{update}',
-       'viewButtonUrl'=>'Yii::app()->controller->createUrl("Investigador/view", array("id"=>$data["Cedula"]))',
+        'viewButtonUrl'=>'Yii::app()->controller->createUrl("Investigador/view", array("id"=>$data["Cedula"]))',
         'viewButtonLabel' => 'Ver información detallada del investigador.',
-    ),*/
+    ),
    );
 
 Yii::app()->clientScript->registerScript('search', "$('.search-button').click(function()

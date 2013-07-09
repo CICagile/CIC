@@ -15,7 +15,7 @@
 	<?php echo CHtml::encode($data->apellido2); ?>
 	<br />
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('cedula')); ?>:</b>
+	<b><?php echo CHtml::encode($data->getAttributeLabel('Cedula')); ?>:</b>
 	<?php echo CHtml::encode($data->cedula); ?>
 	<br />
 
