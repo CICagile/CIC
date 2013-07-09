@@ -148,7 +148,7 @@ class Investigador  extends CModel{
            $rawData=Yii::app()->db->createCommand($call)->queryAll();
            $filteredData=$filtersForm->filter($rawData);
            $dataProvider=new CArrayDataProvider($filteredData, array(
-                'keyField'=>'Cedula',
+                'keyField'=>'cedula',
                 'id'=>'user',
                 'sort'=>array(
                     'attributes'=>array(

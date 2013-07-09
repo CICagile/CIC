@@ -25,8 +25,8 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'Cedula'); ?>
-		<?php echo $form->textField($model,'Cedula',array('size'=>20,'maxlength'=>20)); ?>
+		<?php echo $form->label($model,'cedula'); ?>
+		<?php echo $form->textField($model,'cedula',array('size'=>20,'maxlength'=>20)); ?>
 	</div>
         <div class="row">
 		<?php echo $form->label($model,'telefono'); ?>

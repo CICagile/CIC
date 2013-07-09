@@ -13,7 +13,7 @@ $this->menu=array(
 $columns = array(
     array(
         'header'=>CHtml::encode('Cedula'),
-        'name'=>'Cedula',
+        'name'=>'cedula',
     ),
     array(
         'header'=>CHtml::encode('Nombre'),
@@ -37,8 +37,8 @@ $columns = array(
     ),
    array(
         'class'=>'CButtonColumn',
-        'template'=>'{view}{update}',
-        'viewButtonUrl'=>'Yii::app()->controller->createUrl("Investigador/view", array("id"=>$data["Cedula"]))',
+        'template'=>'{view}',
+        'viewButtonUrl'=>'Yii::app()->controller->createUrl("Investigador/view", array("id"=>$data["cedula"]))',
         'viewButtonLabel' => 'Ver información detallada del investigador.',
     ),
    );
