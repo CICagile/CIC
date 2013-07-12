@@ -505,6 +505,20 @@ class Asistente  extends CModel{
         else
             return 0;
     }//fin contarHorasActuales
+    
+    /**
+     * Busca los datos más actuales de un asistente en un proyecto.
+     * Carga los datos en el modelo y guarda los periódos en un array.
+     * @param string $pCarnet Carnet del estudiante buscado.
+     * @param int $pIDProyecto ID del proyecto en la base de datos.
+     * @return array Un arreglo de arreglos con la fechas de los periodos correspondientes a los
+     * atributos que cargó de la base de datos.
+     */
+    public function buscarDatosActualesAsistenteEnProyecto($pCarnet, $pIDProyecto) {
+        
+        $respuesta =  array();
+        return $respuesta;
+    }//fin buscar Asistente en proyecto
 
 }//fin clase Modelo Asistente
 
