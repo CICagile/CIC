@@ -20,10 +20,17 @@ $this->menu=array(
 ?>
 
 <div class="form">
+    <p class="note">Los campos marcados con <span class="required">*</span> son obligatorios.</p>
     <?php $form = $this->beginWidget('CActiveForm', array(
         'id' => 'editar-rol',
     )); ?>
-    <p class="note">Los campos marcados con <span class="required">*</span> son obligatorios.</p>
-    <?php //echo $form->errorSummary(array($periodo,$asistente),'Se han detectado los siguientes errores:'); ?>
+    <h2>Cambiar Rol</h2>
+    <?php echo $form->errorSummary(array($periodo,$asistente),'Se han detectado los siguientes errores:'); ?>
+    <div class="row">
+        <?php echo $form->labelEx($asistente,'rol'); ?>
+        <?php echo $form->dropDownList($asistente, 'rol',
+                CHtml::listData(RolAsistente::model()->findAll(), 'idtbl_RolesAsistentes', 'nombre'), array('empty'=>'Elija un rol')); ?>
+        <?php echo $form->error($asistente,'rol'); ?>
+    </div>
     <?php $this->endWidget() ?>
 </div>
