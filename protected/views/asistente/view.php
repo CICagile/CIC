@@ -57,7 +57,7 @@ $this->widget('zii.widgets.CDetailView', array(
 <?php 
 $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'asistente-grid',
-	'dataProvider'=>$model->proyectosasistente($model->carnet),
+	'dataProvider'=>$model->verProyectos($model->carnet),
 	'columns'=>$columns,
        ));
 ?>
