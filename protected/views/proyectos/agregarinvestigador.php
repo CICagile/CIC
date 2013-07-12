@@ -6,7 +6,8 @@
 /* @var $horas array */
 $this->breadcrumbs=array(
 	'Proyectos'=>array('admin'),
-	$model->codigo,
+	$model->codigo => array('ver','id'=>$model->idtbl_Proyectos),
+        'Agregar investigador',
 );
 
 $this->menu=array(	

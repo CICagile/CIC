@@ -619,9 +619,9 @@ class ProyectosController extends Controller {
     
     public function actionEditarAsistencia($id, $carnet) {
         $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
-        echo $model->inicio;
-        echo '<br>';
-        echo 'CARNET: ' . $carnet;
+        $this->render('editarasistencia', array(
+            'model' => $model,
+        ));
     }//fin accion editar asistencia
     
     /**

@@ -2,7 +2,7 @@
 
 $this->breadcrumbs=array(
 	'Proyectos'=>array('admin'),
-	'Registrar Proyectos',
+	'Registrar Proyecto',
 );
 
 $this->menu=array(

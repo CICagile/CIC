@@ -5,12 +5,13 @@
 /* @var $periodo Periodos */
 $this->breadcrumbs=array(
 	'Proyectos'=>array('admin'),
-	$model->codigo,
+	$model->codigo => array('ver','id'=>$model->idtbl_Proyectos),
+        'Agregar asistente',
 );
 
 $this->menu=array(	
         array('label'=>'Actualizar información del proyecto', 'url'=>array('actualizar', 'id'=>$model->idtbl_Proyectos)),
-	array('label'=>'Agregar investigador', 'url'=>array('agregarinvestigador', 'id'=>$model->idtbl_Proyectos)),
+        array('label'=>'Agregar investigador', 'url'=>array('agregarinvestigador', 'id'=>$model->idtbl_Proyectos)),
         array('label'=>'Ver Proyecto', 'url'=>array('ver','id'=>$model->idtbl_Proyectos)),
         array('label'=>'Nuevo Proyecto', 'url'=>array('crear')),
 );
