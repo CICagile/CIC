@@ -618,16 +618,17 @@ class ProyectosController extends Controller {
     }
     
     public function actionEditarAsistencia($id, $carnet) {
+        new Periodos; //Elimina un error en la funcion buscar datos actuales...
         $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
         $asistente = new Asistente();
-        /*$periodos = $asistente->buscarDatosActualesAsistenteEnProyecto($carnet, $id);
-        if ($periodos === null)
-            throw new CHttpException(404, 'No se encontró al asistente en ese proyecto.');*/
-        $periodo = new Periodos;
+        $periodos = $asistente->buscarDatosActualesAsistenteEnProyecto($carnet, $id);
+        if ($periodos === NULL)
+            throw new CHttpException(404, 'No se encontró al asistente en ese proyecto.');
+        
         $this->render('editarasistencia', array(
             'model' => $model,
             'asistente' => $asistente,
-            'periodo' => $periodo,
+            'periodos' => $periodos,
         ));
     }//fin accion editar asistencia
     
