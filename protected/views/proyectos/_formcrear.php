@@ -118,8 +118,9 @@
 
     <div class="row">
         <div class="row">
-            <?php echo CHtml::label('Observaciones', 'observaciones'); ?>
-            <?php echo CHtml::textArea('observaciones', '', array('size' => 60, 'maxlength' => 500, 'style' => 'width:90%; heigth:100%;')); ?>
+            <?php echo $form->labelEx($modelproyectos, 'observaciones'); ?>
+            <?php echo $form->textArea($modelproyectos, 'observaciones', array('size' => 60, 'maxlength' => 500, 'style' => 'width:90%; heigth:100%;')); ?>
+            
             <div class="errorMessage" id="observaciones_error"></div>
         </div>	
 
