@@ -515,8 +515,17 @@ class Asistente  extends CModel{
      * atributos que cargó de la base de datos.
      */
     public function buscarDatosActualesAsistenteEnProyecto($pCarnet, $pIDProyecto) {
-        
         $respuesta =  array();
+        $call = 'CALL buscarDatosActualesAsistenteEnProyecto(:carnet,:idproyecto)';
+        $comando = Yii::app()->db->createCommand($call);
+        $comando->bindParam(':carnet', $pCarnet);
+        $comando->bindParam(':idproyecto', $pIDProyecto);
+        $query = $comando->query();
+        if ($query->rowCount === 1) {
+            $read = $query->read();
+            $this->rol = $read['rol_id'];
+            $this->horas = $read['horas'];
+        }//fin si lo encontró y sólo retorna un resultado
         return $respuesta;
     }//fin buscar Asistente en proyecto
 
