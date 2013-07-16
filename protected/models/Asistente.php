@@ -173,6 +173,40 @@ class Asistente  extends CModel{
             ));
             return $dataProvider;
     }
+    
+    /**
+     * Busca los datos más actuales de un asistente en un proyecto.
+     * Carga los datos en el modelo y guarda los periódos en un array.
+     * @param string $pCarnet Carnet del estudiante buscado.
+     * @param int $pIDProyecto ID del proyecto en la base de datos.
+     * @return array Un arreglo de arreglos con la fechas de los periodos correspondientes a los
+     * atributos que cargó de la base de datos.
+     */
+    public function buscarDatosActualesAsistenteEnProyecto($pCarnet, $pIDProyecto) {
+        $respuesta =  NULL;
+        $call = 'CALL buscarDatosActualesAsistenteEnProyecto(:carnet,:idproyecto)';
+        $comando = Yii::app()->db->createCommand($call);
+        $comando->bindParam(':carnet', $pCarnet);
+        $comando->bindParam(':idproyecto', $pIDProyecto);
+        $query = $comando->query();
+        if ($query->rowCount === 1) {
+            $read = $query->read();
+            $this->rol = $read['rol_id'];
+            $this->horas = $read['horas'];
+            $periodo_rol = new Periodos;
+            $periodo_rol->inicio = $read['inicio_rol'];
+            $periodo_rol->fin = $read['fin'];
+            $periodo_horas = new Periodos;
+            $periodo_horas->inicio = $read['inicio_horas'];
+            $periodo_horas->fin = $read['fin'];
+            $periodo_asistencia = new Periodos;
+            $periodo_asistencia->inicio = $read['inicio'];
+            $periodo_asistencia->fin = $read['fin'];
+            $respuesta = array('rol' => $periodo_rol, 'horas' => $periodo_horas, 'asistencia' => $periodo_asistencia);
+        }//fin si lo encontró y sólo retorna un resultado
+        return $respuesta;
+    }//fin buscar Asistente en proyecto
+
 // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Validaciones">
@@ -505,39 +539,6 @@ class Asistente  extends CModel{
         else
             return 0;
     }//fin contarHorasActuales
-    
-    /**
-     * Busca los datos más actuales de un asistente en un proyecto.
-     * Carga los datos en el modelo y guarda los periódos en un array.
-     * @param string $pCarnet Carnet del estudiante buscado.
-     * @param int $pIDProyecto ID del proyecto en la base de datos.
-     * @return array Un arreglo de arreglos con la fechas de los periodos correspondientes a los
-     * atributos que cargó de la base de datos.
-     */
-    public function buscarDatosActualesAsistenteEnProyecto($pCarnet, $pIDProyecto) {
-        $respuesta =  NULL;
-        $call = 'CALL buscarDatosActualesAsistenteEnProyecto(:carnet,:idproyecto)';
-        $comando = Yii::app()->db->createCommand($call);
-        $comando->bindParam(':carnet', $pCarnet);
-        $comando->bindParam(':idproyecto', $pIDProyecto);
-        $query = $comando->query();
-        if ($query->rowCount === 1) {
-            $read = $query->read();
-            $this->rol = $read['rol_id'];
-            $this->horas = $read['horas'];
-            $periodo_rol = new Periodos;
-            $periodo_rol->inicio = $read['inicio_rol'];
-            $periodo_rol->fin = $read['fin'];
-            $periodo_horas = new Periodos;
-            $periodo_horas->inicio = $read['inicio_horas'];
-            $periodo_horas->fin = $read['fin'];
-            $periodo_asistencia = new Periodos;
-            $periodo_asistencia->inicio = $read['inicio'];
-            $periodo_asistencia->fin = $read['fin'];
-            $respuesta = array('rol' => $periodo_rol, 'horas' => $periodo_horas, 'asistencia' => $periodo_asistencia);
-        }//fin si lo encontró y sólo retorna un resultado
-        return $respuesta;
-    }//fin buscar Asistente en proyecto
 
 }//fin clase Modelo Asistente
 
