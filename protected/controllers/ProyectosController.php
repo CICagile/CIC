@@ -618,7 +618,7 @@ class ProyectosController extends Controller {
     }
     
     public function actionEditarAsistencia($id, $carnet) {
-        new Periodos; //Elimina un error en la funcion buscar datos actuales...
+        new Periodos; //Elimina un error en la funcion buscar datos actuales... Sin esto, esa funcion no puede instanciar periodos.
         $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
         $asistente = new Asistente();
         $periodos = $asistente->buscarDatosActualesAsistenteEnProyecto($carnet, $id);
