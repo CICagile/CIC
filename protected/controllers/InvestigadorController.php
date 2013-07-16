@@ -133,10 +133,7 @@ class InvestigadorController extends Controller
 	 */
 	public function actionIndex()
 	{
-		//$dataProvider=new CActiveDataProvider('Asistente');
-		/*$this->render('index'
-		);*/
-                $this->actionAdmin();
+		$this->actionAdmin();
 	}
 
 	/**

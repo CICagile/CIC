@@ -187,6 +187,29 @@ class Investigador  extends CModel{
         return $resultado->rowCount === 1 ? $resultado->read() : NULL;
     
     }//fin buscar asistente por pk
+    //
+    public function proyectosinvestigador(){
+           $call = 'CALL verProyectosporInvestigador(:cedulabuscada)';
+           $comand=Yii::app()->db->createCommand($call);
+           $comand->bindParam(':cedulabuscada', $this->cedula, PDO::PARAM_STR);
+           $rawdata=$comand->queryAll();
+           $dataProvider=new CArrayDataProvider($rawdata, array(
+                'keyField'=>'codigo',
+                'id'=>'user',
+                'sort'=>array(
+                    'attributes'=>array(
+                        'idtbl_proyectos',
+                        'codigo',
+                        'nombre',
+                        'horas',
+                    ),
+                ),
+                'pagination'=>array(
+                'pageSize'=>10,
+                ),
+            ));
+            return $dataProvider;
+    }
     // </editor-fold>
     
     /**

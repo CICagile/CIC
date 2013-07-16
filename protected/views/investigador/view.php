@@ -12,6 +12,22 @@ $this->menu=array(
 	
 	
 );
+$columns = array(
+    array(
+        'header'=>CHtml::encode('Código'),
+        'name'=>'idtbl_proyectos',
+        'type'=>'raw',
+        'value'=>'CHtml::link($data["codigo"], CHtml::normalizeUrl(array("/proyectos/","ver" => $data["idtbl_proyectos"])))',
+        ),
+    array(
+        'header'=>CHtml::encode('Nombre'),
+        'name'=>'nombre',
+    ),
+   array(
+        'header'=>CHtml::encode('Horas'),
+        'name'=>'horas',
+    ),
+   );
 ?>
 
 <h3>Información del Investigador</h3>
@@ -28,10 +44,19 @@ $this->widget('zii.widgets.CDetailView', array(
                 'correo',
                 'experiencia',
                 'ingreso',
-                'grado',
+                //'grado'
 	),
 ));
 ?>
 <br/>
 <br/>
+<h3>Proyectos asociados</h3>
+<?php 
+$this->widget('zii.widgets.grid.CGridView', array(
+        'id'=>'investigador-grid',
+	'dataProvider'=>$model->proyectosinvestigador($model->cedula),
+	'columns'=>$columns,
+       ));
+?>
+
 
