@@ -19,6 +19,7 @@ $this->menu=array(
 
 ?>
 
+<h1>Editar asistencia de <?php echo $asistente->carnet?></h1>
 <div class="form">
     <p class="note">Los campos marcados con <span class="required">*</span> son obligatorios.</p>
     <?php $form = $this->beginWidget('CActiveForm', array(
@@ -35,7 +36,7 @@ $this->menu=array(
     <div class="row">
         <?php echo $form->labelEx($periodos['rol'], 'inicio'); ?>
         <?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-            'name' => CHtml::activeName($periodos['rol'], 'inicio'),
+            'name' => 'Rol[inicio]',
             'value' => $periodos['rol']->attributes['inicio'],
             'language' => 'es',
             'options' => array(
@@ -49,6 +50,90 @@ $this->menu=array(
             ),
         )); ?>
         <?php echo $form->error($periodos['rol'],'inicio'); ?>
+        <div class="row-buttons">
+            <?php echo CHtml::submitButton("Guardar rol"); ?>
+        </div>
+    </div>
+    <?php $this->endWidget() ?>
+</div>
+<div class="form">
+    <?php $form = $this->beginWidget('CActiveForm', array(
+        'id' => 'editar-horas',
+    )); ?>
+    <h2>Cambiar Horas</h2>
+    <?php echo $form->errorSummary(array($periodos['horas'],$asistente),'Se han detectado los siguientes errores:'); ?>
+    <div class="row">
+        <?php echo $form->labelEx($asistente,'horas'); ?>
+        <?php echo $form->textField($asistente,'horas',array('size'=>4,'maxlength'=>4)); ?>
+        <?php echo $form->error($asistente,'horas'); ?>
+    </div>
+    <div class="row">
+        <?php echo $form->labelEx($periodos['horas'], 'inicio'); ?>
+        <?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+            'name' => 'Horas[inicio]',
+            'value' => $periodos['horas']->attributes['inicio'],
+            'language' => 'es',
+            'options' => array(
+                'showAnim' => 'fold',
+                'dateFormat' => 'dd-mm-yy',
+                'changeYear' => true,
+                'changeMonth' => true,
+            ),
+            'htmlOptions' => array(
+                'readonly' => 'readonly'
+            ),
+        )); ?>
+        <?php echo $form->error($periodos['horas'],'inicio'); ?>
+        <div class="row-buttons">
+            <?php echo CHtml::submitButton("Guardar horas"); ?>
+        </div>
+    </div>
+    <?php $this->endWidget() ?>
+</div>
+<div class="form">
+    <?php $form = $this->beginWidget('CActiveForm', array(
+        'id' => 'editar-horas',
+    )); ?>
+    <h2>Cambiar Periodo de Asistencia</h2>
+    <?php echo $form->errorSummary(array($periodos['asistencia'],$asistente),'Se han detectado los siguientes errores:'); ?>
+    <div class="row">
+        <?php echo $form->labelEx($periodos['asistencia'], 'inicio'); ?>
+        <?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+            'name' => 'Asistencia[inicio]',
+            'value' => $periodos['asistencia']->attributes['inicio'],
+            'language' => 'es',
+            'options' => array(
+                'showAnim' => 'fold',
+                'dateFormat' => 'dd-mm-yy',
+                'changeYear' => true,
+                'changeMonth' => true,
+            ),
+            'htmlOptions' => array(
+                'readonly' => 'readonly'
+            ),
+        )); ?>
+        <?php echo $form->error($periodos['asistencia'],'inicio'); ?>
+    </div>
+    <div class="row">
+        <?php echo $form->labelEx($periodos['asistencia'], 'fin'); ?>
+        <?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+            'name' => 'Asistencia[fin]',
+            'value' => $periodos['asistencia']->attributes['fin'],
+            'language' => 'es',
+            'options' => array(
+                'showAnim' => 'fold',
+                'dateFormat' => 'dd-mm-yy',
+                'changeYear' => true,
+                'changeMonth' => true,
+            ),
+            'htmlOptions' => array(
+                'readonly' => 'readonly'
+            ),
+        )); ?>
+        <?php echo $form->error($periodos['asistencia'],'fin'); ?>
+        <div class="row-buttons">
+            <?php echo CHtml::submitButton("Guardar periodo"); ?>
+        </div>
     </div>
     <?php $this->endWidget() ?>
 </div>
