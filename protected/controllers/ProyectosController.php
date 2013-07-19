@@ -625,6 +625,9 @@ class ProyectosController extends Controller {
         $periodos = $asistente->buscarDatosActualesAsistenteEnProyecto($id);
         if ($periodos === NULL)
             throw new CHttpException(404, 'No se encontró al asistente en ese proyecto.');
+        if (isset($_POST['Rol']) && isset($_POST['Asistente'])) {
+            echo 'Le dio click en rol';
+        }//fin si cambia el rol
         
         $this->render('editarasistencia', array(
             'model' => $model,
