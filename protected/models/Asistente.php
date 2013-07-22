@@ -512,6 +512,7 @@ class Asistente  extends CModel{
             $transaccion->rollback();
             return false;
         }//fin catch
+        return true;
     }//fin cambiar periodo asistencia
 // </editor-fold>
     
