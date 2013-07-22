@@ -484,6 +484,35 @@ class Asistente  extends CModel{
             }//fin catch
             return true;
     }
+    
+    /**
+     * Cambia los periodos de asistencia del asistente en el proyecto dados la
+     * nueva fecha fin y la nueva fecha de inicio. Afecta a los periodos del
+     * rol, de las horas y de la asistencia.
+     * @param int $pIdProyecto ID del proyecto. Es el PK que tiene la BD.
+     * @param string $pInicio Nueva fecha de inicio de la asistencia.
+     * @param string $pFin Nueva Fecha de fin de la asistencia.
+     * @return boolean Retorna <code>true</code> si se ejecutó el SP con éxito y <code>false</code> de lo contrario.
+     */
+    public function cambiarPeriodoAsistencia($pIdProyecto, $pInicio, $pFin) {
+        $call = 'CALL cambiarPeriodoAsistencia(:inicio,:fin,:carnet,:id)';
+        $conexion = Yii::app()->db;
+        $transaction = $conexion->beginTransaction();
+        try {
+            $comando = $conexion->createCommand($call);
+            $comando->bindParam(':inicio', $pInicio, PDO::PARAM_STR);
+            $comando->bindParam(':fin', $pFin, PDO::PARAM_STR);
+            $comando->bindParam(':carnet', $this->carnet, PDO::PARAM_STR);
+            $comando->bindParam('id', $pIdProyecto, PDO::PARAM_INT);
+            $comando->execute();
+            $transaction->commit();
+        }//fin try
+        catch (Exception $e) {
+            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
+            $transaccion->rollback();
+            return false;
+        }//fin catch
+    }//fin cambiar periodo asistencia
 // </editor-fold>
     
     /**
