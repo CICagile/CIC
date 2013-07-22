@@ -622,7 +622,22 @@ class ProyectosController extends Controller {
     
     private function cambiarHorasAsistente(){}//fin cambiar horas asistente
     
-    private function cambiarPeriodoAsistencia(){}//fin cambiar horas asistente
+    /**
+     * Cambia el periodo de asistencia de cierto asistente. Tambien corrije los otros periodos
+     * involucrados. Realiza las validaciones necesarias.
+     * @param Periodos $pPeriodo
+     * @param Asistente $pAsistente
+     * @param Proyectos $pProyecto
+     */
+    private function cambiarPeriodoAsistencia($pPeriodo,$pAsistente,$pProyecto){
+        $pPeriodo->validarFechaInicioAsistencia($pProyecto->codigo);
+        $pPeriodo->validarFechaFinAsistencia($pProyecto->codigo);
+        if ($pPeriodo->validate(NULL, false))
+            if ($pAsistente->cambiarPeriodoAsistencia($pProyecto->idtbl_Proyectos, $pPeriodo->inicio, $pPeriodo->fin))
+                $this->redirect(array('editarasistencia','id'=>$pProyecto->idtbl_Proyectos,'carnet'=>$pAsistente->carnet));
+            else
+                throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.'); 
+    }//fin cambiar horas asistente
 
     public function actionEditarAsistencia($id, $carnet) {
         new Periodos; //Elimina un error en la funcion buscar datos actuales... Sin esto, esa funcion no puede instanciar periodos.
@@ -636,6 +651,10 @@ class ProyectosController extends Controller {
             if (isset($_POST['correccion']))
                 $periodos['rol']->addError('inicio', '¡Sólo corregir período no implementado!');
         }//fin si cambia el rol
+        else if (isset($_POST['Asistencia'])) {
+            $periodos['asistencia']->attributes = $_POST['Asistencia'];
+            $this->cambiarPeriodoAsistencia($periodos['asistencia'],$asistente,$model);
+        }//fin si cambia el periodo de asistencia
 
         $this->render('editarasistencia', array(
             'model' => $model,
