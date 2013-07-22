@@ -617,6 +617,13 @@ class ProyectosController extends Controller {
         ));
     }
     
+// <editor-fold defaultstate="collapsed" desc="Editar Asistencia">
+    private function cambiarRolAsistente(){}//fin cambiar rol asistente
+    
+    private function cambiarHorasAsistente(){}//fin cambiar horas asistente
+    
+    private function cambiarPeriodoAsistencia(){}//fin cambiar horas asistente
+
     public function actionEditarAsistencia($id, $carnet) {
         new Periodos; //Elimina un error en la funcion buscar datos actuales... Sin esto, esa funcion no puede instanciar periodos.
         $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
@@ -626,15 +633,18 @@ class ProyectosController extends Controller {
         if ($periodos === NULL)
             throw new CHttpException(404, 'No se encontró al asistente en ese proyecto.');
         if (isset($_POST['Rol']) && isset($_POST['Asistente'])) {
-            echo 'Le dio click en rol';
+            if (isset($_POST['correccion']))
+                $periodos['rol']->addError('inicio', '¡Sólo corregir período no implementado!');
         }//fin si cambia el rol
-        
+
         $this->render('editarasistencia', array(
             'model' => $model,
             'asistente' => $asistente,
             'periodos' => $periodos,
         ));
     }//fin accion editar asistencia
+// </editor-fold>
+
     
     /**
      * Returns the data model based on the primary key given in the GET variable.
