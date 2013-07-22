@@ -51,7 +51,7 @@ $this->menu=array(
                 ),
             )); ?>
             <?php echo $form->error($periodos['rol'],'inicio'); ?>
-            <br>Solo corregir datos <input type="checkbox" name="vehicle" id="vehicle" value="Car">
+            <br>Sólo corregir período <input type="checkbox" name="correccion" id="vehicle" value="1">
             <div class="row-buttons">
                 <?php echo CHtml::submitButton("Guardar rol"); ?>
             </div>
@@ -88,7 +88,7 @@ $this->menu=array(
                 ),
             )); ?>
             <?php echo $form->error($periodos['horas'],'inicio'); ?>
-            <br>Solo corregir datos <input type="checkbox" name="vehicle" id="vehicle" value="Car">
+            <br>Sólo corregir período <input type="checkbox" name="correccion" id="vehicle" value="1">
             <div class="row-buttons">
                 <?php echo CHtml::submitButton("Guardar horas"); ?>
             </div>
@@ -101,7 +101,7 @@ $this->menu=array(
         'id' => 'editar-horas',
     )); ?>
     <fieldset>
-        <legend><h2>Cambiar Periodo de Asistencia</h2></legend>
+        <legend><h2>Cambiar Período de Asistencia</h2></legend>
         <?php echo $form->errorSummary(array($periodos['asistencia'],$asistente),'Se han detectado los siguientes errores:'); ?>
         <div class="row">
             <?php echo $form->labelEx($periodos['asistencia'], 'inicio'); ?>
@@ -138,9 +138,8 @@ $this->menu=array(
                 ),
             )); ?>
             <?php echo $form->error($periodos['asistencia'],'fin'); ?>
-            <br>Solo corregir datos <input type="checkbox" name="vehicle" id="vehicle" value="Car">
             <div class="row-buttons">
-                <?php echo CHtml::submitButton("Guardar periodo"); ?>
+                <?php echo CHtml::submitButton("Guardar período"); ?>
             </div>
         </div>
     </fieldset>
