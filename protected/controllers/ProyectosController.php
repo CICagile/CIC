@@ -625,9 +625,9 @@ class ProyectosController extends Controller {
     /**
      * Cambia el periodo de asistencia de cierto asistente. Tambien corrije los otros periodos
      * involucrados. Realiza las validaciones necesarias.
-     * @param Periodos $pPeriodo
-     * @param Asistente $pAsistente
-     * @param Proyectos $pProyecto
+     * @param Periodos $pPeriodo Periodo de la asistencia nueva.
+     * @param Asistente $pAsistente Asistente al que se le hace el cambio.
+     * @param Proyectos $pProyecto Proyecto en el que está el asistente.
      */
     private function cambiarPeriodoAsistencia($pPeriodo,$pAsistente,$pProyecto){
         $pPeriodo->validarFechaInicioAsistencia($pProyecto->codigo);
