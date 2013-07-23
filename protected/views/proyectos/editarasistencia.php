@@ -51,7 +51,7 @@ $this->menu=array(
                 ),
             )); ?>
             <?php echo $form->error($periodos['rol'],'inicio'); ?>
-            <br>Sólo corregir período <input type="checkbox" name="correccion" id="vehicle" value="1">
+            <br>Sólo corregir fecha inicio <input type="checkbox" name="correccion" id="vehicle" value="1">
             <div class="row-buttons">
                 <?php echo CHtml::submitButton("Guardar rol"); ?>
             </div>
@@ -88,7 +88,7 @@ $this->menu=array(
                 ),
             )); ?>
             <?php echo $form->error($periodos['horas'],'inicio'); ?>
-            <br>Sólo corregir período <input type="checkbox" name="correccion" id="vehicle" value="1">
+            <br>Sólo corregir fecha inicio <input type="checkbox" name="correccion" id="vehicle" value="1">
             <div class="row-buttons">
                 <?php echo CHtml::submitButton("Guardar horas"); ?>
             </div>
