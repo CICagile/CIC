@@ -115,16 +115,12 @@
         'doubleName' => 'Proyectos[idtbl_sectorbeneficiado][]'));
     ?>
 
-
     <div class="row">
-        <div class="row">
-            <?php echo $form->labelEx($modelproyectos, 'observaciones'); ?>
-            <?php echo $form->textArea($modelproyectos, 'observaciones', array('size' => 60, 'maxlength' => 500, 'style' => 'width:90%; heigth:100%;')); ?>
-            
-            <div class="errorMessage" id="observaciones_error"></div>
-        </div>	
+        <?php echo $form->labelEx($modelproyectos, 'observaciones'); ?>
+        <?php echo $form->textArea($modelproyectos, 'observaciones', array('size' => 60, 'maxlength' => 500, 'style' => 'width:90%; heigth:100%;')); ?>
 
-    </div>
+        <div class="errorMessage" id="observaciones_error"></div>
+    </div>	
 
     <div class="row buttons">
         <?php echo CHtml::submitButton('Crear'); ?>

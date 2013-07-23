@@ -46,6 +46,7 @@ $this->widget('zii.widgets.CDetailView', array(
                 'value' => $sectores_beneficiados,
                 'type' => 'html',
                 ),
+                'observaciones',
 	),
 )); 
     
