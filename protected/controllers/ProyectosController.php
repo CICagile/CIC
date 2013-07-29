@@ -633,7 +633,21 @@ class ProyectosController extends Controller {
                     throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
     }//fin cambiar rol asistente
     
-    private function cambiarHorasAsistente(){}//fin cambiar horas asistente
+    /**
+     * Agrega un nuevo periodo para las nuevas horas que hace el asistente.
+     * Se realizan las validaciones necesarias.
+     * @param Periodos $pPeriodo Periodo en que cumple con las horas. La fecha de fin no cmabia.
+     * @param Asistente $pAsistente Asistente al que se le hace el cambio.
+     * @param Proyectos $pProyecto Proyecto en el que está el asistente.
+     * @param double $pHoras Horas nuevas que cumplirá el asistente
+     */
+    private function cambiarHorasAsistente($pPeriodo, $pAsistente, $pProyecto, $pHoras){
+        $pPeriodo->validarFechaIncioAsistencia($pProyecto->codigo);
+        if ($pHoras == null)
+            $pAsistente->addError ('horas', 'Las horas no pueden ser nulas');
+        if($pPeriodo->validate(NULL,FALSE) && $pAsistente->validarActualizacionDeHoras($pHoras))
+            if (!$pAsistente)
+    }//fin cambiar horas asistente
     
     /**
      * Cambia el periodo de asistencia de cierto asistente. Tambien corrije los otros periodos
@@ -679,9 +693,19 @@ class ProyectosController extends Controller {
             $periodos['asistencia']->attributes = $_POST['Asistencia'];
             $this->cambiarPeriodoAsistencia($periodos['asistencia'],$asistente,$model);
         }//fin si cambia el periodo de asistencia
-        
         else if (isset($_POST['Horas'])) {
-            ;
+            if (isset($_POST['correccion']))
+                $periodos['horas']->addError('inicio', '¡Sólo corregir período no implementado!');
+            else {
+                if ($asistente->horas == $_POST['Asistente']['horas'])
+                    $asistente->addError ('horas', 'No cambiaron las horas.');
+                else if ($periodos['horas']->inicio == $_POST['Horas']['inicio'])
+                    $periodos['horas']->addError ('inicio', 'La fecha de inicio no cambió.');
+                else {
+                    $periodos['horas'] = $_POST['Horas']['inicio'];
+                    $this->cambiarHorasAsistente($periodos['horas'], $asistente, $model, $_POST['Asistente']['horas']);
+                }//fin si es agregar nuevo periodo
+            }//fin si las cambia el periodo de las horas.
         }//fin si cambia el periodo de las horas
 
         $this->render('editarasistencia', array(
