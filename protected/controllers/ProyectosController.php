@@ -646,7 +646,10 @@ class ProyectosController extends Controller {
         if ($pHoras == null)
             $pAsistente->addError ('horas', 'Las horas no pueden ser nulas');
         if($pPeriodo->validate(NULL,FALSE) && $pAsistente->validarActualizacionDeHoras($pHoras))
-            if (!$pAsistente)
+            if ($pAsistente->actualizarHorasProyecto($pProyecto->idtbl_Proyectos, $pPeriodo->inicio))
+                $this->redirect (array('ver','id'=>$pProyecto->idtbl_Proyectos));
+            else
+                throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.'); 
     }//fin cambiar horas asistente
     
     /**
