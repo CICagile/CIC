@@ -544,7 +544,7 @@ class Asistente  extends CModel{
     }//fin actualizar rol del asistente en el proyecto.
     
     /**
-     * Inserta un nuevo periodo con las nuevoas horas que cumple el asistente.
+     * Inserta un nuevo periodo con las nuevas horas que cumple el asistente.
      * @param int $pIDProyecto PK del proyecto en la base de datos.
      * @param string $pInicio Fecha en la que empieza a hacer las nuevas horas.
      * @return boolean Retorna <code>true</code> si logra ejecutar el SP con
@@ -560,6 +560,7 @@ class Asistente  extends CModel{
             $comando->bindParam(':id', $pIDProyecto, PDO::PARAM_INT);
             $comando->bindParam(':horas', $this->horas);
             $comando->bindParam(':inicio', $pInicio, PDO::PARAM_STR);
+            $comando->execute();
             $transaction->commit();
         }//fin try
         catch (Exception $e) {
