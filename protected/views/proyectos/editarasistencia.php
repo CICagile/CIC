@@ -27,6 +27,8 @@ $this->menu=array(
     )); ?>
     <fieldset>
         <legend><h2>Cambiar Rol</h2></legend>
+        <?php   $errorHoras = $asistente->getErrors(); //Se guardan por si el formulario de horas los necesita.
+                $asistente->clearErrors('horas'); //para que no muestre los errores del formulario de horas.?> 
         <?php echo $form->errorSummary(array($periodos['rol'],$asistente),'Se han detectado los siguientes errores:'); ?>
         <div class="row">
             <?php echo $form->labelEx($asistente,'rol'); ?>
@@ -65,6 +67,8 @@ $this->menu=array(
     )); ?>
     <fieldset>
         <legend><h2>Cambiar Horas</h2></legend>
+        <?php   $asistente->addErrors($errorHoras); //Se restauran los errores que fueron borrados.
+                $asistente->clearErrors('rol'); //para que no muestre los errores del formulario de roles.?> 
         <?php echo $form->errorSummary(array($periodos['horas'],$asistente),'Se han detectado los siguientes errores:'); ?>
         <div class="row">
             <?php echo $form->labelEx($asistente,'horas'); ?>
@@ -102,7 +106,7 @@ $this->menu=array(
     )); ?>
     <fieldset>
         <legend><h2>Cambiar Período de Asistencia</h2></legend>
-        <?php echo $form->errorSummary(array($periodos['asistencia'],$asistente),'Se han detectado los siguientes errores:'); ?>
+        <?php echo $form->errorSummary($periodos['asistencia'],'Se han detectado los siguientes errores:'); ?>
         <div class="row">
             <?php echo $form->labelEx($periodos['asistencia'], 'inicio'); ?>
             <?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
