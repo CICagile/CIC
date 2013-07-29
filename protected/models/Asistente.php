@@ -514,6 +514,34 @@ class Asistente  extends CModel{
         }//fin catch
         return true;
     }//fin cambiar periodo asistencia
+
+    /**
+     * Agrega un nuevo periodo para el nuevo rol que desempeña el asistente en el proyecto.
+     * @param string $pInicio Fecha en que el asistente inicia con el nuevo rol.
+     * @param int $pIDProyecto PK del proyecto en la base de datos.
+     * @return boolean Retorna <code>true</code> si logra ejecutar el SP con
+     * éxito y <code>false</code> de lo contrario.
+     */
+    public function actualizarRolProyecto($pInicio,$pIDProyecto) {
+        $call = 'CALL actualizarRolAsistente(:id, :carnet, :rol, :inicio)';
+        $conexion = Yii::app()->db;
+        $transaction = $conexion->beginTransaction();
+        try {
+            $comando = $conexion->createCommand($call);
+            $comando->bindParam(':id', $pIDProyecto, PDO::PARAM_INT);
+            $comando->bindParam(':carnet', $this->carnet, PDO::PARAM_STR);
+            $comando->bindParam('rol', $this->rol, PDO::PARAM_INT);
+            $comando->bindParam(':inicio', $pInicio, PDO::PARAM_STR);
+            $comando->execute();
+            $transaction->commit();
+        }//fin try
+        catch (Exception $e) {
+            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
+            $transaction->rollback();
+            return false;
+        }//fin catch
+        return true;
+    }//fin actualizar rol del asistente en el proyecto.
 // </editor-fold>
     
     /**
