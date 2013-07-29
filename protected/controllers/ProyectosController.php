@@ -642,14 +642,14 @@ class ProyectosController extends Controller {
      * @param double $pHoras Horas nuevas que cumplirá el asistente
      */
     private function cambiarHorasAsistente($pPeriodo, $pAsistente, $pProyecto, $pHoras){
-        $pPeriodo->validarFechaIncioAsistencia($pProyecto->codigo);
+        $pPeriodo->validarFechaInicioAsistencia($pProyecto->codigo);
         if ($pHoras == null)
             $pAsistente->addError ('horas', 'Las horas no pueden ser nulas');
         if($pPeriodo->validate(NULL,FALSE) && $pAsistente->validarActualizacionDeHoras($pHoras))
             if ($pAsistente->actualizarHorasProyecto($pProyecto->idtbl_Proyectos, $pPeriodo->inicio))
                 $this->redirect (array('ver','id'=>$pProyecto->idtbl_Proyectos));
             else
-                throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.'); 
+                throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
     }//fin cambiar horas asistente
     
     /**
@@ -705,7 +705,7 @@ class ProyectosController extends Controller {
                 else if ($periodos['horas']->inicio == $_POST['Horas']['inicio'])
                     $periodos['horas']->addError ('inicio', 'La fecha de inicio no cambió.');
                 else {
-                    $periodos['horas'] = $_POST['Horas']['inicio'];
+                    $periodos['horas']->inicio = $_POST['Horas']['inicio'];
                     $this->cambiarHorasAsistente($periodos['horas'], $asistente, $model, $_POST['Asistente']['horas']);
                 }//fin si es agregar nuevo periodo
             }//fin si las cambia el periodo de las horas.
