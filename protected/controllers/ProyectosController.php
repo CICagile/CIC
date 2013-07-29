@@ -670,6 +670,7 @@ class ProyectosController extends Controller {
                     $periodos['rol']->addError ('inicio', 'La fecha de inicio no cambió.');
                 else {
                     $asistente->rol = $_POST['Asistente']['rol'];
+                    $periodos['rol']->inicio = $_POST['Rol']['inicio'];
                     $this->cambiarRolAsistente($periodos['rol'],$asistente,$model);
                 }//fin si el usuario eligió un nuevo rol.
             }//fin si es agregar nuevo periodo
