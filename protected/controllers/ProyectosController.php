@@ -618,7 +618,20 @@ class ProyectosController extends Controller {
     }
     
 // <editor-fold defaultstate="collapsed" desc="Editar Asistencia">
-    private function cambiarRolAsistente(){}//fin cambiar rol asistente
+    /**
+     * Agrega un nuevo periodo en el que el asistente puede llevar un nuevo rol.
+     * @param Periodos $pPeriodo Periodo en que inicia el nuevo rol. La fecha de fin no cambia.
+     * @param Asistente $pAsistente Asistente al que se le hace el cambio.
+     * @param Proyectos $pProyecto Proyecto en el que está el asistente.
+     */
+    private function cambiarRolAsistente($pPeriodo, $pAsistente, $pProyecto) {
+        $pPeriodo->validarFechaInicioAsistencia($pProyecto->codigo);
+        if ($pAsistente->rol === '')
+            $pAsistente->addError ('rol', 'Tiene que elegir un rol.');
+        if ($pPeriodo->validate(NULL, FALSE) && $pAsistente->validate('rol',FALSE))
+            if (!$pAsistente->actualizarRolProyecto($pPeriodo->inicio,$pProyecto->idtbl_Proyectos))
+                    throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
+    }//fin cambiar rol asistente
     
     private function cambiarHorasAsistente(){}//fin cambiar horas asistente
     
@@ -650,11 +663,25 @@ class ProyectosController extends Controller {
         if (isset($_POST['Rol']) && isset($_POST['Asistente'])) {
             if (isset($_POST['correccion']))
                 $periodos['rol']->addError('inicio', '¡Sólo corregir período no implementado!');
-        }//fin si cambia el rol
+            else {
+                if ($asistente->rol == $_POST['Asistente']['rol'])
+                    $asistente->addError ('rol', 'Rol no cambió.');
+                else if ($periodos['rol']->inicio == $_POST['Rol']['inicio'])
+                    $periodos['rol']->addError ('inicio', 'La fecha de inicio no cambió.');
+                else {
+                    $asistente->rol = $_POST['Asistente']['rol'];
+                    $this->cambiarRolAsistente($periodos['rol'],$asistente,$model);
+                }//fin si el usuario eligió un nuevo rol.
+            }//fin si es agregar nuevo periodo
+        }//fin si cambia el periodo del rol
         else if (isset($_POST['Asistencia'])) {
             $periodos['asistencia']->attributes = $_POST['Asistencia'];
             $this->cambiarPeriodoAsistencia($periodos['asistencia'],$asistente,$model);
         }//fin si cambia el periodo de asistencia
+        
+        else if (isset($_POST['Horas'])) {
+            ;
+        }//fin si cambia el periodo de las horas
 
         $this->render('editarasistencia', array(
             'model' => $model,
