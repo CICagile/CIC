@@ -542,6 +542,33 @@ class Asistente  extends CModel{
         }//fin catch
         return true;
     }//fin actualizar rol del asistente en el proyecto.
+    
+    /**
+     * Inserta un nuevo periodo con las nuevoas horas que cumple el asistente.
+     * @param int $pIDProyecto PK del proyecto en la base de datos.
+     * @param string $pInicio Fecha en la que empieza a hacer las nuevas horas.
+     * @return boolean Retorna <code>true</code> si logra ejecutar el SP con
+     * éxito y <code>false</code> de lo contrario.
+     */
+    public function actualizarHorasProyecto($pIDProyecto, $pInicio) {
+        $call = 'CALL actualizarHorasAsistencia(:carnet,:id,:horas,:inicio)';
+        $conexion = Yii::app()->db;
+        $transaction = $conexion->beginTransaction();
+        try {
+            $comando = $conexion->createCommand($call);
+            $comando->bindParam(':carnet', $this->carnet, PDO::PARAM_STR);
+            $comando->bindParam(':id', $pIDProyecto, PDO::PARAM_INT);
+            $comando->bindParam(':horas', $this->horas);
+            $comando->bindParam(':inicio', $pInicio, PDO::PARAM_STR);
+            $transaction->commit();
+        }//fin try
+        catch (Exception $e) {
+            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
+            $transaction->rollback();
+            return false;
+        }//fin catch
+        return true;
+    }//fin actualizar horas del asistente en el proyecto.
 // </editor-fold>
     
     /**
