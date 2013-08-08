@@ -23,11 +23,7 @@ $columns = array(
         'header'=>CHtml::encode('Nombre'),
         'name'=>'nombre',
     ),
-   array(
-        'header'=>CHtml::encode('Horas'),
-        'name'=>'horas',
-    ),
-   );
+ );
 ?>
 
 <h3>Información del Investigador</h3>
