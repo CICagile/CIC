@@ -12,18 +12,18 @@
     <div id="AjaxLoader" style="display: none"><img src="<?php echo Yii::app()->request->baseUrl; ?>/images/spinner.gif"></img></div>
 
     <p class="note">Campos con <span class="required">*</span> son obligatorios.</p>
-        <?php echo $form->errorSummary(array($modelproyectos, $modelperiodos)); ?>
+    <?php echo $form->errorSummary(array($modelproyectos, $modelperiodos)); ?>
 
     <div class="row">
         <?php echo $form->labelEx($modelproyectos, 'codigo'); ?>
-<?php echo $form->textField($modelproyectos, 'codigo', array('size' => 20, 'maxlength' => 20)); ?>
-<?php echo $form->error($modelproyectos, 'codigo'); ?>               
+        <?php echo $form->textField($modelproyectos, 'codigo', array('size' => 20, 'maxlength' => 20)); ?>
+        <?php echo $form->error($modelproyectos, 'codigo'); ?>               
     </div>
 
     <div class="row">
         <?php echo $form->labelEx($modelproyectos, 'nombre'); ?>
-<?php echo $form->textArea($modelproyectos, 'nombre', array('size' => 60, 'maxlength' => 500, 'style' => 'width:100%; heigth:100%;')); ?>
-<?php echo $form->error($modelproyectos, 'nombre'); ?>
+        <?php echo $form->textArea($modelproyectos, 'nombre', array('size' => 60, 'maxlength' => 500, 'style' => 'width:90%; heigth:100%;')); ?>
+        <?php echo $form->error($modelproyectos, 'nombre'); ?>
     </div>		
 
     <div class="row">
@@ -85,10 +85,10 @@
     </div>
 
     <div class="row">
-    <?php echo $form->labelEx($modelproyectos, 'idtbl_adscrito'); ?>
-    <?php echo $form->dropDownList($modelproyectos, 'idtbl_adscrito', CHtml::listData(Adscrito::model()->findAll(), 'idtbl_adscrito', 'nombre'), array('empty' => 'Elija la adscripción del proyecto', 'id' => 'Proyectos_idtbl_adscrito'))
-    ?>
-    <?php echo $form->error($modelproyectos, 'idtbl_adscrito'); ?>
+        <?php echo $form->labelEx($modelproyectos, 'idtbl_adscrito'); ?>
+        <?php echo $form->dropDownList($modelproyectos, 'idtbl_adscrito', CHtml::listData(Adscrito::model()->findAll(), 'idtbl_adscrito', 'nombre'), array('empty' => 'Elija la adscripción del proyecto', 'id' => 'Proyectos_idtbl_adscrito'))
+        ?>
+        <?php echo $form->error($modelproyectos, 'idtbl_adscrito'); ?>
     </div>
 
     <?php /*
@@ -104,7 +104,7 @@
     /* http://www.yiiframework.com/extension/optiontransferselect/ */
     //option transfers
     $leftOption = CHtml::listData(SectorBeneficiado::model()->findAll(), 'idtbl_sectorbeneficiado', 'nombre');
-    
+
     //asort($leftOption);
     $this->widget('application.extensions.optiontransferselect.Optiontransferselect', array(
         'leftTitle' => 'Sectores disponibles',
@@ -115,10 +115,9 @@
         'doubleName' => 'Proyectos[idtbl_sectorbeneficiado][]'));
     ?>
 
-    
     <div class="row buttons">
-    <?php echo CHtml::submitButton('Crear'); ?>
+        <?php echo CHtml::submitButton('Crear'); ?>
     </div>
-<?php $this->endWidget(); ?>
+    <?php $this->endWidget(); ?>
 
 </div><!-- form -->
