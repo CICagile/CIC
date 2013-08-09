@@ -1,4 +1,4 @@
-<?php*
+<?php
 /* @var $this AsistenteController */
 /* @var $model Asistente */
 
