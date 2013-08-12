@@ -71,6 +71,7 @@ $this->menu=array(
                             'dateFormat'=>'dd-mm-yy',
                             'changeYear'=>true,
                             'changeMonth'=>true,
+                            'minDate' => $model->inicio,
                         ),
                         'htmlOptions'=>array(                            
                             'readonly' => 'readonly'
@@ -91,6 +92,7 @@ $this->menu=array(
                             'dateFormat'=>'dd-mm-yy',
                             'changeYear'=>true,
                             'changeMonth'=>true,
+                            'maxDate' => $model->fin,
                         ),
                         'htmlOptions'=>array(                            
                             'readonly' => 'readonly'
