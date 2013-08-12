@@ -668,6 +668,22 @@ class ProyectosController extends Controller {
             else
                 throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.'); 
     }//fin cambiar horas asistente
+    
+    /**
+     * Realiza las siguientes validaciones:
+     * Verificar que no se cambie la fecha de inicio del primer período.
+     * Verificar contra la fecha de fin del periodo
+     * Verificar contra la fecha de fin del proyecto
+     * Verificar traslapaciones
+     *  -inicio nuevo no puede ser menor o  igual a inicio de periodo anterior (periodo con fecha fin igual a este inico).
+     * @param Periodos $pPeriodo Periodo que se está verificando.
+     * @param Proyectos $pProyecto Proyecto en que se encuentra el asistente.
+     * @param Asistente $pAsistente Asistente al que se le cambia el periodo.
+     */
+    private function validarCambioInicioPeriodo($pPeriodo, $pProyecto, $pAsistente){
+        $pPeriodo->validarFechaInicioAsistencia($pProyecto->codigo);
+        $pPeriodo->validate(NULL,FALSE);
+    }//fin validar cambio de inicio del periodo.
 
     public function actionEditarAsistencia($id, $carnet) {
         new Periodos; //Elimina un error en la funcion buscar datos actuales... Sin esto, esa funcion no puede instanciar periodos.
@@ -678,8 +694,10 @@ class ProyectosController extends Controller {
         if ($periodos === NULL)
             throw new CHttpException(404, 'No se encontró al asistente en ese proyecto.');
         if (isset($_POST['Rol']) && isset($_POST['Asistente'])) {
-            if (isset($_POST['correccion']))
+            if (isset($_POST['correccion'])){
                 $periodos['rol']->addError('inicio', '¡Sólo corregir período no implementado!');
+                $this->validarCambioInicioPeriodo();
+            }//fin si es sólo corregir fecha de inicio
             else {
                 if ($asistente->rol == $_POST['Asistente']['rol'])
                     $asistente->addError ('rol', 'Rol no cambió.');

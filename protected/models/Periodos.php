@@ -160,21 +160,31 @@ class Periodos extends CActiveRecord
         * @return boolean Retorna true si los datos son válidos o false de lo contrario.
         */
         public function validarActualizacionFechaFinAsistencia($pFinNuevo,$pProyecto){
-        $fin_anterior = $this->fin;
-        $this->fin =$pFinNuevo;
-        if ($this->validate()) {
-            if (strtotime($this->fin) <= strtotime($pProyecto->fin) && strtotime($this->fin) > strtotime($pProyecto->inicio))
-                return true;
+            $fin_anterior = $this->fin;
+            $this->fin =$pFinNuevo;
+            if ($this->validate()) {
+                if (strtotime($this->fin) <= strtotime($pProyecto->fin) && strtotime($this->fin) > strtotime($pProyecto->inicio))
+                    return true;
+                else {
+                    $this->addError('fin',$this->getAttributeLabel('fin') . ' no se encuentra dentro del período del proyecto.');
+                    $this->fin = $fin_anterior;
+                    return false;
+                }//fin si la fecha nueva no corresponde dentro del proyecto
+            }//fin si la nueva fecha es válida
             else {
-                $this->addError('fin',$this->getAttributeLabel('fin') . ' no se encuentra dentro del período del proyecto.');
                 $this->fin = $fin_anterior;
                 return false;
-            }//fin si la fecha nueva no corresponde dentro del proyecto
-        }//fin si la nueva fecha es válida
-        else {
-            $this->fin = $fin_anterior;
-            return false;
-        }//fin si la nueva fecha no es válida
+            }//fin si la nueva fecha no es válida
         }//fin validación de la fin nueva del asitente
+    
+    /**
+     * Valida que el inicio de este periodo no coincida con el inicio de
+     * la asistencia.
+     * @param string $pCarnet Carnet del asistente.
+     * @param int $pPKProyecto PK que tiene en la BD el Proyecto en el que esta el asistente.
+     */
+    public function validarPeriodoDiferentePrimero($pCarnet,$pPKProyecto){
+        ;
+    }//fin validar periodo diferente a primero
         
 }
