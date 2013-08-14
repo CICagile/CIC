@@ -64,3 +64,13 @@ $this->widget('zii.widgets.CDetailView', array(
     else
         $this->renderPartial('_verasistentes', array('model'=>$model,'dataProvider'=>$dataProvider));
 ?>
+</br></br></br></br>
+<h3>Investigadores Activos</h3>
+
+<!--?php $this->widget('zii.widgets.grid.CGridView', array(
+        'id'=>'asistente-grid',
+	'dataProvider'=>$dataProvider,
+	//'filter'=>$model,
+	'columns'=>$columns,
+           )); 
+?--!>
