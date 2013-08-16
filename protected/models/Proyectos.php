@@ -270,6 +270,31 @@ class Proyectos extends CActiveRecord {
         }//fin catch
         return true;
     }//fin agregar investigador a proyecto
+    //
+    //
+    public function investigadorporproyecto(){
+           $call = 'CALL verinvestigadorporproyecto(:pkproyecto)';
+           $comand=Yii::app()->db->createCommand($call);
+           $comand->bindParam(':pkproyecto', $this->idtbl_Proyectos, PDO::PARAM_STR);
+           $rawdata=$comand->queryAll();
+           $dataProvider=new CArrayDataProvider($rawdata, array(
+                'keyField'=>'codigo',
+                'id'=>'user',
+                'sort'=>array(
+                    'attributes'=>array(
+                        'cedula',
+                        'nombre',
+                        'apellido1',
+                        'apellido2',
+                        'rol',
+                    ),
+                ),
+                'pagination'=>array(
+                'pageSize'=>10,
+                ),
+            ));
+            return $dataProvider;
+    }
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Functions">
     /**
