@@ -18,6 +18,28 @@ $this->menu=array(
 );
 
 
+
+$columns = array (
+    array(
+        'header'=>CHtml::encode(Asistente::model()->getAttributeLabel('cedula')),
+        'name'=>'carnet',
+    ),
+    array(
+        'header'=>CHtml::encode(Asistente::model()->getAttributeLabel('nombre')),
+        'name'=>'nombre',
+    ),
+    array(
+        'header'=>CHtml::encode(Asistente::model()->getAttributeLabel('apellido1')),
+        'name'=>'apellido1',
+    ),
+    array(
+        'header'=>CHtml::encode(Asistente::model()->getAttributeLabel('apellido2')),
+        'name'=>'apellido2',
+    ),
+    array(
+        'header'=>CHtml::encode(Asistente::model()->getAttributeLabel('rol')),
+        'name'=>'rol',
+    ));
 ?>
 
 <h3>Detalle del proyecto.</h3>
@@ -67,10 +89,10 @@ $this->widget('zii.widgets.CDetailView', array(
 </br></br></br></br>
 <h3>Investigadores Activos</h3>
 
-<!--?php $this->widget('zii.widgets.grid.CGridView', array(
-        'id'=>'asistente-grid',
+<?php $this->widget('zii.widgets.grid.CGridView', array(
+        'id'=>'investigador-grid',
 	'dataProvider'=>$dataProvider,
 	//'filter'=>$model,
 	'columns'=>$columns,
            )); 
-?--!>
+?>
