@@ -69,7 +69,6 @@ $this->widget('zii.widgets.grid.CGridView', array(
     'dataProvider' => $data_provider,
     'columns' => array(
         array('header'=>'Código del Proyecto','value'=>'CHtml::link($data["codigo"], CHtml::normalizeUrl(array("/proyectos/","ver" => $data["idtbl_Proyectos"])))', 'type' => 'raw'),
-        array('header'=>'Código del Proyecto','value'=>'$data["codigo"]'),
         array('header'=>'Horas','value'=>'$data["horas"]'),
         array('header'=>'Rol','value'=>'$data["rol"]'),
         array('header'=>'Inicio','value'=>'$data["inicio"]'),
