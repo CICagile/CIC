@@ -87,10 +87,11 @@ class AsistenteController extends Controller {
         $data_provider = new CArrayDataProvider(
                         $historial_proyectos_asistente,
                         array(
+                            'keyField'=>'codigo',
                             'id' => 'asistente-historial-proyectos',
                             'sort' => array(
                                 'attributes' => array(
-                                    'codigo', 'horas', 'inicio', 'fin'
+                                    'idtbl_proyectos','codigo', 'horas', 'inicio', 'fin','rol'
                                 ),
                             ),
                             'pagination' => array(
