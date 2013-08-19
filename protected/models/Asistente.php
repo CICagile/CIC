@@ -505,6 +505,21 @@ class Asistente  extends CModel{
         else
             return 0;
     }//fin contarHorasActuales
+    
+// <editor-fold defaultstate="collapsed" desc="Reportes">
+
+    public function obtenerHistorialProyectosAsistente(){
+        $call = 'CALL obtenerHistorialProyectosAsistentes(:carnet)';
+        $comando = Yii::app()->db->createCommand($call);
+        $comando->bindParam(':carnet',$this->carnet,PDO::PARAM_STR);
+        $query = $comando->queryAll();
+        if (empty($query))
+            return null;
+        else
+            return $query;
+    }
+// </editor-fold>
+
 
 }//fin clase Modelo Asistente
 
