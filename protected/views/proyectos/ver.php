@@ -19,7 +19,7 @@ $this->menu=array(
 $columns = array (
     array(
         'header'=>CHtml::encode(Asistente::model()->getAttributeLabel('cedula')),
-        'name'=>'carnet',
+        'name'=>'cedula',
     ),
     array(
         'header'=>CHtml::encode(Asistente::model()->getAttributeLabel('nombre')),
@@ -83,7 +83,7 @@ $this->widget('zii.widgets.CDetailView', array(
     else
         $this->renderPartial('_verasistentes', array('model'=>$model,'dataProvider'=>$dataProvider));
 ?>
-</br>
+</br> </br>
 <h3>Investigadores Activos</h3>
 
 <?php $this->widget('zii.widgets.grid.CGridView', array(
