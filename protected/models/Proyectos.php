@@ -272,17 +272,23 @@ class Proyectos extends CActiveRecord {
     }//fin agregar investigador a proyecto
     //
     //
-    public function investigadorporproyecto(){
-           $call = 'CALL verinvestigadorporproyecto(:pkproyecto)';
+    
+    /** 
+     * Busca todos los investigadores asociados a un proyecto
+    * @return boolean Retorna true si la transacción ocurre exitosamente y false de lo contrario.
+     */
+    public function buscarinvestigadorporproyecto(){
+           $pkid = $this->idtbl_Proyectos;
+           $call = 'CALL verinvestigadorporproyecto(:idproyecto)';
            $comand=Yii::app()->db->createCommand($call);
-           $comand->bindParam(':pkproyecto', $this->idtbl_Proyectos, PDO::PARAM_STR);
+           $comand->bindParam(':idproyecto',$pkid, PDO::PARAM_INT);
            $rawdata=$comand->queryAll();
            $dataProvider=new CArrayDataProvider($rawdata, array(
-                'keyField'=>'codigo',
+                'keyField'=>'cedula',
                 'id'=>'user',
                 'sort'=>array(
                     'attributes'=>array(
-                        'cedula',
+                       // 'cedula',
                         'nombre',
                         'apellido1',
                         'apellido2',

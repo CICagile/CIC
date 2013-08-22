@@ -54,6 +54,7 @@ class ProyectosController extends Controller {
             $this->render('ver', array(
                 'model' => $model,
                 'dataProvider' => $model->buscarAsistentesActivosDeProyecto(),
+                'dataProvider1' => $model->buscarinvestigadorporproyecto(),
             ));
     }
 

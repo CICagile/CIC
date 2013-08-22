@@ -16,9 +16,6 @@ $this->menu=array(
         array('label'=>'Nuevo Proyecto', 'url'=>array('crear')),
         
 );
-
-
-
 $columns = array (
     array(
         'header'=>CHtml::encode(Asistente::model()->getAttributeLabel('cedula')),
@@ -86,13 +83,12 @@ $this->widget('zii.widgets.CDetailView', array(
     else
         $this->renderPartial('_verasistentes', array('model'=>$model,'dataProvider'=>$dataProvider));
 ?>
-</br></br></br></br>
+</br>
 <h3>Investigadores Activos</h3>
 
 <?php $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'investigador-grid',
-	'dataProvider'=>$dataProvider,
-	//'filter'=>$model,
+	'dataProvider'=>$dataProvider1,
 	'columns'=>$columns,
            )); 
 ?>

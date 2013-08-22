@@ -40,7 +40,7 @@ $this->widget('zii.widgets.CDetailView', array(
                 'correo',
                 'experiencia',
                 'ingreso',
-                //'grado'
+                
 	),
 ));
 ?>
