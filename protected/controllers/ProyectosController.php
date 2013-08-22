@@ -242,7 +242,7 @@ class ProyectosController extends Controller {
                 $transaction = Yii::app()->db->beginTransaction();
 
                 $resultado = $modelperiodos->save(false); //Guardo el periodo sin validar, ya que lo valide con anterioridad                                                           
-                //El proyecto cuando se crea por Default es aprobado -> 0           
+                //originalmente, un estado de 0 significaba aprobado         
                 $resultado = $resultado ? $modelproyectos->save() : $resultado;
 
 
@@ -256,7 +256,7 @@ class ProyectosController extends Controller {
                         $historialproyectoperiodo = new HistorialProyectosPeriodo();
                         $historialproyectoperiodo->idPeriodo = $modelperiodos->idPeriodo;
                         $historialproyectoperiodo->idtbl_Proyectos = $modelproyectos->idtbl_Proyectos;
-                        $historialproyectoperiodo->idtbl_EstadosProyecto = $modelproyectos->CODIGO_APROBADO;
+                        $historialproyectoperiodo->idtbl_EstadosProyecto = $historialproyectoperiodo->obtenerIdEstadoPeriodoProyecto($modelproyectos->CODIGO_APROBADO);
 
                         $resultado = $resultado ? $historialproyectoperiodo->save() : $resultado;
 
@@ -267,7 +267,7 @@ class ProyectosController extends Controller {
                             $this->redirect(array('admin'));
                         } else {
                             $transaction->rollBack();
-                            Yii::log("Rollback al intentar crear el proyecto con el código: " . $modelproyectos->codigo, "warning", "application.
+                            Yii::log("Rollback al intentar crear el proyecto con el código: " . $modelproyectos->codigo . " IdProyecto:" . $historialproyectoperiodo->idtbl_Proyectos . "-" . $modelproyectos->idtbl_Proyectos, "warning", "application.
     controllers.ProyectosController");
                             throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
                         }
@@ -485,7 +485,7 @@ class ProyectosController extends Controller {
                         $historialproyectosperiodo = new HistorialProyectosPeriodo();
                         $historialproyectosperiodo->idtbl_Proyectos = $modelproyectos->idtbl_Proyectos;
                         $historialproyectosperiodo->idPeriodo = $periodoampliado->idPeriodo;
-                        $historialproyectosperiodo->idtbl_EstadosProyecto = $modelproyectos->ID_AMPLIADO;
+                        $historialproyectosperiodo->idtbl_EstadosProyecto = $historialproyectosperiodo->obtenerIdEstadoPeriodoProyecto($modelproyectos->CODIGO_AMPLIADO);
 
                         $result = $historialproyectosperiodo->save(false);
 

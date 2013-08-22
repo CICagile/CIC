@@ -76,6 +76,7 @@ class Proyectos extends CActiveRecord {
             array('idtbl_objetivoproyecto, tipoproyecto, idtbl_adscrito, estado', 'numerical', 'integerOnly' => true), /* removido idtbl_sectorbeneficiado, */
             array('nombre', 'length', 'min' => 3, 'max' => 500, 'tooShort' => 'El {attribute} debe ser mayor a {min} caracteres.', 'tooLong' => 'El {attribute} debe ser menor a {max} caracteres.'),
             array('codigo', 'length', 'min' => 2, 'max' => 20, 'tooShort' => 'El {attribute} debe ser mayor a {min} caracteres.', 'tooLong' => 'El {attribute} debe ser menor a {max} caracteres.'),
+            //array('codigo', 'match', 'pattern'=>'/^[\p{N}-]+$/u'),
             // The following rule is used by search().
             // Please remove those attributes that should not be searched.
             //array('idtbl_Proyectos, nombre, codigo, tbl_Periodos_idPeriodo', 'safe', 'on'=>'search'),
@@ -373,7 +374,7 @@ class Proyectos extends CActiveRecord {
      */
     public function cancelarProyecto($pIdProyecto, $pFechaCancelacion, $pMotivoCancelacion) {
         $conexion = Yii::app()->db;
-        $call = 'CALL actualizarPeriodoProyecto(:pIdProyecto, NULL, :pFechaFinal, :pNombreEstado, :pDetalleEstado)';
+        $call = 'CALL cancelarProyecto(:pIdProyecto, :pFechaFinal, :pDetalleEstado, :pNombreEstado)';
         $transaccion = Yii::app()->db->beginTransaction();
 
         try {
@@ -386,13 +387,9 @@ class Proyectos extends CActiveRecord {
             $transaccion->commit();
         } catch (Exception $e) {
             $transaccion->rollback();
-            Yii::log("Rollback al cancelar el proyecto " . $pIdProyecto->codigo, "error", "application.controllers.ModelProyectos");
+            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Proyectos");
             return false;
         }
-
-        /* TODO
-          asistentes issues
-         */
         return true;
     }
 
@@ -440,7 +437,7 @@ class Proyectos extends CActiveRecord {
             return true;
         } catch (Exception $e) {
             $transaccion->rollback();
-            Yii::log("Rollback al cancelar el proyecto " . $pIdProyecto->codigo, "error", "application.controllers.ModelProyectos");
+            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Proyectos");
             return false;
         }
     }
