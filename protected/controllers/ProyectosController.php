@@ -678,10 +678,23 @@ class ProyectosController extends Controller {
      *  -inicio nuevo no puede ser menor o  igual a inicio de periodo anterior (periodo con fecha fin igual a este inico).
      * @param Periodos $pPeriodo Periodo que se está verificando.
      * @param Proyectos $pProyecto Proyecto en que se encuentra el asistente.
-     * @param Asistente $pAsistente Asistente al que se le cambia el periodo.
+     * @param Periodos $pAsistencia El periodo en que el asistente cumple la asistencia.
+     * @param Periodos $pAnterior Fechas del periodo antes de que se cambiaran.
      */
-    private function validarCambioInicioPeriodo($pPeriodo, $pProyecto, $pAsistente){
+    private function validarCambioInicioPeriodo($pPeriodo, $pProyecto, $pAsistencia, $pAnterior){
+        //Valida que no se cambie la fecha del primer periodo
+        if ($pAsistencia->inicio == $pPeriodo->inicio) {
+            $pPeriodo->addError('inicio', 'No se puede cambiar esta fecha porque el inicio coincide con el inicio de la asistencia.');
+        }//fin si es el primer periodo
+        //Valida que los periodos no se traslapen.
+        $periodo = new Periodos;
+        $periodo->inicio = $pAnterior->inicio;
+        $periodo->fin = $pPeriodo->inicio;
+        $periodo->validate();
+        $pPeriodo->addErrors($periodo->getErrors());
+        //Valida contra la fecha del proyecto.
         $pPeriodo->validarFechaInicioAsistencia($pProyecto->codigo);
+        //Valida contra las fechas del periodo.
         $pPeriodo->validate(NULL,FALSE);
     }//fin validar cambio de inicio del periodo.
 
@@ -695,8 +708,13 @@ class ProyectosController extends Controller {
             throw new CHttpException(404, 'No se encontró al asistente en ese proyecto.');
         if (isset($_POST['Rol']) && isset($_POST['Asistente'])) {
             if (isset($_POST['correccion'])){
-                $periodos['rol']->addError('inicio', '¡Sólo corregir período no implementado!');
-                $this->validarCambioInicioPeriodo();
+                $anterior = new Periodos;
+                $anterior->inicio = $periodos['rol']->inicio;
+                $periodos['rol']->inicio = $_POST['Rol']['inicio'];
+                $this->validarCambioInicioPeriodo($periodos['rol'], $model, $periodos['asistencia'], $anterior);
+                if(!$periodos['rol']->hasErrors()){
+                    //if ($asistente->)
+                }//fin si no hay errores
             }//fin si es sólo corregir fecha de inicio
             else {
                 if ($asistente->rol == $_POST['Asistente']['rol'])
