@@ -53,10 +53,10 @@ return array(
 		// uncomment the following to use a MySQL database
             
                 'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=db_cic',
+			'connectionString' => 'mysql:host=172.19.16.219;dbname=db_cic',
 			'emulatePrepare' => true,
-			'username' => 'root',
-			'password' => '',
+			'username' => 'CIC',
+			'password' => 'Cicagile004',
 			'charset' => 'utf8',
 		),
 		

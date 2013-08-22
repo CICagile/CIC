@@ -312,6 +312,12 @@ class Investigador  extends CModel{
             $comando->bindParam(':grado', $this->grado, PDO::PARAM_STR);
             $comando->bindParam(':cod', $this->proyecto, PDO::PARAM_STR);
             $comando->bindParam(':rol', $this->rol, PDO::PARAM_STR);
+            
+            // esta es una correcion para que se guarde un null cuando no se indica el año de ingreso
+            // en caso contrario, guardaría un 0000, pues para Yii es de tipo numerical
+            if(strlen($this->ingreso) < 1)
+                $this->ingreso = null;
+            
             $comando->bindParam(':ingreso', $this->ingreso);
             $comando->execute();
             foreach ($this->horas as $tipo => $horas) {
