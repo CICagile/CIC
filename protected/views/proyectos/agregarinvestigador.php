@@ -39,8 +39,8 @@ $this->menu=array(
 )); ?>
         
     <h2>Agregar investigador al Proyecto: <?php echo $model->codigo?></h2>
-    <p>Periodo del proyecto: <?php echo $this->FechaMysqltoPhp($model->inicio)
-    .' hasta '.$this->FechaMysqltoPhp($model->fin)?></p>
+    <p>Periodo del proyecto: <?php echo $model->inicio
+    .' hasta '.$model->fin?></p>
 
 	<p class="note">Campos con <span class="required">*</span> son obligatorios.</p>
         
