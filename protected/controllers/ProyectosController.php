@@ -691,7 +691,8 @@ class ProyectosController extends Controller {
         $periodo->inicio = $pAnterior->inicio;
         $periodo->fin = $pPeriodo->inicio;
         $periodo->validate();
-        $pPeriodo->addErrors($periodo->getErrors());
+        if ($periodo->hasErrors())
+            $pPeriodo->addError('inicio','Hay conflicto con otros periodos.');
         //Valida contra la fecha del proyecto.
         $pPeriodo->validarFechaInicioAsistencia($pProyecto->codigo);
         //Valida contra las fechas del periodo.
@@ -713,7 +714,12 @@ class ProyectosController extends Controller {
                 $periodos['rol']->inicio = $_POST['Rol']['inicio'];
                 $this->validarCambioInicioPeriodo($periodos['rol'], $model, $periodos['asistencia'], $anterior);
                 if(!$periodos['rol']->hasErrors()){
-                    //if ($asistente->)
+                    if ($asistente->corregirFechaInicioRolAsistente($periodos['rol']->inicio)){
+                        ;
+                    }
+                    else {
+                        throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
+                    }//fin si fallo la transaccion
                 }//fin si no hay errores
             }//fin si es sólo corregir fecha de inicio
             else {
