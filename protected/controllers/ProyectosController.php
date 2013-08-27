@@ -836,35 +836,8 @@ class ProyectosController extends Controller {
             }
             echo CJSON::encode($return_array);
         }
-    }
-
-//fin investigador autocomplete
-
-
-    /**
-     * Busca el codigo de la variable GET en la BD para autocompletar un campo de texto. 
-         */
-    public function actionInvestigadorAutoComplete()         {
-        if (isset($_GET['term'])) {
-            $conexion = Yii::app()->db;
-            $call = 'CALL buscarinvestigadorPorCedula2(:ced)';
-            $comando = $conexion->createCommand($call);
-            $comando->bindParam(':ced', $_GET['term'], PDO::PARAM_STR);
-            $result_set = $comando->query();
-            $investigadores = $result_set->readAll();
-            $return_array = array();
-            foreach ($investigadores as $investigador) {
-                $return_array[] = array(
-                    'label' => $investigador['nombre'],
-                    'value' => $investigador['cedula'],
-                );
-            }
-            echo CJSON::encode($return_array);
-        }
-    }
-
-//fin investigador autocomplete// </editor-fold>
-
+    }//fin investigador autocomplete
+//</editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="AJAX">
     /**
