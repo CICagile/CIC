@@ -1,18 +1,17 @@
 <?php
-/* @var $this AsistenteController */
-/* @var $model Asistente */
+/* @var $this InvestigadorController */
+/* @var $model investigador */
 
 $this->breadcrumbs=array(
-	'Asistente'=>array('admin'),
+	'Investigador'=>array('admin'),
 	$model->nombre." ".$model->apellido1." ".$model->apellido2,
 );
 
 $this->menu=array(
-        array('label'=>'Ver Asistentes', 'url'=>array('admin')),	
-	array('label'=>'Actualizar información del asistente', 'url'=>array('updateDP','id'=>$model->carnet)),	
+        array('label'=>'Ver Investigadores', 'url'=>array('admin')),	
+	
 	
 );
-//Columnas para mostrar todos los proyectos relacionados con un asistente
 $columns = array(
     array(
         'header'=>CHtml::encode('Código'),
@@ -24,30 +23,24 @@ $columns = array(
         'header'=>CHtml::encode('Nombre'),
         'name'=>'nombre',
     ),
-   array(
-        'header'=>CHtml::encode('Horas'),
-        'name'=>'horas',
-    ),
-   );
+ );
 ?>
 
-<h3>Información del asistente</h3>
+<h3>Información del Investigador</h3>
 
 <?php 
 $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
-		'nombre',
+                'cedula',
+                'nombre',
                 'apellido1',
                 'apellido2',
-                'cedula',
-                'numerocuenta',
-                'banco',
-                'cuentacliente',
                 'telefono',
                 'correo',
-                'carnet',
-                'carrera',
+                'experiencia',
+                'ingreso',
+                //'grado'
 	),
 ));
 ?>
@@ -56,8 +49,10 @@ $this->widget('zii.widgets.CDetailView', array(
 <h3>Proyectos asociados</h3>
 <?php 
 $this->widget('zii.widgets.grid.CGridView', array(
-        'id'=>'asistente-grid',
-	'dataProvider'=>$model->verProyectos(),
+        'id'=>'investigador-grid',
+	'dataProvider'=>$model->proyectosinvestigador($model->cedula),
 	'columns'=>$columns,
        ));
 ?>
+
+

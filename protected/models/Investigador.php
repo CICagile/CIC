@@ -137,6 +137,81 @@ class Investigador  extends CModel{
     
 // </editor-fold>
     
+      
+    // <editor-fold defaultstate="collapsed" desc="Busqueda">
+    
+       public function search(){
+           $filtersForm=new FiltersForm;
+            if (isset($_GET['FiltersForm']))
+                $filtersForm->filters=$_GET['FiltersForm'];
+           $call = 'CALL verInvestigador()';
+           $rawData=Yii::app()->db->createCommand($call)->queryAll();
+           $filteredData=$filtersForm->filter($rawData);
+           $dataProvider=new CArrayDataProvider($filteredData, array(
+                'keyField'=>'cedula',
+                'id'=>'user',
+                'sort'=>array(
+                    'attributes'=>array(
+                        'cedula',
+                        'nombre',
+                        'apellido1',
+                        'apellido2',
+                        'telefono',
+                        'correo',
+                    ),
+                ),
+                'pagination'=>array(
+                    'pageSize'=>10,
+                ),
+            ));
+            return $dataProvider;
+    }
+    
+     public function buscarInvestigadorporCedula($pCedula) {
+        $conexion = Yii::app()->db;
+        $call = 'CALL buscarDatosPersonalesInvestigadorporCedula(:pCedula)';
+        $transaccion = Yii::app()->db->beginTransaction();
+        $resultado = NULL;
+        try {
+            $comando = $conexion->createCommand($call);
+            $comando->bindParam(':pCedula', $pCedula, PDO::PARAM_STR);
+            $resultado = $comando->query();
+            $transaccion->commit();
+        } catch (Exception $e) {
+            $transaccion->rollback();
+            echo $e->getMessage();
+            return NULL;
+        }
+
+
+        return $resultado->rowCount === 1 ? $resultado->read() : NULL;
+    
+    }//fin buscar asistente por pk
+    //
+    public function proyectosinvestigador(){
+           $call = 'CALL verProyectosporInvestigador(:cedulabuscada)';
+           $comand=Yii::app()->db->createCommand($call);
+           $comand->bindParam(':cedulabuscada', $this->cedula, PDO::PARAM_STR);
+           $rawdata=$comand->queryAll();
+           $dataProvider=new CArrayDataProvider($rawdata, array(
+                'keyField'=>'codigo',
+                'id'=>'user',
+                'sort'=>array(
+                    'attributes'=>array(
+                        'idtbl_proyectos',
+                        'codigo',
+                        'nombre',
+                        'horas',
+                    ),
+                ),
+                'pagination'=>array(
+                'pageSize'=>10,
+                ),
+            ));
+            return $dataProvider;
+    }
+    // </editor-fold>
+    
     /**
      * @return array Etiquetas personalizadas de los atributos del modelo.
      */
@@ -237,6 +312,12 @@ class Investigador  extends CModel{
             $comando->bindParam(':grado', $this->grado, PDO::PARAM_STR);
             $comando->bindParam(':cod', $this->proyecto, PDO::PARAM_STR);
             $comando->bindParam(':rol', $this->rol, PDO::PARAM_STR);
+            
+            // esta es una correcion para que se guarde un null cuando no se indica el año de ingreso
+            // en caso contrario, guardaría un 0000, pues para Yii es de tipo numerical
+            if(strlen($this->ingreso) < 1)
+                $this->ingreso = null;
+            
             $comando->bindParam(':ingreso', $this->ingreso);
             $comando->execute();
             foreach ($this->horas as $tipo => $horas) {

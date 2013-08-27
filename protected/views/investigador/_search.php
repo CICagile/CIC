@@ -4,7 +4,7 @@
 <div class="wide form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(
-        'id'=>'asistente-form',
+        'id'=>'investigador-form',
         'action'=>Yii::app()->createUrl($this->route),
 	'method'=>'get',
 )); ?>
@@ -25,22 +25,8 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'Cedula'); ?>
-		<?php echo $form->textField($model,'Cedula',array('size'=>20,'maxlength'=>20)); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->label($model,'numerocuenta'); ?>
-		<?php echo $form->textField($model,'numerocuenta',array('size'=>30,'maxlength'=>30)); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->label($model,'cuentacliente'); ?>
-		<?php echo $form->textField($model,'cuentacliente',array('size'=>17,'maxlength'=>17)); ?>
-	</div>
-        <div class="row">
-		<?php echo $form->label($model,'codigo'); ?>
-		<?php echo $form->textField($model,'codigo',array('size'=>17,'maxlength'=>30)); ?>
+		<?php echo $form->label($model,'cedula'); ?>
+		<?php echo $form->textField($model,'cedula',array('size'=>20,'maxlength'=>20)); ?>
 	</div>
         <div class="row">
 		<?php echo $form->label($model,'telefono'); ?>
@@ -57,4 +43,3 @@
 
 <?php $this->endWidget(); ?>
 
-</div><!-- search-form -->

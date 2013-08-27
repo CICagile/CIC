@@ -41,11 +41,8 @@ $this->menu=array(
                       'header' => 'Sector Beneficiado',
                       'type'=>'raw',
                       'name' => 'sectorbeneficiado', 
-                      /*'value'=>'CHtml::dropDownList("setorbeneficiado[$row]", $data["sectorbeneficiado"],
-                       CHtml::listData(SectorBeneficiado::model()->findAll(), "nombre", "nombre"), array("empty"=>"Elija un sector beneficiado"))',*/
-                      
                 ),
-             array(
+                 array(
                     'class'=>'CButtonColumn',
                     'template'=>'{view}{update}{agregarasistente}{ampliar}{cancelar}',
                     'viewButtonUrl'=>'Yii::app()->controller->createUrl("proyectos/ver", array("id"=>$data["idtbl_Proyectos"]))',
