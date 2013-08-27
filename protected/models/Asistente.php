@@ -151,7 +151,7 @@ class Asistente  extends CModel{
             return $dataProvider;
     }
     /*Metodo que llama a un stored procedure que lista todos los proyectos a los que pertenece un asistente.*/
-    public function proyectosasistente(){
+    public function verProyectos(){
            $call = 'CALL verProyectosporAsistente(:carnetbuscado)';
            $comand=Yii::app()->db->createCommand($call);
            $comand->bindParam(':carnetbuscado', $this->carnet, PDO::PARAM_STR);

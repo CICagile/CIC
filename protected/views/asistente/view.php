@@ -1,4 +1,4 @@
-<?php*
+<?php
 /* @var $this AsistenteController */
 /* @var $model Asistente */
 
@@ -55,7 +55,7 @@ $this->widget('zii.widgets.CDetailView', array(
 <?php 
 $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'asistente-grid',
-	'dataProvider'=>$model->proyectosasistente($model->carnet),
+	'dataProvider'=>$model->verProyectos(),
 	'columns'=>$columns,
        ));
 ?>
