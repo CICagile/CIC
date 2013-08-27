@@ -45,7 +45,9 @@ $this->widget('zii.widgets.CDetailView', array(
                 'banco',
                 'cuentacliente',
                 'telefono',
-                'correo'
+                'correo',
+                'carnet',
+                'carrera',
 	),
 ));
 ?>
