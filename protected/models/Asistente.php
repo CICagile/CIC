@@ -205,6 +205,31 @@ class Asistente  extends CModel{
         }//fin si lo encontró y sólo retorna un resultado
         return $respuesta;
     }//fin buscar Asistente en proyecto
+    
+    /**
+     * Busca el periodo del rol que termina en la fecha dada.
+     * Esta función es útil cuando se busca un rol anterior al actual
+     * para evitar que se traslapen los tiempos.
+     * @param string $pFecha Fecha de fin del periodo que se busca.
+     * @return \Periodos Retorna el periodo con las fechas de inicio y fin.
+     * Retorna <code>NULL</code> si no encuentra el periodo.
+     */
+    public function buscarPeriodoRolAnterior($pFecha) {
+        $respuesta = NULL;
+        $call = 'CALL buscarPeriodoRolAnterior(:fecha,:carnet:id)';
+        $conexion = Yii::app()->db;
+        $comando = $conexion->createCommand($call);
+        $comando->bindParam(':fecha', $pFecha, PDO::PARAM_STR);
+        $comando->bindParam(':carnet', $this->carnet, PDO::PARAM_STR);
+        $comando->bindParam(':id', $this->codigo, PDO::PARAM_INT);
+        $query = $comando->query();
+        if (($read = $query->read())){
+            $respuesta = new Periodos;
+            $respuesta->inicio = $read['inicio'];
+            $respuesta->fin = $read['fin'];
+        }//fin si logro leer un resultado
+        return $respuesta;
+    }//fin buscar periodo rol anterior
 
 // </editor-fold>
     
