@@ -560,8 +560,10 @@ class ProyectosController extends Controller {
         if ($pAsistente->rol === '')
             $pAsistente->addError ('rol', 'Tiene que elegir un rol.');
         if ($pPeriodo->validate(NULL, FALSE) && $pAsistente->validate('rol',FALSE))
-            if (!$pAsistente->actualizarRolProyecto($pPeriodo->inicio,$pProyecto->idtbl_Proyectos))
-                    throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
+            if ($pAsistente->actualizarRolProyecto($pPeriodo->inicio,$pProyecto->idtbl_Proyectos))
+                $this->mostrarMensaje('Se ha agregado el nuevo periodo del rol.');
+            else
+                throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
     }//fin cambiar rol asistente
     
     /**
@@ -578,7 +580,7 @@ class ProyectosController extends Controller {
             $pAsistente->addError ('horas', 'Las horas no pueden ser nulas');
         if($pPeriodo->validate(NULL,FALSE) && $pAsistente->validarActualizacionDeHoras($pHoras))
             if ($pAsistente->actualizarHorasProyecto($pProyecto->idtbl_Proyectos, $pPeriodo->inicio))
-                $this->redirect (array('ver','id'=>$pProyecto->idtbl_Proyectos));
+                $this->mostrarMensaje ('Se ha agregado el nuevo periodo de las horas del asistente.');
             else
                 throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
     }//fin cambiar horas asistente
@@ -635,6 +637,7 @@ class ProyectosController extends Controller {
         $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
         $asistente = new Asistente();
         $asistente->carnet = $carnet;
+        $asistente->codigo = $id;
         $periodos = $asistente->buscarDatosActualesAsistenteEnProyecto($id);
         if ($periodos === NULL)
             throw new CHttpException(404, 'No se encontró al asistente en ese proyecto.');
@@ -646,7 +649,7 @@ class ProyectosController extends Controller {
                 $this->validarCambioInicioPeriodo($periodos['rol'], $model, $periodos['asistencia'], $anterior);
                 if(!$periodos['rol']->hasErrors()){
                     if ($asistente->corregirFechaInicioRolAsistente($periodos['rol']->inicio)){
-                        ;
+                        $this->mostrarMensaje('Se ha corregido la fecha del periodo.');
                     }
                     else {
                         throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
@@ -852,6 +855,14 @@ class ProyectosController extends Controller {
     }
 
 // </editor-fold>
+    
+    /**
+     * Muestra un mensaje de JS en la página del usuario.
+     * @param string $pMensaje mensaje que se quiere mostrar
+     */
+    private function mostrarMensaje($pMensaje){
+        echo '<script>alert("' . $pMensaje . '");</script>';
+    }//fin mostrar mensaje
 
 
 }
