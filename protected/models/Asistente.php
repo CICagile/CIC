@@ -216,7 +216,7 @@ class Asistente  extends CModel{
      */
     public function buscarPeriodoRolAnterior($pFecha) {
         $respuesta = NULL;
-        $call = 'CALL buscarPeriodoRolAnterior(:fecha,:carnet:id)';
+        $call = 'CALL buscarPeriodoRolAnterior(:fecha,:carnet,:id)';
         $conexion = Yii::app()->db;
         $comando = $conexion->createCommand($call);
         $comando->bindParam(':fecha', $pFecha, PDO::PARAM_STR);
