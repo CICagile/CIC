@@ -580,7 +580,7 @@ class ProyectosController extends Controller {
             $pAsistente->addError ('horas', 'Las horas no pueden ser nulas');
         if($pPeriodo->validate(NULL,FALSE) && $pAsistente->validarActualizacionDeHoras($pHoras))
             if ($pAsistente->actualizarHorasProyecto($pProyecto->idtbl_Proyectos, $pPeriodo->inicio))
-                $this->mostrarMensaje ('Se ha agregado el nuevo periodo de las horas del asistente.');
+                $this->mostrarMensaje ('Se ha agregado el nuevo periodo de las horas del asistente');
             else
                 throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
     }//fin cambiar horas asistente
@@ -643,8 +643,7 @@ class ProyectosController extends Controller {
             throw new CHttpException(404, 'No se encontró al asistente en ese proyecto.');
         if (isset($_POST['Rol']) && isset($_POST['Asistente'])) {
             if (isset($_POST['correccion'])){
-                $anterior = new Periodos;
-                $anterior->inicio = $periodos['rol']->inicio;
+                $anterior = $asistente->buscarPeriodoRolAnterior($periodos['rol']->inicio);
                 $periodos['rol']->inicio = $_POST['Rol']['inicio'];
                 $this->validarCambioInicioPeriodo($periodos['rol'], $model, $periodos['asistencia'], $anterior);
                 if(!$periodos['rol']->hasErrors()){
