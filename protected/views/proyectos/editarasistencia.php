@@ -56,7 +56,7 @@ $this->menu=array(
             <?php echo $form->error($periodos['rol'],'inicio'); ?>
             <br>Sólo corregir fecha inicio
                 <input type="checkbox" name="correccion" id="vehicle" value="1"
-                    <?php if ($periodos['rol']->inicio == $periodos['asistencia']->inicio)
+                    <?php if ($periodos['rol']->inicio == $periodos['asistencia']->inicio && !$periodos['rol']->hasErrors())
                             echo 'DISABLED';
                     ?>
                 />
@@ -101,7 +101,7 @@ $this->menu=array(
             <?php echo $form->error($periodos['horas'],'inicio'); ?>
             <br>Sólo corregir fecha inicio
                 <input type="checkbox" name="correccion" id="vehicle" value="1"
-                    <?php if ($periodos['horas']->inicio == $periodos['asistencia']->inicio)
+                    <?php if ($periodos['horas']->inicio == $periodos['asistencia']->inicio && !$periodos['horas']->hasErrors())
                             echo 'DISABLED';
                     ?>
                 />
