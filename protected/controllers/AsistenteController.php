@@ -30,7 +30,7 @@ class AsistenteController extends Controller {
                 'users' => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('create', 'updateDP', 'codigoautocomplete', 'update', 'index', 'desvincular'),
+                'actions' => array('create', 'updateDP', 'reportarProyectos', 'codigoautocomplete', 'update', 'index', 'desvincular'),
                 'users' => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -82,7 +82,32 @@ class AsistenteController extends Controller {
      */
     public function actionView($id) {
         $model = $this->loadModel($id);
-        $historial_proyectos_asistente = $model->obtenerHistorialProyectosAsistente();
+//        $historial_proyectos_asistente = $model->obtenerHistorialProyectosAsistente();
+//
+//        $data_provider = new CArrayDataProvider(
+//                        $historial_proyectos_asistente,
+//                        array(
+//                            'keyField'=>'codigo',
+//                            'id' => 'asistente-historial-proyectos',
+//                            'sort' => array(
+//                                'attributes' => array(
+//                                    'idtbl_proyectos','codigo', 'inicio', 'fin','rol'
+//                                ),
+//                            ),
+//                            'pagination' => array(
+//                                'pageSize' => 50,
+//                            ),
+//                ));
+        $this->render('view', array(
+            'model' => $model,
+            //'data_provider' => $data_provider,
+        ));
+    }
+
+    public function actionReportarProyectos($id){
+        //$model = $this->loadModel($id);
+        $model = $this->loadModel($id);
+        $historial_proyectos_asistente = $model->obtenerHistorialProyectosAsistente($id);
 
         $data_provider = new CArrayDataProvider(
                         $historial_proyectos_asistente,
@@ -91,19 +116,19 @@ class AsistenteController extends Controller {
                             'id' => 'asistente-historial-proyectos',
                             'sort' => array(
                                 'attributes' => array(
-                                    'idtbl_proyectos','codigo', 'horas', 'inicio', 'fin','rol'
+                                    'idtbl_proyectos','codigo', 'inicio', 'fin','rol'
                                 ),
                             ),
                             'pagination' => array(
                                 'pageSize' => 50,
                             ),
                 ));
-        $this->render('view', array(
+        $this->render('reportarProyectos', array(
             'model' => $model,
             'data_provider' => $data_provider,
         ));
     }
-
+    
     /**
      * Creates a new model.
      * If creation is successful, the browser will be redirected to the 'view' page.

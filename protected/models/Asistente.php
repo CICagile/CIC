@@ -508,10 +508,10 @@ class Asistente  extends CModel{
     
 // <editor-fold defaultstate="collapsed" desc="Reportes">
 
-    public function obtenerHistorialProyectosAsistente(){
+    public function obtenerHistorialProyectosAsistente($pCarnet){
         $call = 'CALL obtenerHistorialProyectosAsistentes(:carnet)';
         $comando = Yii::app()->db->createCommand($call);
-        $comando->bindParam(':carnet',$this->carnet,PDO::PARAM_STR);
+        $comando->bindParam(':carnet',$pCarnet,PDO::PARAM_STR);
         $query = $comando->queryAll();
         if (empty($query))
             return null;
