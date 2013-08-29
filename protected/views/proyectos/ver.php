@@ -51,11 +51,11 @@ $this->widget('zii.widgets.CDetailView', array(
                 'estado',
 		array(
                         'label' => 'Fecha Inicio',
-                        'value' => $this->FechaMysqltoPhp($model->inicio),
+                        'value' => $model->inicio,
                 ),
                 array(
                         'label' => 'Fecha finalización',
-                        'value' => $this->FechaMysqltoPhp($model->fin),
+                        'value' => $model->fin,
                 ),
                 '_tipoproyecto.nombre',                
                 '_objetivoproyecto.nombre',
@@ -65,6 +65,7 @@ $this->widget('zii.widgets.CDetailView', array(
                 'value' => $sectores_beneficiados,
                 'type' => 'html',
                 ),
+                'observaciones',
 	),
 )); 
     

@@ -22,11 +22,11 @@ $this->menu=array(
                 'nombre',                
 		array(
                         'label' => 'Fecha Inicio',
-                        'value' => $this->FechaMysqltoPhp($modelproyectos->inicio),
+                        'value' => $modelproyectos->inicio,
                 ),
                 array(
                         'label' => 'Fecha finalización',
-                        'value' => $this->FechaMysqltoPhp($modelproyectos->fin),
+                        'value' => $modelproyectos->fin,
                 ),                         
 	),
 )); 

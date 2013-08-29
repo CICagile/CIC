@@ -8,6 +8,7 @@
  * @property string $nombre
  * @property string $codigo
 
+ * @property string $observaciones
  * @property integer $idtbl_objetivoproyecto
  * @property integer $tipoproyecto
  * @property integer $idtbl_adscrito
@@ -76,6 +77,8 @@ class Proyectos extends CActiveRecord {
             array('idtbl_objetivoproyecto, tipoproyecto, idtbl_adscrito, estado', 'numerical', 'integerOnly' => true), /* removido idtbl_sectorbeneficiado, */
             array('nombre', 'length', 'min' => 3, 'max' => 500, 'tooShort' => 'El {attribute} debe ser mayor a {min} caracteres.', 'tooLong' => 'El {attribute} debe ser menor a {max} caracteres.'),
             array('codigo', 'length', 'min' => 2, 'max' => 20, 'tooShort' => 'El {attribute} debe ser mayor a {min} caracteres.', 'tooLong' => 'El {attribute} debe ser menor a {max} caracteres.'),
+            array('nombre, observaciones', 'length', 'max'=>500),
+            //array('codigo', 'match', 'pattern'=>'/^[\p{N}-]+$/u'),
             // The following rule is used by search().
             // Please remove those attributes that should not be searched.
             //array('idtbl_Proyectos, nombre, codigo, tbl_Periodos_idPeriodo', 'safe', 'on'=>'search'),
@@ -120,7 +123,7 @@ class Proyectos extends CActiveRecord {
             'idtbl_adscrito' => 'Adscrito a',
             'estado' => 'Estado del proyecto',
             'idtbl_sectorbeneficiado' => 'Sector Beneficiado',
-            'estado' => 'Estado del Proyecto',
+            'observaciones' => 'Observaciones',
         );
     }
 
@@ -138,6 +141,7 @@ class Proyectos extends CActiveRecord {
         $criteria->compare('idtbl_Proyectos', $this->idtbl_Proyectos);
         $criteria->compare('nombre', $this->nombre, true);
         $criteria->compare('codigo', $this->codigo, true);
+        $criteria->compare('observaciones',$this->observaciones,true);
         $criteria->compare('periodos.inicio', $this->fecha_inicio_search, true);
         $criteria->compare('periodos.fin', $this->fecha_fin_search, true);
         $criteria->compare('idtbl_objetivoproyecto', $this->idtbl_objetivoproyecto);
@@ -404,7 +408,7 @@ class Proyectos extends CActiveRecord {
      */
     public function cancelarProyecto($pIdProyecto, $pFechaCancelacion, $pMotivoCancelacion) {
         $conexion = Yii::app()->db;
-        $call = 'CALL actualizarPeriodoProyecto(:pIdProyecto, NULL, :pFechaFinal, :pNombreEstado, :pDetalleEstado)';
+        $call = 'CALL cancelarProyecto(:pIdProyecto, :pFechaFinal, :pDetalleEstado, :pNombreEstado)';
         $transaccion = Yii::app()->db->beginTransaction();
 
         try {
@@ -417,13 +421,9 @@ class Proyectos extends CActiveRecord {
             $transaccion->commit();
         } catch (Exception $e) {
             $transaccion->rollback();
-            Yii::log("Rollback al cancelar el proyecto " . $pIdProyecto->codigo, "error", "application.controllers.ModelProyectos");
+            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Proyectos");
             return false;
         }
-
-        /* TODO
-          asistentes issues
-         */
         return true;
     }
 
@@ -471,7 +471,7 @@ class Proyectos extends CActiveRecord {
             return true;
         } catch (Exception $e) {
             $transaccion->rollback();
-            Yii::log("Rollback al cancelar el proyecto " . $pIdProyecto->codigo, "error", "application.controllers.ModelProyectos");
+            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Proyectos");
             return false;
         }
     }
@@ -519,7 +519,7 @@ class Proyectos extends CActiveRecord {
     //public $LABEL_AMPLIADO = 'Ampliado';
 
     public $CODIGO_APROBADO = "Aprobado";
-    public $CODIGO_AMPLIADO = "Ampliado";
+    public static $CODIGO_AMPLIADO = "Ampliado";
     public static $CODIGO_CANCELADO = "Cancelado";
     
     public $ID_AMPLIADO = 2;

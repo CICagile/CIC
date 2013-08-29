@@ -97,6 +97,12 @@ class ProyectosSectorbeneficiado extends CActiveRecord {
                             $pIdProyecto, $sector);
             $resultadoSector = ($is_sector_saved == 1) && $resultadoSector;
         }
+        if($resultadoSector == false){
+            Yii::log("Error al almacenar el sector beneficiado. IdProyecto:  " . $pIdProyecto 
+                    . " Sectores beneficiados: " . $pIdsSectoresBeneficiados,
+                    "error", "application.models.ProyectosSectorbeneficiado");
+        }
+        
         return $resultadoSector;
     }
 

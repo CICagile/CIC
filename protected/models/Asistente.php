@@ -151,7 +151,7 @@ class Asistente  extends CModel{
             return $dataProvider;
     }
     /*Metodo que llama a un stored procedure que lista todos los proyectos a los que pertenece un asistente.*/
-    public function proyectosasistente(){
+    public function verProyectos(){
            $call = 'CALL verProyectosporAsistente(:carnetbuscado)';
            $comand=Yii::app()->db->createCommand($call);
            $comand->bindParam(':carnetbuscado', $this->carnet, PDO::PARAM_STR);
@@ -201,7 +201,7 @@ class Asistente  extends CModel{
             array('horas', 'numerical', 'max'=>20, 'min'=>1, 'tooBig'=>'Se permite un máximo de {max} horas de asistencia', 'tooSmall'=>'Se permite un mínimo de {min} horas.'),
             array('correo', 'email', 'message'=>'Dirección de correo inválida'),
             array('nombre, apellido1, apellido2, ', 'match', 'pattern'=>'/^[\p{L} ]+$/u'),
-            array('numerocuenta,codigo', 'match', 'pattern'=>'/^[\p{N}-]+$/u'),
+            array('numerocuenta', 'match', 'pattern'=>'/^[\p{N}-]+$/u'), //,codigo
             array('codigo','validarCodigoProyecto','on'=>'nuevo'),
             array('carnet','validarAsistenteNoRepetido','on'=>'agregar'),
         );
