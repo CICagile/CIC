@@ -675,7 +675,7 @@ class ProyectosController extends Controller {
                 $anterior = $asistente->buscarPeriodoHorasAnterior($periodos['horas']->inicio);
                 $periodos['horas']->inicio = $_POST['Horas']['inicio'];
                 $this->validarCambioInicioPeriodo($periodos['horas'], $model, $periodos['asistencia'], $anterior);
-                if(!$periodos['rol']->hasErrors()){
+                if(!$periodos['horas']->hasErrors()){
                     if ($asistente->corregirFechaInicioHorasAsistente($periodos['horas']->inicio)){
                         $this->mostrarMensaje('Se ha corregido la fecha del periodo.');
                     } else {
