@@ -230,6 +230,31 @@ class Asistente  extends CModel{
         }//fin si logro leer un resultado
         return $respuesta;
     }//fin buscar periodo rol anterior
+    
+    /**
+     * Busca el periodo de las horas que termina en la fecha dada.
+     * Esta función es útil cuando se busca el periodo de horas
+     * anterior al actual para evitar que se traslapen los periodos.
+     * @param string $pFecha Fecha de fin del periodo que se busca.
+     * @return \Periodos Retorna el periodo con las fechas de inicio y fin.
+     * Retorna <code>NULL</code> si no encuentra el periodo.
+     */
+    public function buscarPeriodoHorasAnterior($pFecha) {
+        $respuesta = NULL;
+        $call = 'CALL buscarPeriodoHorasAnterior(:fecha,:carnet,:id)';
+        $conexion = Yii::app()->db;
+        $comando = $conexion->createCommand($call);
+        $comando->bindParam(':fecha', $pFecha, PDO::PARAM_STR);
+        $comando->bindParam(':carnet', $this->carnet, PDO::PARAM_STR);
+        $comando->bindParam(':id', $this->codigo, PDO::PARAM_INT);
+        $query = $comando->query();
+        if (($read = $query->read())){
+            $respuesta = new Periodos;
+            $respuesta->inicio = $read['inicio'];
+            $respuesta->fin = $read['fin'];
+        }//fin si logro leer un resultado
+        return $respuesta;
+    }//fin buscar periodo horas anterior
 
 // </editor-fold>
     
