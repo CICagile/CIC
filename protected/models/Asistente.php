@@ -476,7 +476,32 @@ class Asistente  extends CModel{
             return false;
         }//fin try-catch
         return true;
-    }//fin corregir feca de inicio de rol del asistente
+    }//fin corregir fecha de inicio de rol del asistente
+    
+    /**
+     * Corrige el periodo actual de las horas del asistente. Cambia la fecha de inicio
+     * del periodo actual y la fecha de fin del periodo anterior.
+     * @param string $pInicio Nueva fecha de inicio.
+     * @return boolean Retorna <code>true</code> si logra hacer el cambio con éxito y <code>false</code> de lo contrario.
+     */
+    public function corregirFechaInicioHorasAsistente($pInicio) {
+        $conexion = Yii::app()->db;
+        $call = 'CALL corregirFechaInicioHorasAsistente(:pk,:carnet,:inicio)';
+        $transaction = $conexion->beginTransaction();
+        try {
+            $comando = $conexion->createCommand($call);
+            $comando->bindParam(':pk', $this->codigo, PDO::PARAM_STR);
+            $comando->bindParam('carnet', $this->carnet, PDO::PARAM_STR);
+            $comando->bindParam('inicio', $pInicio, PDO::PARAM_STR);
+            $comando->execute();
+            $transaction->commit();
+        } catch (Exception $e) {
+            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
+            $transaction->rollback();
+            return false;
+        }//fin try-catch
+        return true;
+    }// fin corregir fecha de inicio de las horas del asistente.
 // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Actualización de datos">
