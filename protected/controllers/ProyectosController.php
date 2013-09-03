@@ -676,7 +676,7 @@ class ProyectosController extends Controller {
                 $periodos['horas']->inicio = $_POST['Horas']['inicio'];
                 $this->validarCambioInicioPeriodo($periodos['horas'], $model, $periodos['asistencia'], $anterior);
                 if(!$periodos['rol']->hasErrors()){
-                    if ($asistente->corregirFechaInicioRolAsistente($periodos['horas']->inicio)){
+                    if ($asistente->corregirFechaInicioHorasAsistente($periodos['horas']->inicio)){
                         $this->mostrarMensaje('Se ha corregido la fecha del periodo.');
                     } else {
                         throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
