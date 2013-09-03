@@ -649,8 +649,7 @@ class ProyectosController extends Controller {
                 if(!$periodos['rol']->hasErrors()){
                     if ($asistente->corregirFechaInicioRolAsistente($periodos['rol']->inicio)){
                         $this->mostrarMensaje('Se ha corregido la fecha del periodo.');
-                    }
-                    else {
+                    } else {
                         throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
                     }//fin si fallo la transaccion
                 }//fin si no hay errores
@@ -672,8 +671,18 @@ class ProyectosController extends Controller {
             $this->cambiarPeriodoAsistencia($periodos['asistencia'],$asistente,$model);
         }//fin si cambia el periodo de asistencia
         else if (isset($_POST['Horas'])) {
-            if (isset($_POST['correccion']))
-                $periodos['horas']->addError('inicio', '¡Sólo corregir período no implementado!');
+            if (isset($_POST['correccion'])){
+                $anterior = $asistente->buscarPeriodoHorasAnterior($periodos['horas']->inicio);
+                $periodos['horas']->inicio = $_POST['Horas']['inicio'];
+                $this->validarCambioInicioPeriodo($periodos['horas'], $model, $periodos['asistencia'], $anterior);
+                if(!$periodos['rol']->hasErrors()){
+                    if ($asistente->corregirFechaInicioRolAsistente($periodos['horas']->inicio)){
+                        $this->mostrarMensaje('Se ha corregido la fecha del periodo.');
+                    } else {
+                        throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
+                    }//fin si fallo la transaccion
+                }//fin si no hay errores
+            }//fin si es sólo corregir el inicio del periodo.
             else {
                 if ($asistente->horas == $_POST['Asistente']['horas'])
                     $asistente->addError ('horas', 'No cambiaron las horas.');
