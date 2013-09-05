@@ -292,11 +292,18 @@ class Proyectos extends CActiveRecord {
                 'id'=>'user',
                 'sort'=>array(
                     'attributes'=>array(
-                       // 'cedula',
+                       //'cedula',
                         'nombre',
                         'apellido1',
                         'apellido2',
                         'rol',
+                        'fin',
+                        'vie',
+                        'fundatec',
+                        'docencia', 
+                        'reconocimiento',
+                        
+                        
                     ),
                 ),
                 'pagination'=>array(
