@@ -30,20 +30,20 @@ $columns = array (
         'name'=>'fin',
     ),
     array(
-        'header'=>CHtml::encode(Investigador::model()->getAttributeLabel('VIE')),
-        'name'=>'VIE',
+        'header'=>CHtml::encode('VIE'),
+        'name'=>'vie',
     ),
     array(
-        'header'=>CHtml::encode(Investigador::model()->getAttributeLabel('FUNDATEC')),
-        'name'=>'Fundatec',
+        'header'=>CHtml::encode('Fundatec'),
+        'name'=>'fundatec',
     ),
     array(
-        'header'=>CHtml::encode(Investigador::model()->getAttributeLabel('Docencia')),
-        'name'=>'Docencia',
+        'header'=>CHtml::encode('Docencia'),
+        'name'=>'docencia',
     ),
     array(
-        'header'=>CHtml::encode(Investigador::model()->getAttributeLabel('Reconocimiento')),
-        'name'=>'Reconocimiento',
+        'header'=>CHtml::encode('Reconocimiento'),
+        'name'=>'reconocimiento',
     )
     );
 ?>
@@ -51,7 +51,7 @@ $columns = array (
 <h3>Investigadores Activos</h3>
 
 <?php $this->widget('zii.widgets.grid.CGridView', array(
-        'id'=>'asistente-grid',
+        'id'=>'investigador-grid',
 	'dataProvider'=>$investigadores,
 	//'filter'=>$model,
 	'columns'=>$columns,
