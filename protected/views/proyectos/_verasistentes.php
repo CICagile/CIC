@@ -35,14 +35,20 @@ $columns = array (
     ),
     array(
         'class'=>'CButtonColumn',
-        'template'=>'{view}{update}{delete}',
+        'template'=>'{view}{editar}{update}{delete}',
         'viewButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/view", array("id"=>$data["carnet"]))',
         'viewButtonLabel' => 'Ver información detallada del asistente',
-        'updateButtonUrl'=>'Yii::app()->controller->createUrl("Asistente/updateDP", array("id"=>$data["carnet"]))',
-        'updateButtonLabel' => 'Editar información personal del asistente',
+        'updateButtonUrl'=>'Yii::app()->controller->createUrl("Proyectos/editarasistencia", array("id"=>'.$model->idtbl_Proyectos.',"carnet"=>$data["carnet"]))',
+        'updateButtonLabel' => 'Actualizar información de la asistencia.',
         'deleteButtonUrl'=>'Yii::app()->controller->createURL("Asistente/desvincular",array("idtbl_Proyectos"=>'.$model->idtbl_Proyectos.',"carnet"=>$data["carnet"]))',
-        //'deleteButtonUrl'=>'Yii::app()->controller->createURL("Asistente/desvincular", array("id"=>$data["carnet"]))',
-        'deleteButtonLabel' => 'Desvincular Asistente'
+        'deleteButtonLabel' => 'Desvincular Asistente',
+        'buttons' => array(
+            'editar' => array(
+                'label' => 'Editar información personal del asistente',
+                'imageUrl' => Yii::app()->request->baseUrl . '/images/edit-user.png',
+                'url' => 'Yii::app()->controller->createURL("Asistente/updateDP", array("id"=>$data["carnet"]))',
+            ),
+        ),
      ));
 ?>
 
@@ -57,5 +63,5 @@ $columns = array (
 ?>
 
 <?php if ($dataProvider->totalItemCount > 0)
-            echo CHtml::button('Editar información de los asistentes',array('submit'=>Yii::app()->controller->createUrl("Proyectos/actualizarInfoAsistentes", array("id"=>$model->idtbl_Proyectos))));
+            echo CHtml::button('Corregir información de los asistentes',array('submit'=>Yii::app()->controller->createUrl("Proyectos/actualizarInfoAsistentes", array("id"=>$model->idtbl_Proyectos))));
 ?>

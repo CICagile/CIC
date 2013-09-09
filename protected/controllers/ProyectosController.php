@@ -27,7 +27,8 @@ class ProyectosController extends Controller {
         return array(
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
                 'actions' => array('ver', 'ActualizarInfoAsistentes', 'crear', 'actualizar', 'agregarasistente', 'AsistenteAutoComplete',
-                    'ValidarAgregarAsistente', 'adminantiguos', 'verantiguos', 'ampliarproyecto', 'agregarInvestigador', 'investigadorAutoComplete', 'cancelarproyecto'),
+                    'ValidarAgregarAsistente', 'adminantiguos', 'verantiguos', 'ampliarproyecto', 'agregarInvestigador', 'investigadorAutoComplete',
+                    'cancelarproyecto', 'editarasistencia'),
                 'users' => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -547,7 +548,163 @@ class ProyectosController extends Controller {
             'modelproyectos' => $modelproyectos
         ));
     }
+    
+// <editor-fold defaultstate="collapsed" desc="Editar Asistencia">
+    /**
+     * Agrega un nuevo periodo en el que el asistente puede llevar un nuevo rol.
+     * @param Periodos $pPeriodo Periodo en que inicia el nuevo rol. La fecha de fin no cambia.
+     * @param Asistente $pAsistente Asistente al que se le hace el cambio.
+     * @param Proyectos $pProyecto Proyecto en el que está el asistente.
+     */
+    private function cambiarRolAsistente($pPeriodo, $pAsistente, $pProyecto) {
+        $pPeriodo->validarFechaInicioAsistencia($pProyecto->codigo);
+        if ($pAsistente->rol === '')
+            $pAsistente->addError ('rol', 'Tiene que elegir un rol.');
+        if ($pPeriodo->validate(NULL, FALSE) && $pAsistente->validate('rol',FALSE))
+            if ($pAsistente->actualizarRolProyecto($pPeriodo->inicio,$pProyecto->idtbl_Proyectos))
+                $this->mostrarMensaje('Se ha agregado el nuevo periodo del rol.');
+            else
+                throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
+    }//fin cambiar rol asistente
+    
+    /**
+     * Agrega un nuevo periodo para las nuevas horas que hace el asistente.
+     * Se realizan las validaciones necesarias.
+     * @param Periodos $pPeriodo Periodo en que cumple con las horas. La fecha de fin no cmabia.
+     * @param Asistente $pAsistente Asistente al que se le hace el cambio.
+     * @param Proyectos $pProyecto Proyecto en el que está el asistente.
+     * @param double $pHoras Horas nuevas que cumplirá el asistente
+     */
+    private function cambiarHorasAsistente($pPeriodo, $pAsistente, $pProyecto, $pHoras){
+        $pPeriodo->validarFechaInicioAsistencia($pProyecto->codigo);
+        if ($pHoras == null)
+            $pAsistente->addError ('horas', 'Las horas no pueden ser nulas');
+        if($pPeriodo->validate(NULL,FALSE) && $pAsistente->validarActualizacionDeHoras($pHoras))
+            if ($pAsistente->actualizarHorasProyecto($pProyecto->idtbl_Proyectos, $pPeriodo->inicio))
+                $this->mostrarMensaje ('Se ha agregado el nuevo periodo de las horas del asistente');
+            else
+                throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
+    }//fin cambiar horas asistente
+    
+    /**
+     * Cambia el periodo de asistencia de cierto asistente. Tambien corrije los otros periodos
+     * involucrados. Realiza las validaciones necesarias.
+     * @param Periodos $pPeriodo Periodo de la asistencia nueva.
+     * @param Asistente $pAsistente Asistente al que se le hace el cambio.
+     * @param Proyectos $pProyecto Proyecto en el que está el asistente.
+     */
+    private function cambiarPeriodoAsistencia($pPeriodo,$pAsistente,$pProyecto){
+        $pPeriodo->validarFechaInicioAsistencia($pProyecto->codigo);
+        $pPeriodo->validarFechaFinAsistencia($pProyecto->codigo);
+        if ($pPeriodo->validate(NULL, false))
+            if ($pAsistente->cambiarPeriodoAsistencia($pProyecto->idtbl_Proyectos, $pPeriodo->inicio, $pPeriodo->fin))
+                $this->redirect(array('editarasistencia','id'=>$pProyecto->idtbl_Proyectos,'carnet'=>$pAsistente->carnet));
+            else
+                throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.'); 
+    }//fin cambiar horas asistente
+    
+    /**
+     * Realiza las siguientes validaciones:
+     * Verificar que no se cambie la fecha de inicio del primer período.
+     * Verificar contra la fecha de fin del periodo
+     * Verificar contra la fecha de fin del proyecto
+     * Verificar traslapaciones
+     *  -inicio nuevo no puede ser menor o  igual a inicio de periodo anterior (periodo con fecha fin igual a este inico).
+     * @param Periodos $pPeriodo Periodo que se está verificando.
+     * @param Proyectos $pProyecto Proyecto en que se encuentra el asistente.
+     * @param Periodos $pAsistencia El periodo en que el asistente cumple la asistencia.
+     * @param Periodos $pAnterior Fechas del periodo antes de que se cambiaran.
+     */
+    private function validarCambioInicioPeriodo($pPeriodo, $pProyecto, $pAsistencia, $pAnterior){
+        //Valida que no se cambie la fecha del primer periodo
+        if ($pAsistencia->inicio == $pPeriodo->inicio) {
+            $pPeriodo->addError('inicio', 'No se puede cambiar esta fecha porque el inicio coincide con el inicio de la asistencia.');
+        }//fin si es el primer periodo
+        //Valida que los periodos no se traslapen.
+        $periodo = new Periodos;
+        $periodo->inicio = $pAnterior->inicio;
+        $periodo->fin = $pPeriodo->inicio;
+        $periodo->validate();
+        if ($periodo->hasErrors())
+            $pPeriodo->addError('inicio','Hay conflicto con otros periodos.');
+        //Valida contra la fecha del proyecto.
+        $pPeriodo->validarFechaInicioAsistencia($pProyecto->codigo);
+        //Valida contra las fechas del periodo.
+        $pPeriodo->validate(NULL,FALSE);
+    }//fin validar cambio de inicio del periodo.
 
+    public function actionEditarAsistencia($id, $carnet) {
+        new Periodos; //Elimina un error en la funcion buscar datos actuales... Sin esto, esa funcion no puede instanciar periodos.
+        $model = Proyectos::model()->obtenerProyectoconPeriodoActual($id);
+        $asistente = new Asistente();
+        $asistente->carnet = $carnet;
+        $asistente->codigo = $id;
+        $periodos = $asistente->buscarDatosActualesAsistenteEnProyecto($id);
+        if ($periodos === NULL)
+            throw new CHttpException(404, 'No se encontró al asistente en ese proyecto.');
+        if (isset($_POST['Rol']) && isset($_POST['Asistente'])) {
+            if (isset($_POST['correccion'])){
+                $anterior = $asistente->buscarPeriodoRolAnterior($periodos['rol']->inicio);
+                $periodos['rol']->inicio = $_POST['Rol']['inicio'];
+                $this->validarCambioInicioPeriodo($periodos['rol'], $model, $periodos['asistencia'], $anterior);
+                if(!$periodos['rol']->hasErrors()){
+                    if ($asistente->corregirFechaInicioRolAsistente($periodos['rol']->inicio)){
+                        $this->mostrarMensaje('Se ha corregido la fecha del periodo.');
+                    } else {
+                        throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
+                    }//fin si fallo la transaccion
+                }//fin si no hay errores
+            }//fin si es sólo corregir fecha de inicio
+            else {
+                if ($asistente->rol == $_POST['Asistente']['rol'])
+                    $asistente->addError ('rol', 'Rol no cambió.');
+                else if ($periodos['rol']->inicio == $_POST['Rol']['inicio'])
+                    $periodos['rol']->addError ('inicio', 'La fecha de inicio no cambió.');
+                else {
+                    $asistente->rol = $_POST['Asistente']['rol'];
+                    $periodos['rol']->inicio = $_POST['Rol']['inicio'];
+                    $this->cambiarRolAsistente($periodos['rol'],$asistente,$model);
+                }//fin si el usuario eligió un nuevo rol.
+            }//fin si es agregar nuevo periodo
+        }//fin si cambia el periodo del rol
+        else if (isset($_POST['Asistencia'])) {
+            $periodos['asistencia']->attributes = $_POST['Asistencia'];
+            $this->cambiarPeriodoAsistencia($periodos['asistencia'],$asistente,$model);
+        }//fin si cambia el periodo de asistencia
+        else if (isset($_POST['Horas'])) {
+            if (isset($_POST['correccion'])){
+                $anterior = $asistente->buscarPeriodoHorasAnterior($periodos['horas']->inicio);
+                $periodos['horas']->inicio = $_POST['Horas']['inicio'];
+                $this->validarCambioInicioPeriodo($periodos['horas'], $model, $periodos['asistencia'], $anterior);
+                if(!$periodos['horas']->hasErrors()){
+                    if ($asistente->corregirFechaInicioHorasAsistente($periodos['horas']->inicio)){
+                        $this->mostrarMensaje('Se ha corregido la fecha del periodo.');
+                    } else {
+                        throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
+                    }//fin si fallo la transaccion
+                }//fin si no hay errores
+            }//fin si es sólo corregir el inicio del periodo.
+            else {
+                if ($asistente->horas == $_POST['Asistente']['horas'])
+                    $asistente->addError ('horas', 'No cambiaron las horas.');
+                else if ($periodos['horas']->inicio == $_POST['Horas']['inicio'])
+                    $periodos['horas']->addError ('inicio', 'La fecha de inicio no cambió.');
+                else {
+                    $periodos['horas']->inicio = $_POST['Horas']['inicio'];
+                    $this->cambiarHorasAsistente($periodos['horas'], $asistente, $model, $_POST['Asistente']['horas']);
+                }//fin si es agregar nuevo periodo
+            }//fin si las cambia el periodo de las horas.
+        }//fin si cambia el periodo de las horas
+
+        $this->render('editarasistencia', array(
+            'model' => $model,
+            'asistente' => $asistente,
+            'periodos' => $periodos,
+        ));
+    }//fin accion editar asistencia
+// </editor-fold>
+
+    
     /**
      * Returns the data model based on the primary key given in the GET variable.
      * If the data model is not found, an HTTP exception will be raised.
@@ -638,6 +795,7 @@ class ProyectosController extends Controller {
 
 //fin agregar investigador
 
+// <editor-fold defaultstate="collapsed" desc="Autocomplete">
     public function actionAsistenteAutoComplete() {
         if (isset($_GET['term'])) {
 
@@ -690,10 +848,10 @@ class ProyectosController extends Controller {
             }
             echo CJSON::encode($return_array);
         }
-    }
+    }//fin investigador autocomplete
+//</editor-fold>
 
-//fin investigador autocomplete
-
+// <editor-fold defaultstate="collapsed" desc="AJAX">
     /**
      * Performs the AJAX validation.
      * @param CModel the model to be validated
@@ -704,5 +862,16 @@ class ProyectosController extends Controller {
             Yii::app()->end();
         }
     }
+
+// </editor-fold>
+    
+    /**
+     * Muestra un mensaje de JS en la página del usuario.
+     * @param string $pMensaje mensaje que se quiere mostrar
+     */
+    private function mostrarMensaje($pMensaje){
+        echo '<script>alert("' . $pMensaje . '");</script>';
+    }//fin mostrar mensaje
+
 
 }

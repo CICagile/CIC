@@ -173,6 +173,89 @@ class Asistente  extends CModel{
             ));
             return $dataProvider;
     }
+    
+    /**
+     * Busca los datos más actuales de un asistente en un proyecto.
+     * Carga los datos en el modelo y guarda los periódos en un array.
+     * @param int $pIDProyecto ID del proyecto en la base de datos.
+     * @return array Un arreglo de arreglos con la fechas de los periodos correspondientes a los
+     * atributos que cargó de la base de datos.
+     */
+    public function buscarDatosActualesAsistenteEnProyecto($pIDProyecto) {
+        $respuesta =  NULL;
+        $call = 'CALL buscarDatosActualesAsistenteEnProyecto(:carnet,:idproyecto)';
+        $comando = Yii::app()->db->createCommand($call);
+        $comando->bindParam(':carnet', $this->carnet);
+        $comando->bindParam(':idproyecto', $pIDProyecto);
+        $query = $comando->query();
+        if ($query->rowCount === 1) {
+            $read = $query->read();
+            $this->rol = $read['rol_id'];
+            $this->horas = $read['horas'];
+            $periodo_rol = new Periodos;
+            $periodo_rol->inicio = $read['inicio_rol'];
+            $periodo_rol->fin = $read['fin'];
+            $periodo_horas = new Periodos;
+            $periodo_horas->inicio = $read['inicio_horas'];
+            $periodo_horas->fin = $read['fin'];
+            $periodo_asistencia = new Periodos;
+            $periodo_asistencia->inicio = $read['inicio'];
+            $periodo_asistencia->fin = $read['fin'];
+            $respuesta = array('rol' => $periodo_rol, 'horas' => $periodo_horas, 'asistencia' => $periodo_asistencia);
+        }//fin si lo encontró y sólo retorna un resultado
+        return $respuesta;
+    }//fin buscar Asistente en proyecto
+    
+    /**
+     * Busca el periodo del rol que termina en la fecha dada.
+     * Esta función es útil cuando se busca un rol anterior al actual
+     * para evitar que se traslapen los tiempos.
+     * @param string $pFecha Fecha de fin del periodo que se busca.
+     * @return \Periodos Retorna el periodo con las fechas de inicio y fin.
+     * Retorna <code>NULL</code> si no encuentra el periodo.
+     */
+    public function buscarPeriodoRolAnterior($pFecha) {
+        $respuesta = NULL;
+        $call = 'CALL buscarPeriodoRolAnterior(:fecha,:carnet,:id)';
+        $conexion = Yii::app()->db;
+        $comando = $conexion->createCommand($call);
+        $comando->bindParam(':fecha', $pFecha, PDO::PARAM_STR);
+        $comando->bindParam(':carnet', $this->carnet, PDO::PARAM_STR);
+        $comando->bindParam(':id', $this->codigo, PDO::PARAM_INT);
+        $query = $comando->query();
+        if (($read = $query->read())){
+            $respuesta = new Periodos;
+            $respuesta->inicio = $read['inicio'];
+            $respuesta->fin = $read['fin'];
+        }//fin si logro leer un resultado
+        return $respuesta;
+    }//fin buscar periodo rol anterior
+    
+    /**
+     * Busca el periodo de las horas que termina en la fecha dada.
+     * Esta función es útil cuando se busca el periodo de horas
+     * anterior al actual para evitar que se traslapen los periodos.
+     * @param string $pFecha Fecha de fin del periodo que se busca.
+     * @return \Periodos Retorna el periodo con las fechas de inicio y fin.
+     * Retorna <code>NULL</code> si no encuentra el periodo.
+     */
+    public function buscarPeriodoHorasAnterior($pFecha) {
+        $respuesta = NULL;
+        $call = 'CALL buscarPeriodoHorasAnterior(:fecha,:carnet,:id)';
+        $conexion = Yii::app()->db;
+        $comando = $conexion->createCommand($call);
+        $comando->bindParam(':fecha', $pFecha, PDO::PARAM_STR);
+        $comando->bindParam(':carnet', $this->carnet, PDO::PARAM_STR);
+        $comando->bindParam(':id', $this->codigo, PDO::PARAM_INT);
+        $query = $comando->query();
+        if (($read = $query->read())){
+            $respuesta = new Periodos;
+            $respuesta->inicio = $read['inicio'];
+            $respuesta->fin = $read['fin'];
+        }//fin si logro leer un resultado
+        return $respuesta;
+    }//fin buscar periodo horas anterior
+
 // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Validaciones">
@@ -369,6 +452,56 @@ class Asistente  extends CModel{
         }//fin catch
         return true;
     }//cambia el rol del asistente en un proyecto.
+    
+    /**
+     * Corrige el periodo actual del rol del asistente. Cambia la fecha de inicio
+     * del periodo actual y la fecha de fin del periodo anterior.
+     * @param string $pInicio Nueva fecha de inicio.
+     * @return boolean Retorna <code>true</code> si logra hacer el cambio con éxito y <code>false</code> de lo contrario.
+     */
+    public function corregirFechaInicioRolAsistente($pInicio){
+        $conexion = Yii::app()->db;
+        $call = 'CALL corregirFechaInicioRolAsistente(:pk,:carnet,:inicio)';
+        $transaction = $conexion->beginTransaction();
+        try {
+            $comando = $conexion->createCommand($call);
+            $comando->bindParam(':pk', $this->codigo, PDO::PARAM_STR);
+            $comando->bindParam('carnet', $this->carnet, PDO::PARAM_STR);
+            $comando->bindParam('inicio', $pInicio, PDO::PARAM_STR);
+            $comando->execute();
+            $transaction->commit();
+        } catch (Exception $e) {
+            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
+            $transaction->rollback();
+            return false;
+        }//fin try-catch
+        return true;
+    }//fin corregir fecha de inicio de rol del asistente
+    
+    /**
+     * Corrige el periodo actual de las horas del asistente. Cambia la fecha de inicio
+     * del periodo actual y la fecha de fin del periodo anterior.
+     * @param string $pInicio Nueva fecha de inicio.
+     * @return boolean Retorna <code>true</code> si logra hacer el cambio con éxito y <code>false</code> de lo contrario.
+     */
+    public function corregirFechaInicioHorasAsistente($pInicio) {
+        $conexion = Yii::app()->db;
+        $call = 'CALL corregirFechaInicioHorasAsistente(:pk,:carnet,:inicio)';
+        $transaction = $conexion->beginTransaction();
+        try {
+            $comando = $conexion->createCommand($call);
+            $comando->bindParam(':pk', $this->codigo, PDO::PARAM_STR);
+            $comando->bindParam('carnet', $this->carnet, PDO::PARAM_STR);
+            $comando->bindParam('inicio', $pInicio, PDO::PARAM_STR);
+            $comando->execute();
+            $transaction->commit();
+        } catch (Exception $e) {
+            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
+            $transaction->rollback();
+            return false;
+        }//fin try-catch
+        return true;
+    }// fin corregir fecha de inicio de las horas del asistente.
 // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Actualización de datos">
@@ -451,6 +584,92 @@ class Asistente  extends CModel{
             }//fin catch
             return true;
     }
+    
+    /**
+     * Cambia los periodos de asistencia del asistente en el proyecto dados la
+     * nueva fecha fin y la nueva fecha de inicio. Afecta a los periodos del
+     * rol, de las horas y de la asistencia.
+     * @param int $pIdProyecto ID del proyecto. Es el PK que tiene la BD.
+     * @param string $pInicio Nueva fecha de inicio de la asistencia.
+     * @param string $pFin Nueva Fecha de fin de la asistencia.
+     * @return boolean Retorna <code>true</code> si se ejecutó el SP con éxito y <code>false</code> de lo contrario.
+     */
+    public function cambiarPeriodoAsistencia($pIdProyecto, $pInicio, $pFin) {
+        $call = 'CALL cambiarPeriodoAsistencia(:inicio,:fin,:carnet,:id)';
+        $conexion = Yii::app()->db;
+        $transaction = $conexion->beginTransaction();
+        try {
+            $comando = $conexion->createCommand($call);
+            $comando->bindParam(':inicio', $pInicio, PDO::PARAM_STR);
+            $comando->bindParam(':fin', $pFin, PDO::PARAM_STR);
+            $comando->bindParam(':carnet', $this->carnet, PDO::PARAM_STR);
+            $comando->bindParam('id', $pIdProyecto, PDO::PARAM_INT);
+            $comando->execute();
+            $transaction->commit();
+        }//fin try
+        catch (Exception $e) {
+            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
+            $transaccion->rollback();
+            return false;
+        }//fin catch
+        return true;
+    }//fin cambiar periodo asistencia
+
+    /**
+     * Agrega un nuevo periodo para el nuevo rol que desempeña el asistente en el proyecto.
+     * @param string $pInicio Fecha en que el asistente inicia con el nuevo rol.
+     * @param int $pIDProyecto PK del proyecto en la base de datos.
+     * @return boolean Retorna <code>true</code> si logra ejecutar el SP con
+     * éxito y <code>false</code> de lo contrario.
+     */
+    public function actualizarRolProyecto($pInicio,$pIDProyecto) {
+        $call = 'CALL actualizarRolAsistente(:id, :carnet, :rol, :inicio)';
+        $conexion = Yii::app()->db;
+        $transaction = $conexion->beginTransaction();
+        try {
+            $comando = $conexion->createCommand($call);
+            $comando->bindParam(':id', $pIDProyecto, PDO::PARAM_INT);
+            $comando->bindParam(':carnet', $this->carnet, PDO::PARAM_STR);
+            $comando->bindParam('rol', $this->rol, PDO::PARAM_INT);
+            $comando->bindParam(':inicio', $pInicio, PDO::PARAM_STR);
+            $comando->execute();
+            $transaction->commit();
+        }//fin try
+        catch (Exception $e) {
+            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
+            $transaction->rollback();
+            return false;
+        }//fin catch
+        return true;
+    }//fin actualizar rol del asistente en el proyecto.
+    
+    /**
+     * Inserta un nuevo periodo con las nuevas horas que cumple el asistente.
+     * @param int $pIDProyecto PK del proyecto en la base de datos.
+     * @param string $pInicio Fecha en la que empieza a hacer las nuevas horas.
+     * @return boolean Retorna <code>true</code> si logra ejecutar el SP con
+     * éxito y <code>false</code> de lo contrario.
+     */
+    public function actualizarHorasProyecto($pIDProyecto, $pInicio) {
+        $call = 'CALL actualizarHorasAsistencia(:carnet,:id,:horas,:inicio)';
+        $conexion = Yii::app()->db;
+        $transaction = $conexion->beginTransaction();
+        try {
+            $comando = $conexion->createCommand($call);
+            $comando->bindParam(':carnet', $this->carnet, PDO::PARAM_STR);
+            $comando->bindParam(':id', $pIDProyecto, PDO::PARAM_INT);
+            $comando->bindParam(':horas', $this->horas);
+            $comando->bindParam(':inicio', $pInicio, PDO::PARAM_STR);
+            $comando->execute();
+            $transaction->commit();
+        }//fin try
+        catch (Exception $e) {
+            Yii::log("Error en la transacción: " . $e->getMessage(), "error", "application.models.Asistente");
+            $transaction->rollback();
+            return false;
+        }//fin catch
+        return true;
+    }//fin actualizar horas del asistente en el proyecto.
 // </editor-fold>
     
     /**

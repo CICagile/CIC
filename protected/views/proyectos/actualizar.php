@@ -2,12 +2,15 @@
 
 $this->breadcrumbs=array(
 	'Proyectos'=>array('admin'),
-	'Actualizar proyecto',
+	$modelproyectos->codigo => array('ver','id'=>$modelproyectos->idtbl_Proyectos),
+        'Actualizar proyecto',
 );
 
 $this->menu=array(
-        array('label'=>'Ver información de este proyecto', 'url'=>array('ver', 'id'=>$modelproyectos->idtbl_Proyectos)),
-	array('label'=>'Ver Proyecto', 'url'=>array('ver','id'=>$modelproyectos->idtbl_Proyectos)),    	
+	array('label'=>'Agregar asistente', 'url'=>array('agregarasistente', 'id'=>$modelproyectos->idtbl_Proyectos)),
+        array('label'=>'Agregar investigador', 'url'=>array('agregarinvestigador', 'id'=>$modelproyectos->idtbl_Proyectos)),
+        array('label'=>'Ver Proyecto', 'url'=>array('ver','id'=>$modelproyectos->idtbl_Proyectos)),
+        array('label'=>'Nuevo Proyecto', 'url'=>array('crear')),
 );
 ?>
 

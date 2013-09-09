@@ -6,7 +6,8 @@
 /* @var $horas array */
 $this->breadcrumbs=array(
 	'Proyectos'=>array('admin'),
-	$model->codigo,
+	$model->codigo => array('ver','id'=>$model->idtbl_Proyectos),
+        'Agregar investigador',
 );
 
 $this->menu=array(	
@@ -86,6 +87,7 @@ $this->menu=array(
                             'dateFormat'=>'dd-mm-yy',
                             'changeYear'=>true,
                             'changeMonth'=>true,
+                            'minDate' => $model->inicio,
                         ),
                         'htmlOptions'=>array(                            
                             'readonly' => 'readonly'
@@ -106,6 +108,7 @@ $this->menu=array(
                             'dateFormat'=>'dd-mm-yy',
                             'changeYear'=>true,
                             'changeMonth'=>true,
+                            'maxDate' => $model->fin,
                         ),
                         'htmlOptions'=>array(                            
                             'readonly' => 'readonly'
