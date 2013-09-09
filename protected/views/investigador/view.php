@@ -50,7 +50,7 @@ $this->widget('zii.widgets.CDetailView', array(
 <?php 
 $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'investigador-grid',
-	'dataProvider'=>$model->proyectosinvestigador($model->cedula),
+	'dataProvider'=>$model->buscarProyectosActuales($model->cedula),
 	'columns'=>$columns,
        ));
 ?>
