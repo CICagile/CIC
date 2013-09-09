@@ -277,41 +277,48 @@ class Proyectos extends CActiveRecord {
     //
     //
     
-    /** 
-     * Busca todos los investigadores asociados a un proyecto
-    * @return boolean Retorna true si la transacción ocurre exitosamente y false de lo contrario.
+    /**
+     * Esta funcion busca en la base de datos todos los investigadores que están activos
+     * en el proyecto. Un investigador se considera activo si actualmente está asociado al
+     * proyecto. En otras palabras si la fecha actual se encuentra entre su fecha de inicio y su fecha de fin.
+     * @return CArraryDataProvider Retorna un CArrayDataProvider que se usa para mostrar datos en tablas. 
      */
-    public function buscarinvestigadorporproyecto(){
+    public function buscarInvestigadoresActivos(){
            $pkid = $this->idtbl_Proyectos;
            $call = 'CALL verinvestigadorporproyecto(:idproyecto)';
            $comand=Yii::app()->db->createCommand($call);
            $comand->bindParam(':idproyecto',$pkid, PDO::PARAM_INT);
-           $rawdata=$comand->queryAll();
-           $dataProvider=new CArrayDataProvider($rawdata, array(
+           $investigadores=$comand->queryAll();
+           foreach ($investigadores as &$investigador) {
+               $instancia = new Investigador;
+               $instancia->cedula = $investigador['cedula'];
+               $instancia->proyecto = $this->idtbl_Proyectos;
+               $instancia->buscarHorasEnProyecto();
+               $investigador['vie'] = isset($instancia->horas['vie']) ? $instancia->horas['vie'] : 0;
+               $investigador['fundatec'] = isset($instancia->horas['fundatec']) ? $instancia->horas['fundatec'] : 0;
+               $investigador['reconocimiento'] = isset($instancia->horas['reconocimiento']) ? $instancia->horas['reconocimiento'] : 0;
+               $investigador['docencia'] = isset($instancia->horas['docencia']) ? $instancia->horas['docencia'] : 0;
+           }//fin for
+           $dataProvider=new CArrayDataProvider($investigadores, array(
                 'keyField'=>'cedula',
                 'id'=>'user',
                 'sort'=>array(
-                    'attributes'=>array(
-                       //'cedula',
-                        'nombre',
+                    'defaultOrder' => 'apellido1 ASC',
+                    'attributes' => array (
                         'apellido1',
-                        'apellido2',
                         'rol',
-                        'fin',
                         'vie',
                         'fundatec',
-                        'docencia', 
                         'reconocimiento',
-                        
-                        
+                        'docencia',
                     ),
-                ),
-                'pagination'=>array(
-                'pageSize'=>10,
                 ),
             ));
             return $dataProvider;
-    }
+    }//fin buscar investigadores activos en proyecto
+    
+    //private function buscar
+
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Functions">
     /**
