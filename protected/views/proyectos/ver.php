@@ -2,6 +2,7 @@
 /* @var $this ProyectosController */
 /* @var $model Proyectos */
 /* @var $dataProvider CArrayDataProvider */
+/* @var $investigadores CArrayDataProvider */
 /* @var $errores array */
 $this->breadcrumbs=array(
 	'Proyectos'=>array('admin'),
@@ -16,48 +17,7 @@ $this->menu=array(
         array('label'=>'Nuevo Proyecto', 'url'=>array('crear')),
         
 );
-$columns = array (
-    array(
-        'header'=>CHtml::encode(Investigador::model()->getAttributeLabel('cedula')),
-        'name'=>'cedula',
-    ),
-    array(
-        'header'=>CHtml::encode(Investigador::model()->getAttributeLabel('nombre')),
-        'name'=>'nombre',
-    ),
-    array(
-        'header'=>CHtml::encode(Investigador::model()->getAttributeLabel('apellido1')),
-        'name'=>'apellido1',
-    ),
-    array(
-        'header'=>CHtml::encode(Investigador::model()->getAttributeLabel('apellido2')),
-        'name'=>'apellido2',
-    ),
-    array(
-        'header'=>CHtml::encode(Investigador::model()->getAttributeLabel('rol')),
-        'name'=>'rol',
-    ),
-    array(
-        'header'=>CHtml::encode(Investigador::model()->getAttributeLabel('fin')),
-        'name'=>'fin',
-    ),
-    array(
-        'header'=>CHtml::encode(Investigador::model()->getAttributeLabel('VIE')),
-        'name'=>'VIE',
-    ),
-    array(
-        'header'=>CHtml::encode(Investigador::model()->getAttributeLabel('FUNDATEC')),
-        'name'=>'Fundatec',
-    ),
-    array(
-        'header'=>CHtml::encode(Investigador::model()->getAttributeLabel('Docencia')),
-        'name'=>'Docencia',
-    ),
-    array(
-        'header'=>CHtml::encode(Investigador::model()->getAttributeLabel('Reconocimiento')),
-        'name'=>'Reconocimiento',
-    )
-    );
+
 ?>
 
 <h3>Detalle del proyecto.</h3>
@@ -106,11 +66,7 @@ $this->widget('zii.widgets.CDetailView', array(
         $this->renderPartial('_verasistentes', array('model'=>$model,'dataProvider'=>$dataProvider));
 ?>
 </br> </br>
-<h3>Investigadores Activos</h3>
 
-<?php $this->widget('zii.widgets.grid.CGridView', array(
-        'id'=>'investigador-grid',
-	'dataProvider'=>$dataProvider1,
-	'columns'=>$columns,
-           )); 
+<?php
+    $this->renderPartial('_verInvestigadores', array('model'=>$model,'investigadores'=>$investigadores));
 ?>
