@@ -53,7 +53,6 @@ $columns = array (
 <?php $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'investigador-grid',
 	'dataProvider'=>$investigadores,
-	//'filter'=>$model,
 	'columns'=>$columns,
            )); 
 ?>
