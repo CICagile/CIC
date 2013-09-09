@@ -188,7 +188,7 @@ class Investigador  extends CModel{
     
     }//fin buscar asistente por pk
     //
-    public function proyectosinvestigador(){
+    public function buscarProyectosActuales(){
            $call = 'CALL verProyectosporInvestigador(:cedulabuscada)';
            $comand=Yii::app()->db->createCommand($call);
            $comand->bindParam(':cedulabuscada', $this->cedula, PDO::PARAM_STR);
@@ -210,6 +210,26 @@ class Investigador  extends CModel{
             ));
             return $dataProvider;
     }
+    
+    /**
+     * Busca las horas que hace este investigador en el proyecto con el
+     * PK asigando en el atributo <code>proyecto</code>  de esta instancia.
+     * Las horas las guarda en un arreglo de la siguiente forma: ($tipo => $cantidad)
+     * en el atributo <code>horas</code> de esta instancia. Es importante notar
+     * que el tipo de horas lo regresa en minúsculas.
+     */
+    public function buscarHorasEnProyecto(){
+        $this->horas = array();
+        $call = 'CALL verHorasInvestigador(:ced,:proyecto)';
+        $comando = Yii::app()->db->createCommand($call);
+        $comando->bindParam(':ced', $this->cedula, PDO::PARAM_STR);
+        $comando->bindParam(':proyecto', $this->proyecto, PDO::PARAM_INT);
+        $arrayhoras = $comando->queryAll();
+        foreach ($arrayhoras as $horas){
+            $this->horas[$horas['tipo']] = $horas['horas'];
+        }//fin for
+    }//fin buscarHorasEnProyecto
+    
     // </editor-fold>
     
     /**
