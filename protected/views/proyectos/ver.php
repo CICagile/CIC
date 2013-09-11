@@ -55,16 +55,16 @@ $this->widget('zii.widgets.CDetailView', array(
 <br/>
 <br/>
 
-<?php
-    /**
-     * ASISTENTES Si se están modificando los asistentes, muestra la vista de modificar los asistentes.
-     * De lo contrario, sólo muestra los datos. 
-     */
-    if ($model->scenario === 'editar-asistentes')
-        $this->renderPartial('_editarasistentes', array('model'=>$model,'dataProvider'=>$dataProvider,'errores'=>$errores));
-    else
-        $this->renderPartial('_verasistentes', array('model'=>$model,'dataProvider'=>$dataProvider));
-?>
+    <?php
+        /**
+         * ASISTENTES Si se están modificando los asistentes, muestra la vista de modificar los asistentes.
+         * De lo contrario, sólo muestra los datos. 
+         */
+        if ($model->scenario === 'editar-asistentes')
+            $this->renderPartial('_editarasistentes', array('model'=>$model,'dataProvider'=>$dataProvider,'errores'=>$errores));
+        else
+            $this->renderPartial('_verasistentes', array('model'=>$model,'dataProvider'=>$dataProvider));
+    ?>
 </br> </br>
 
 <?php
