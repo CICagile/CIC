@@ -7,7 +7,7 @@ $this->breadcrumbs = array(
 );
 
 $this->menu = array(
-    array('label' => 'Actualizar información del proyecto', 'url' => array('actualizar', 'id' => $model->idtbl_Proyectos)),
+    array('label' => 'Corregir información del proyecto', 'url' => array('actualizar', 'id' => $model->idtbl_Proyectos)),
     array('label' => 'Ver proyectos activos', 'url' => array('admin')),
     array('label' => 'Ver proyectos antiguos', 'url' => array('adminantiguos')),
 );
