@@ -69,8 +69,6 @@ class ProyectosController extends Controller {
         else
             $this->render('verantiguos', array(
                 'model' => $model,
-                'asistente' => new Asistente,
-                'dataProvider' => $model->buscarAsistentesActivosDeProyecto(),
             ));
     }
 
@@ -102,6 +100,7 @@ class ProyectosController extends Controller {
             'model' => $model,
             'dataProvider' => $dataProvider,
             'errores' => $errores,
+            'investigadores' => $model->buscarInvestigadoresActivos(),
         ));
     }
 
