@@ -11,6 +11,7 @@ $this->menu = array(
     array('label' => 'Ver Asistentes', 'url' => array('admin')),
     array('label' => 'Actualizar información del asistente', 'url' => array('updateDP', 'id' => $model->carnet)),
     array('label' => 'Reporte historial proyectos', 'url' => array('reportarProyectos', 'id' => $model->carnet)),
+    array('label' => 'Reporte horas proyectos', 'url' => array('reportarHoras', 'id' => $model->carnet)),
 );
 //Columnas para mostrar todos los proyectos relacionados con un asistente
 $columns = array(

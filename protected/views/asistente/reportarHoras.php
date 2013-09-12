@@ -12,7 +12,7 @@ $this->breadcrumbs = array(
 $this->menu = array(
     array('label' => 'Ver Asistentes', 'url' => array('admin')),
     array('label' => 'Actualizar información del asistente', 'url' => array('updateDP', 'id' => $model->carnet)),
-    array('label' => 'Reporte historial horas', 'url' => array('reportarHoras', 'id' => $model->carnet)),
+    array('label' => 'Reporte historial proyectos', 'url' => array('reportarProyectos', 'id' => $model->carnet)),
 );
 
 

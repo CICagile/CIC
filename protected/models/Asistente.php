@@ -507,8 +507,28 @@ class Asistente  extends CModel{
     }//fin contarHorasActuales
     
 // <editor-fold defaultstate="collapsed" desc="Reportes">
-
+    /**
+     * Obtiene lista de proyectos en los que ha trabajado un asistente, su rol y asociado a periodos de tiempo
+     * @param type $pCarnet
+     * @return 
+     */
     public function obtenerHistorialProyectosAsistente($pCarnet){
+        $call = 'CALL obtenerHistorialProyectosAsistentes(:carnet)';
+        $comando = Yii::app()->db->createCommand($call);
+        $comando->bindParam(':carnet',$pCarnet,PDO::PARAM_STR);
+        $query = $comando->queryAll();
+        if (empty($query))
+            return null;
+        else
+            return $query;
+    }
+    
+    /**
+     * Obtiene lista de proyectos en los que ha trabajado un asistente, su rol y asociado a periodos de tiempo
+     * @param type $pCarnet
+     * @return 
+     */
+    public function obtenerHistorialHorasAsistente($pCarnet){
         $call = 'CALL obtenerHistorialProyectosAsistentes(:carnet)';
         $comando = Yii::app()->db->createCommand($call);
         $comando->bindParam(':carnet',$pCarnet,PDO::PARAM_STR);
