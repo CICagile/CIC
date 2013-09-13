@@ -148,7 +148,7 @@ class AsistenteController extends Controller {
                             'id' => 'asistente-historial-proyectos',
                             'sort' => array(
                                 'attributes' => array(
-                                    'idtbl_proyectos','codigo', 'inicio', 'fin','rol'
+                                    'idtbl_proyectos','codigo', 'inicio', 'fin','horas'
                                 ),
                             ),
                             'pagination' => array(
