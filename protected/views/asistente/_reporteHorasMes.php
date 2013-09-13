@@ -9,4 +9,7 @@
         array('header'=>'Fin','value'=>'$data["fin"]'),
     ),
 ));
+    
+    
+    echo $data;
 ?>

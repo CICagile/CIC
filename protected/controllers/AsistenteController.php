@@ -30,7 +30,7 @@ class AsistenteController extends Controller {
                 'users' => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('create', 'updateDP', 'reportarProyectos', 'reportarHoras', 'codigoautocomplete', 'update', 'index', 'desvincular'),
+                'actions' => array('create', 'updateDP', 'reportarProyectos', 'reportarHoras', 'ActualizarReporteHorasMes', 'codigoautocomplete', 'update', 'index', 'desvincular'),
                 'users' => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -140,6 +140,8 @@ class AsistenteController extends Controller {
         //$model = $this->loadModel($id);
         $model = $this->loadModel($id);
         $historial_proyectos_asistente = $model->obtenerHistorialHorasAsistente($id);
+        
+        $data = 'data';
 
         $data_provider = new CArrayDataProvider(
                         $historial_proyectos_asistente,
@@ -158,7 +160,34 @@ class AsistenteController extends Controller {
         $this->render('reportarHoras', array(
             'model' => $model,
             'data_provider' => $data_provider,
+            'data' => $data,
         ));
+    }
+    
+    
+    public function actionActualizarReporteHorasMes($pCarnet){
+        $data = "content updated in ajax";
+        
+        if(isset($_POST['mes_reporte']))
+            $data = '01-' . $_POST['mes_reporte'];
+        
+        $model = $this->loadModel($pCarnet);
+        $historial_proyectos_asistente = $model->obtenerHistorialHorasAsistente($pCarnet);
+        $data_provider = new CArrayDataProvider(
+                        $historial_proyectos_asistente,
+                        array(
+                            'keyField'=>'codigo',
+                            'id' => 'asistente-historial-proyectos',
+                            'sort' => array(
+                                'attributes' => array(
+                                    'idtbl_proyectos','codigo', 'inicio', 'fin','horas'
+                                ),
+                            ),
+                            'pagination' => array(
+                                'pageSize' => 50,
+                            ),
+                ));
+        $this->renderPartial('_reporteHorasMes', array('data_provider'=> $data_provider, 'data'=>$data));
     }
     
     /**

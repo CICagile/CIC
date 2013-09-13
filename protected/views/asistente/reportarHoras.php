@@ -1,6 +1,9 @@
 
 
 <h3>Reporte de historial de horas por proyecto</h3>
+
+
+
 <?php
 //print_r($data_provider);
 
@@ -18,6 +21,11 @@ $this->menu = array(
 
 <h3>Seleccione un mes para filtrar el resultado</h3>
 
+<?php $form=$this->beginWidget('CActiveForm', array(
+	'id'=>'asistente-horasmes-form',
+	'enableAjaxValidation'=>true,
+)); ?>
+
 <?php
 $this->widget('ext.EJuiMonthPicker.EJuiMonthPicker', array(
                 'name' => 'mes_reporte',
@@ -31,6 +39,20 @@ $this->widget('ext.EJuiMonthPicker.EJuiMonthPicker', array(
                     'readonly' => 'readonly'
                 ),
             ));
+
+echo CHtml::ajaxButton ("Filtrar",
+                              CController::createUrl('ActualizarReporteHorasMes', array('pCarnet'=>'112233445566')), 
+                              array(
+                                  'update' => '#horas-mes',
+                                  'type' => 'post',
+                                  //'success'=>'function(data){alert("OK");}',
+                                  'data' => array('mes_reporte'=>'js:$("#mes_reporte").val()'))
+                        );
+
 ?>
 
-<?php $this->renderPartial('_reporteHorasMes', array('data_provider'=>$data_provider)); ?>
+<?php $this->endWidget(); ?>
+
+<div id="horas-mes">
+    <?php $this->renderPartial('_reporteHorasMes', array('data_provider'=>$data_provider, 'data'=>$data)); ?>
+</div>
