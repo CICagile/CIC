@@ -14,6 +14,6 @@ if ($data_provider != null) {
 }else{
     echo '<br/>No se encontraron resultados';
     if(strlen($fecha_mes) > 3)
-        echo 'para el mes que inicia el día ' . $fecha_mes;
+        echo ' para el mes que inicia el día ' . $fecha_mes;
 }
 ?>

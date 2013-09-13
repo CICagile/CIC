@@ -21,15 +21,11 @@ $this->menu = array(
 
 <h4>Puede seleccionar un mes para filtrar el resultado</h4>
 
-<?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'asistente-horasmes-form',
-	'enableAjaxValidation'=>true,
-)); ?>
-
 <?php
 $this->widget('ext.EJuiMonthPicker.EJuiMonthPicker', array(
                 'name' => 'mes_reporte',
                 'id' => 'mes_reporte',
+                'value' => date('m-Y'),
                 'options' => array(
                     'dateFormat' => 'mm-yy',
                     'changeYear' => true,
@@ -51,8 +47,9 @@ echo CHtml::ajaxButton ("Filtrar",
 
 ?>
 
-<?php $this->endWidget(); ?>
 
 <div id="horas-mes">
-    <?php $this->renderPartial('_reporteHorasMes', array('data_provider'=>$data_provider, 'data'=>$data)); ?>
+    <br/><br/><br/>
+    El siguiente es un reporte de todas las horas registradas por proyecto
+    <?php $this->renderPartial('_reporteHorasMes', array('data_provider'=>$data_provider)); ?>
 </div>

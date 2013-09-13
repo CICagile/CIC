@@ -135,67 +135,34 @@ class AsistenteController extends Controller {
     }
     
     
-    
-        public function actionReportarHoras($id){
-        //$model = $this->loadModel($id);
+    /**
+     * Reporta un listado de todas las horas que ha realizado un asistente por proyecto
+     * Hace un render a vista que permite ver las horas que se realizan en un mes dado
+     * @param type $id carnet del estudiante
+     */
+    public function actionReportarHoras($id){
         $model = $this->loadModel($id);
-        $historial_proyectos_asistente = $model->obtenerHistorialHorasAsistente($id);
-        
-        $data = 'data';
-
-        $data_provider = new CArrayDataProvider(
-                        $historial_proyectos_asistente,
-                        array(
-                            'keyField'=>'codigo',
-                            'id' => 'asistente-historial-proyectos',
-                            'sort' => array(
-                                'attributes' => array(
-                                    'idtbl_proyectos','codigo', 'inicio', 'fin','horas'
-                                ),
-                            ),
-                            'pagination' => array(
-                                'pageSize' => 50,
-                            ),
-                ));
+        $data_provider = Asistente::model()->obtenerHorasAsistente($id,null); //se pasa un null para mostrar el historial completo
         $this->render('reportarHoras', array(
             'model' => $model,
-            'data_provider' => $data_provider,
-            'data' => $data,
+            'data_provider' => $data_provider
         ));
     }
     
-    
+    /**
+     * Permite visualizar las horas que realiza un asistente, para un mes dado
+     *  implementa un render partial de _reporteHorasMes, y recibe el valor a partir de una peticion
+     *  AJAX, que se realiza en la vista Asistente/reportarHoras.php con un ajaxbutton
+     * @param type $pCarnet 
+     */
     public function actionActualizarReporteHorasMes($pCarnet){
-        if(isset($_POST['mes_reporte']))
+        if(isset($_POST['mes_reporte'])){
             //es necesario concatenar primero el mes para que la base de datos haga una comparacion adecuada
             $fecha_mes = '01-' . $_POST['mes_reporte'];
-        
-        $model = $this->loadModel($pCarnet);
-        //if(strlen (($_POST['mes_reporte'])) > 0 )
-            $historial_proyectos_asistente = $model->obtenerHorasMesAsistente($pCarnet, $fecha_mes);
-        //else
-        //    $historial_proyectos_asistente = $model->obtenerHistorialHorasAsistente($pCarnet);
-        
-        if($historial_proyectos_asistente != null){
-            $data_provider = new CArrayDataProvider(
-                        $historial_proyectos_asistente,
-                        array(
-                            'keyField'=>'codigo',
-                            'id' => 'asistente-historial-proyectos',
-                            'sort' => array(
-                                'attributes' => array(
-                                    'idtbl_proyectos','codigo', 'inicio', 'fin','horas'
-                                ),
-                            ),
-                            'pagination' => array(
-                                'pageSize' => 50,
-                            ),
-                ));
-        }else{
-            $data_provider = null;
+
+            $data_provider = Asistente::model()->obtenerHorasAsistente($pCarnet, $fecha_mes);
+            $this->renderPartial('_reporteHorasMes', array('data_provider'=> $data_provider, 'fecha_mes'=>$fecha_mes));
         }
-        $this->renderPartial('_reporteHorasMes', array('data_provider'=> $data_provider, 'fecha_mes'=>$fecha_mes));
-            //}
     }
     
     /**
