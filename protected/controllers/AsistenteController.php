@@ -166,14 +166,18 @@ class AsistenteController extends Controller {
     
     
     public function actionActualizarReporteHorasMes($pCarnet){
-        $data = "content updated in ajax";
-        
         if(isset($_POST['mes_reporte']))
-            $data = '01-' . $_POST['mes_reporte'];
+            //es necesario concatenar primero el mes para que la base de datos haga una comparacion adecuada
+            $fecha_mes = '01-' . $_POST['mes_reporte'];
         
         $model = $this->loadModel($pCarnet);
-        $historial_proyectos_asistente = $model->obtenerHistorialHorasAsistente($pCarnet);
-        $data_provider = new CArrayDataProvider(
+        //if(strlen (($_POST['mes_reporte'])) > 0 )
+            $historial_proyectos_asistente = $model->obtenerHorasMesAsistente($pCarnet, $fecha_mes);
+        //else
+        //    $historial_proyectos_asistente = $model->obtenerHistorialHorasAsistente($pCarnet);
+        
+        if($historial_proyectos_asistente != null){
+            $data_provider = new CArrayDataProvider(
                         $historial_proyectos_asistente,
                         array(
                             'keyField'=>'codigo',
@@ -187,7 +191,11 @@ class AsistenteController extends Controller {
                                 'pageSize' => 50,
                             ),
                 ));
-        $this->renderPartial('_reporteHorasMes', array('data_provider'=> $data_provider, 'data'=>$data));
+        }else{
+            $data_provider = null;
+        }
+        $this->renderPartial('_reporteHorasMes', array('data_provider'=> $data_provider, 'fecha_mes'=>$fecha_mes));
+            //}
     }
     
     /**

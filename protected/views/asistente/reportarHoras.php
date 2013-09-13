@@ -19,7 +19,7 @@ $this->menu = array(
 );
 ?>
 
-<h3>Seleccione un mes para filtrar el resultado</h3>
+<h4>Puede seleccionar un mes para filtrar el resultado</h4>
 
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'asistente-horasmes-form',

@@ -529,9 +529,21 @@ class Asistente  extends CModel{
      * @return 
      */
     public function obtenerHistorialHorasAsistente($pCarnet){
-        $call = 'CALL obtenerHistorialHorasMesAsistente(:carnet)';
+        $call = 'CALL obtenerHistorialHorasAsistente(:carnet)';
         $comando = Yii::app()->db->createCommand($call);
         $comando->bindParam(':carnet',$pCarnet,PDO::PARAM_STR);
+        $query = $comando->queryAll();
+        if (empty($query))
+            return null;
+        else
+            return $query;
+    }
+    
+    public function obtenerHorasMesAsistente($pCarnet, $pFechaMes){
+        $call = 'CALL obtenerHorasMesAsistente(:pCarnet,:pFechaMes)';
+        $comando = Yii::app()->db->createCommand($call);
+        $comando->bindParam(':pCarnet',$pCarnet,PDO::PARAM_STR);
+        $comando->bindParam(':pFechaMes',$pFechaMes,PDO::PARAM_STR);
         $query = $comando->queryAll();
         if (empty($query))
             return null;
