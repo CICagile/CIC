@@ -298,16 +298,13 @@ class Asistente  extends CModel{
     public function validarAsistenteNoRepetido($attribute, $params){
         if(isset($params['on']) && $params['on'] != $this->scenario)
             return;
-        $call = "CALL verProyectosPorAsistente(:carnet)";
+        $call = "CALL buscarDatosActualesAsistenteEnProyecto(:carnet,:codigo)";
         $comando = Yii::app()->db->createCommand($call);
         $comando->bindParam(':carnet',$this->carnet,PDO::PARAM_STR);
-        $resultados = $comando->queryAll();
-        foreach ($resultados as $resultado){
-            if ($resultado['codigo'] == $this->codigo){
-                $this->addError('carnet', 'El asistente ya está en el proyecto.');
-                break;
-            }//fin si el asistente ya esta en el proyecto
-        }//fin for
+        $comando->bindParam(':codigo', $this->codigo,  PDO::PARAM_INT);
+        $query = $comando->query();
+        if ($query->rowCount != 0)
+            $this->addError($attribute, 'El asistente ya está en el proyecto.');
     }//fin validar asistente no repetido
         
     /**
@@ -324,9 +321,9 @@ class Asistente  extends CModel{
         $horas_totales -= $horas_anteriores;
         $horas_totales += $pHorasNuevas;
         $this->horas = $horas_totales;
-        if ($this->validate('horas', false)) {
+        if ($this->validate(array('horas'), false)) {
             $this->horas = $pHorasNuevas;
-            if ($this->validate('horas', false)) {
+            if ($this->validate(array('horas'), false)) {
                 return true;
             }//fin si las horas totales y las horas nuevas son válidas.
             else {
