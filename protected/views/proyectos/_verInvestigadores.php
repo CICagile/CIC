@@ -44,7 +44,27 @@ $columns = array (
     array(
         'header'=>CHtml::encode('Reconocimiento'),
         'name'=>'reconocimiento',
-    )
+    ),
+    array(
+        'class'=>'CButtonColumn',
+        'template'=>'{view}{delete}',//{editar}{update}{delete}',
+        'viewButtonUrl'=>'Yii::app()->controller->createUrl("Investigador/view", array("id"=>$data["cedula"]))',
+        'viewButtonLabel' => 'Ver información detallada del asistente',
+        'deleteButtonUrl'=>'',
+        'deleteButtonLabel' => 'Desvincular Investigador',
+        /*
+        'updateButtonUrl'=>'Yii::app()->controller->createUrl("Proyectos/editarasistencia", array("id"=>'.$model->idtbl_Proyectos.',"carnet"=>$data["carnet"]))',
+        'updateButtonLabel' => 'Actualizar información de la asistencia.',
+        'deleteButtonUrl'=>'Yii::app()->controller->createURL("Asistente/desvincular",array("idtbl_Proyectos"=>'.$model->idtbl_Proyectos.',"carnet"=>$data["carnet"]))',
+        'deleteButtonLabel' => 'Desvincular Asistente',
+        'buttons' => array(
+            'editar' => array(
+                'label' => 'Editar información personal del asistente',
+                'imageUrl' => Yii::app()->request->baseUrl . '/images/edit-user.png',
+                'url' => 'Yii::app()->controller->createURL("Asistente/updateDP", array("id"=>$data["carnet"]))',
+                        ),
+                    ),*/
+        ),
     );
 ?>
 
