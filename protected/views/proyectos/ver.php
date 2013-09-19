@@ -46,11 +46,7 @@ $this->widget('zii.widgets.CDetailView', array(
                     'value' => $sectores_beneficiados,
                     'type' => 'html',
                     ),
-                array(
-                    'label' => 'Observaciones',
-                    'value' => nl2br($model->observaciones),
-                    'type' => 'raw',
-                ),
+                'observaciones:ntext',
 	),
 )); 
     
