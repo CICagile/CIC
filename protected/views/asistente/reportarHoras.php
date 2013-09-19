@@ -36,7 +36,7 @@ $this->widget('ext.EJuiMonthPicker.EJuiMonthPicker', array(
                 ),
             ));
 
-echo CHtml::ajaxButton ("Filtrar",
+echo CHtml::ajaxButton ("Buscar",
                               CController::createUrl('ActualizarReporteHorasMes', array('pCarnet'=>'112233445566')), 
                               array(
                                   'update' => '#horas-mes',
