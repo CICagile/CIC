@@ -20,7 +20,7 @@ $this->menu=array(
 <div class="form">
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'agregarasistente-form',
-	'enableAjaxValidation'=>true,
+	'enableAjaxValidation'=>false,
 )); ?>
         
     <h2>Agregar asistente al Proyecto: <?php echo $model->codigo?></h2>
