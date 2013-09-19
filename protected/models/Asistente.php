@@ -724,6 +724,66 @@ class Asistente  extends CModel{
         else
             return 0;
     }//fin contarHorasActuales
+    
+// <editor-fold defaultstate="collapsed" desc="Reportes">
+    /**
+     * Obtiene lista de proyectos en los que ha trabajado un asistente, su rol y asociado a periodos de tiempo
+     * @param type $pCarnet
+     * @return 
+     */
+    public function obtenerHistorialProyectosAsistente($pCarnet){
+        $call = 'CALL obtenerHistorialProyectosAsistentes(:carnet)';
+        $comando = Yii::app()->db->createCommand($call);
+        $comando->bindParam(':carnet',$pCarnet,PDO::PARAM_STR);
+        $query = $comando->queryAll();
+        if (empty($query))
+            return null;
+        else
+            return $query;
+    }
+    
+    /**
+     * Obtiene un CDataProvider con las horas que ha realizado un asistente
+     * @param string $pCarnet El carnet del asistente
+     * @param string|\null $pFechaMes El mes a buscar, si se pasa un null muestra todo el historial
+     * @return null|\CArrayDataProvider 
+     */
+    public function obtenerHorasAsistente($pCarnet, $pFechaMes){
+        if($pFechaMes != null){
+            $call = 'CALL obtenerHorasMesAsistente(:pCarnet,:pFechaMes)';
+            $comando = Yii::app()->db->createCommand($call);
+            $comando->bindParam(':pFechaMes',$pFechaMes,PDO::PARAM_STR);
+        }else{
+            $call = 'CALL obtenerHistorialHorasAsistente(:pCarnet)';
+            $comando = Yii::app()->db->createCommand($call);
+        }
+        
+        $comando->bindParam(':pCarnet',$pCarnet,PDO::PARAM_STR);
+        $query = $comando->queryAll();
+        
+        if (empty($query)){
+            return null;
+        }
+        else{
+            $data_provider = new CArrayDataProvider(
+                        $query, //obtiene los datos de variable $query
+                        array(
+                            'keyField'=>'codigo',
+                            'id' => 'asistente-historial-proyectos',
+                            'sort' => array(
+                                'attributes' => array(
+                                    'idtbl_proyectos','codigo', 'inicio', 'fin','horas'
+                                ),
+                            ),
+                            'pagination' => array(
+                                'pageSize' => 50,
+                            ),
+                ));
+            return $data_provider;
+        }
+    }
+// </editor-fold>
+
 
 }//fin clase Modelo Asistente
 
