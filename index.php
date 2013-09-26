@@ -3,9 +3,9 @@
 // change the following paths if necessary
 $yii=dirname(__FILE__).'/../yii/framework/yii.php';
 
-// si está en la carpeta CIC/
+// si está en la carpeta (...)-CIC/
 // establece la configuracion del entorno para desarrollo
-if(strncmp(strrev(dirname(__FILE__)), '/CIC', 4)){
+if(strncmp(strrev(dirname(__FILE__)), DIRECTORY_SEPARATOR . 'CIC-', 5)){
     $config=dirname(__FILE__).'/protected/config/devmain.php';
     // remove the following lines when in production mode
     defined('YII_DEBUG') or define('YII_DEBUG',true);
