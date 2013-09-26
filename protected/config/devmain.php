@@ -19,6 +19,15 @@ return array(
 	),
 
 	'modules'=>array(
+		// uncomment the following to enable the Gii tool
+		
+		'gii'=>array(
+			'class'=>'system.gii.GiiModule',
+			'password'=>'CIC',
+			// If removed, Gii defaults to localhost only. Edit carefully to taste.
+			'ipFilters'=>array('127.0.0.1','::1'),
+		),
+		
 	),
 
 	// application components
@@ -44,12 +53,11 @@ return array(
 		// uncomment the following to use a MySQL database
             
                 'db'=>array(
-			'connectionString' => 'mysql:host=172.19.16.219;dbname=db_cic_proyectos',
+			'connectionString' => 'mysql:host=172.19.16.219;dbname=db_cic',
 			'emulatePrepare' => true,
 			'username' => 'CIC',
 			'password' => 'Cicagile004',
 			'charset' => 'utf8',
-                        'schemaCachingDuration'=>3600,
 		),
 		
 		'errorHandler'=>array(
