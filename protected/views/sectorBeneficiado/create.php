@@ -3,8 +3,9 @@
 /* @var $model SectorBeneficiado */
 
 $this->breadcrumbs=array(
-	'Sector Beneficiados'=>array('index'),
-	'Crear',
+	'Gestión del sistema'=>array('parametros/index'),
+	'Sectores beneficiados'=>array('admin'),
+        'Crear'
 );
 ?>
 

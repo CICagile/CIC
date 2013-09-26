@@ -3,9 +3,9 @@
 /* @var $model Convenio */
 
 $this->breadcrumbs=array(
-	'Convenios'=>array('index'),
-	$model->nombre=>array('view','id'=>$model->idtbl_convenio),
-	'Actualizar',
+	'Gestión del sistema'=>array('parametros/index'),
+	'Convenios'=>array('admin'),
+        'Modificar'
 );
 
 $this->menu=array(

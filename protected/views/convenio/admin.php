@@ -3,8 +3,8 @@
 /* @var $model Convenio */
 
 $this->breadcrumbs=array(
-	'Convenios'=>array('index'),
-	'Ver',
+	'Gestión del sistema'=>array('parametros/index'),
+	'Convenios',
 );
 
 $this->menu=array(

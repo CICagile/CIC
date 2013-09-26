@@ -3,8 +3,8 @@
 /* @var $model SectorBeneficiado */
 
 $this->breadcrumbs=array(
-	'Sector Beneficiado'=>array('index'),
-	'Ver',
+	'Gestión del sistema'=>array('parametros/index'),
+	'Sectores Beneficiados',
 );
 
 $this->menu=array(

@@ -3,8 +3,9 @@
 /* @var $model Adscrito */
 
 $this->breadcrumbs=array(
-	'Adscritos'=>array('admin'),	
-	'Modificar',
+	'Gestión del sistema'=>array('parametros/index'),
+	'Adscritos'=>array('admin'),
+        'Modificar'
 );
 
 $this->menu=array(	

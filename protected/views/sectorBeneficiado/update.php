@@ -3,9 +3,9 @@
 /* @var $model SectorBeneficiado */
 
 $this->breadcrumbs=array(
-	'Sector Beneficiados'=>array('index'),
-	$model->nombre=>array('view','id'=>$model->idtbl_sectorbeneficiado),
-	'Actualizar',
+	'Gestión del sistema'=>array('parametros/index'),
+	'Sectores Beneficiados'=>array('admin'),
+        'Modificar'
 );
 
 $this->menu=array(

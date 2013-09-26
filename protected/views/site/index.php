@@ -6,6 +6,7 @@ $this->pageTitle=Yii::app()->name;
 
 <h2>Menú Principal</h2>
 <h3>Elija una categoría:</h3>
+<?php echo date('Y-m-d')?>
 
 <ul>
     <li><?php echo CHtml::link('Módulo de Proyectos',array('proyectos/admin')) ?></li> 

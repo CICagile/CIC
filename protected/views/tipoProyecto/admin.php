@@ -3,8 +3,8 @@
 /* @var $model TipoProyecto */
 
 $this->breadcrumbs=array(
-	'Tipo de Proyectos'=>array('admin'),
-	'Opciones',
+	'Gestión del sistema'=>array('parametros/index'),
+	'Tipos de Proyecto',
 );
 
 $this->menu=array(

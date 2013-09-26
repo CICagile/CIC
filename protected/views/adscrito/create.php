@@ -3,8 +3,9 @@
 /* @var $model Adscrito */
 
 $this->breadcrumbs=array(
+	'Gestión del sistema'=>array('parametros/index'),
 	'Adscritos'=>array('admin'),
-	'Crear',
+        'Crear'
 );
 
 $this->menu=array(	

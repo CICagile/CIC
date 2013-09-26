@@ -3,8 +3,9 @@
 /* @var $model Convenio */
 
 $this->breadcrumbs=array(
-	'Convenios'=>array('index'),
-	'Crear',
+	'Gestión del sistema'=>array('parametros/index'),
+	'Convenios'=>array('admin'),
+        'Crear'
 );
 ?>
 

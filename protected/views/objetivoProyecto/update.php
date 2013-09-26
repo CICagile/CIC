@@ -3,8 +3,9 @@
 /* @var $model ObjetivoProyecto */
 
 $this->breadcrumbs=array(
+	'Gestión del sistema'=>array('parametros/index'),
 	'Objetivos de Proyectos'=>array('admin'),
-	'Modificar',
+        'Modificar'
 );
 
 $this->menu=array(
