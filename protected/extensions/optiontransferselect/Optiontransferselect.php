@@ -1,6 +1,7 @@
 <?php
-/*
+/**
  * option transfer extraido de /* http://www.yiiframework.com/extension/optiontransferselect/
+ * @author Jose Pable Garbanzo <pgarbanzo@ic-itcr.ac.cr.com> (Adaptación a la aplicación)
  */
 class Optiontransferselect extends CWidget{
 	/**
