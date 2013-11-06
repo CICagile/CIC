@@ -8,7 +8,8 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-        array('label'=>'Ver Investigadores', 'url'=>array('admin')),	
+        array('label'=>'Ver Investigadores', 'url'=>array('admin')),
+        array('label' => 'Reporte horas proyectos', 'url' => array('reportarHoras', 'id' => $model->cedula)),
 	
 	
 );
