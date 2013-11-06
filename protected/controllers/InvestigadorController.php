@@ -148,7 +148,7 @@ class InvestigadorController extends Controller
         
         public function actionReportarHoras($id){
         $model = $this->loadModel($id);
-        $data_provider = Asistente::model()->obtenerHorasAsistente($id,null); //se pasa un null para mostrar el historial completo
+        $data_provider = Investigador::model()->obtenerHorasinvestigador($id,null); //se pasa un null para mostrar el historial completo
         $this->render('reportarHoras', array(
             'model' => $model,
             'data_provider' => $data_provider
