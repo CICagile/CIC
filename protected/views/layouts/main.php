@@ -53,7 +53,7 @@
 	<div id="footer">
 		&copy; Centro de Investigación en Computación del ITCR <?php echo date('Y'); ?><br/>
 		Todos los derechos reservados.<br/>
-                Version 0.5.1 <br/>
+                Version 0.6 <br/>
 		<?php echo Yii::powered(); ?>
 	</div><!-- footer -->
 

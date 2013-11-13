@@ -2,3 +2,4 @@ assets/
 protected/runtime/
 themes/classic/views/
 /nbproject/private/
+!/protected/extensions/EJuiMonthPicker/assets/
