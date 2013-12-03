@@ -34,7 +34,7 @@ class InvestigadorController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','index','codigoautocomplete','reportarHoras'),
+				'actions'=>array('create','index','codigoautocomplete','reportarHoras','actualizarReporteHorasMes'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -159,7 +159,6 @@ class InvestigadorController extends Controller
         if(isset($_POST['mes_reporte'])){
             //es necesario concatenar primero el mes para que la base de datos haga una comparacion adecuada
             $fecha_mes = '01-' . $_POST['mes_reporte'];
-
             $data_provider = Investigador::model()->obtenerHorasInvestigador($pCedula, $fecha_mes);
             $this->renderPartial('_reporteHorasMes', array('data_provider'=> $data_provider, 'fecha_mes'=>$fecha_mes));
         }
