@@ -19,12 +19,10 @@ class Investigador  extends CModel{
     public $grado;
     public $proyecto;
     public $rol;
-    
     /**
      * Año en que ingresó el investigador al ITCR. 
      */
     public $ingreso;
-    
     public $horas = null;
     
     // <editor-fold defaultstate="collapsed" desc="Validaciones">
@@ -232,9 +230,15 @@ class Investigador  extends CModel{
     
     // </editor-fold>
     
+    
+    // <editor-fold defaultstate="collapsed" desc="Atributos">
+
+    
     /**
      * @return array Etiquetas personalizadas de los atributos del modelo.
      */
+    
+
     public function attributeLabels()
     {
         return array(
@@ -299,6 +303,8 @@ class Investigador  extends CModel{
         }
     }
     
+// </editor-fold>
+    
     /**
      * Este método retorna una instancia del modelo para cuando se ocupe
      * acceder a sus propiedades. Por ejemplo, para conseguir el string
@@ -309,12 +315,17 @@ class Investigador  extends CModel{
         return new Investigador;
     }//fin model
         
+    // <editor-fold defaultstate="collapsed" desc="Funciones"> 
     /**
     * Funcion de guardado.
     * Registra un nuevo investigador en la base de datos. 
      * Por ahora supongo que las horas son un array de la siguiente forma: array('VIE'=>3, 'FUNDATEC'=>1.5, 'Docencia'=>3, 'Reconocimiento'=>1)
     * @param Periodos $pPeriodo El periodo inicial del investigador.
     */
+    
+
+
+
     public function crear($pPeriodo)
     {
         $conexion = Yii::app()->db;
@@ -358,6 +369,9 @@ class Investigador  extends CModel{
         return true;
     }//fin crear
 
+    // </editor-fold>
+    // 
+    // 
     // <editor-fold defaultstate="collapsed" desc="Reportes">
     /**
      * Obtiene lista de proyectos en los que ha trabajado un asistente, su rol y asociado a periodos de tiempo

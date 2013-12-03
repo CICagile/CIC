@@ -1,6 +1,6 @@
 <?php
 /**
- * Controlador del modelo de asistentes, recibe las instrucciones del usuario, muestra la interfaz y llama a las funciones del modelo.
+ * Controlador del modelo de investigadores, recibe las instrucciones del usuario, muestra la interfaz y llama a las funciones del modelo.
  */
 class InvestigadorController extends Controller
 {
@@ -29,15 +29,15 @@ class InvestigadorController extends Controller
 	public function accessRules()
 	{
 		return array(
-			array('allow',  // allow all users to perform 'index' and 'view' actions
+			array('allow',  // allow all users 
 				'actions'=>array('view'),
 				'users'=>array('*'),
 			),
-			array('allow', // allow authenticated user to perform 'create' and 'update' actions
+			array('allow', // allow authenticated user 
 				'actions'=>array('create','index','codigoautocomplete','reportarHoras','actualizarReporteHorasMes'),
 				'users'=>array('@'),
 			),
-			array('allow', // allow admin user to perform 'admin' and 'delete' actions
+			array('allow', // allow admin user
 				'actions'=>array('admin'),
 				'users'=>array('admin'),
 			),
@@ -136,9 +136,7 @@ class InvestigadorController extends Controller
 		$this->actionAdmin();
 	}
 
-	/**
-	 * Manages all models.
-	 */
+	/** Invoca la pantalla donde se muestran todos los investigadores actuales*/
 	public function actionAdmin(){
                 $filtersForm=new FiltersForm;
                 $this->render('admin',array(
@@ -146,6 +144,7 @@ class InvestigadorController extends Controller
                 ));
 	}
         
+        /*Muestra todas las horas de un investigador*/
         public function actionReportarHoras($id){
         $model = $this->loadModel($id);
         $data_provider = Investigador::model()->obtenerHorasinvestigador($id,null); //se pasa un null para mostrar el historial completo
@@ -154,7 +153,7 @@ class InvestigadorController extends Controller
             'data_provider' => $data_provider
         ));
     }
-    
+        /*Reporte de horas de un investigador con el filtro de mes*/
         public function actionActualizarReporteHorasMes($pCedula){
         if(isset($_POST['mes_reporte'])){
             //es necesario concatenar primero el mes para que la base de datos haga una comparacion adecuada
