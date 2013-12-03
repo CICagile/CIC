@@ -1,5 +1,5 @@
 <?php
-
+/*Miestra el gridview donde se muestran las horas de un investigador filtrado por mes-año*/
 if ($data_provider != null) {
     $this->widget('zii.widgets.grid.CGridView', array(
         'id' => 'investigador-grid-historial',
@@ -12,6 +12,7 @@ if ($data_provider != null) {
             array('header' => 'Tipos de Hora', 'value' => '$data["tipo_hora"]'),
         ),
     ));
+  
 }else{
    echo '<br/>No se encontraron resultados';
     if(strlen($fecha_mes) > 3)
