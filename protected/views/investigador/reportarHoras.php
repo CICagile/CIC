@@ -35,7 +35,7 @@ $this->widget('ext.EJuiMonthPicker.EJuiMonthPicker', array(
             ));
 
 echo CHtml::ajaxButton ("Buscar",
-                              CController::createUrl('ActualizarReporteHorasMes', array( $model->cedula)), 
+                              CController::createUrl('ActualizarReporteHorasMes', array('pCedula' => $model->cedula)), 
                               array(
                                   'update' => '#horas-mes',
                                   'type' => 'post',
