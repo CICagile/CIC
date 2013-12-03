@@ -5,7 +5,6 @@
 
 
 <?php
-//print_r($data_provider);
 
 $this->breadcrumbs = array(
     'Investigador' => array('admin'),
