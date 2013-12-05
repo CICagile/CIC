@@ -192,28 +192,6 @@ class ProyectosController extends Controller {
 
 //fin actualizar cada asistente
 
-
-    /*protected function FechaPhptoMysql($pfechaphp) {
-        try {
-            list($d, $m, $y) = explode('-', $pfechaphp);
-            $nuevafecha = mktime(0, 0, 0, $m, $d, $y);
-            $fechamysql = strftime('%Y-%m-%d', $nuevafecha);
-        } catch (Exception $e) { //El catch no ejecuta ninguna funcion porque las excepciones son manejas por el CErrorHandler de Yii.                
-        }
-        return $fechamysql;
-    }*/
-
-    /* public function FechaMysqltoPhp($pfechamysql) {
-      try {
-      $fecha = substr($pfechamysql, 0, 10);
-      list($y, $m, $d) = explode('-', $fecha);
-      $fecha = $d . '-' . $m . '-' . $y;
-      } catch (Exception $e) {
-
-      }
-      return $fecha;
-      } */
-
     /*
      * Crea un proyecto
      */
