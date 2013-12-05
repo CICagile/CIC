@@ -308,16 +308,13 @@ class ProyectosController extends Controller {
     public function actionAdmin() {
         // Create filter model and set properties
         $filtersForm = new FiltersForm;
-        $atributos = array(5);
         $dataProvider = new CArrayDataProvider(array());
 
         if (isset($_GET['FiltersForm']))
             $filtersForm->filters = $_GET['FiltersForm'];
         $atributos = $filtersForm->getAttributes();
         $long = sizeof($atributos['filters']);
-        if ($long == 0)
-            $modelos = Proyectos::model()->obtenerProyectosActivos(NULL);
-        else if ($atributos['filters']['sectorbeneficiado'] == "")
+        if ($long == 0 || $atributos['filters']['sectorbeneficiado'] == "")
             $modelos = Proyectos::model()->obtenerProyectosActivos(NULL);
         else
             $modelos = Proyectos::model()->obtenerProyectosActivos($atributos['filters']['sectorbeneficiado']);
