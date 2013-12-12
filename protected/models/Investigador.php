@@ -358,6 +358,49 @@ class Investigador  extends CModel{
         return true;
     }//fin crear
 
+    // <editor-fold defaultstate="collapsed" desc="Reportes">
+    /**
+     * Obtiene lista de proyectos en los que ha trabajado un asistente, su rol y asociado a periodos de tiempo
+     * @param type $pCarnet
+     * @return 
+     */
+   
+    public function obtenerHorasInvestigador($pCedula, $pFechaMes){
+        if($pFechaMes != null){
+            $call = 'CALL obtenerHorasMesInvestigador(:pCedula,:pFechaMes)';
+            $comando = Yii::app()->db->createCommand($call);
+            $comando->bindParam(':pFechaMes',$pFechaMes,PDO::PARAM_STR);
+        }else{
+            $call = 'CALL obtenerHistorialHorasInvestigador(:pCedula)';
+            $comando = Yii::app()->db->createCommand($call);
+        }
+        
+        $comando->bindParam(':pCedula',$pCedula,PDO::PARAM_STR);
+        $query = $comando->queryAll();
+        
+        if (empty($query)){
+            return null;
+        }
+        else{
+            $data_provider = new CArrayDataProvider(
+                        $query, //obtiene los datos de variable $query
+                        array(
+                            'keyField'=>'codigo',
+                            'id' => 'investigador-historial-proyectos',
+                            'sort' => array(
+                                'attributes' => array(
+                                    'idtbl_proyectos','codigo', 'inicio', 'fin','horas','tipo_hora'
+                                ),
+                            ),
+                            'pagination' => array(
+                                'pageSize' => 50,
+                            ),
+                ));
+            return $data_provider;
+        }
+    }
+// </editor-fold>
+
     
 }//fin clase Investigador
 
