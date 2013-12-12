@@ -3,12 +3,11 @@
 /* @var $model Usuario */
 
 $this->breadcrumbs=array(
-	'Usuarios'=>array('index'),
+	'Usuarios'=>array('admin'),
 	$model->username,
 );
 
 $this->menu=array(
-	array('label'=>'Listar Usuario', 'url'=>array('index')),
 	array('label'=>'Crear Usuario', 'url'=>array('create')),
 	array('label'=>'Actualizar Usuario', 'url'=>array('update', 'id'=>$model->idtbl_usuario)),
 	array('label'=>'Borrar Usuario', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->idtbl_usuario),'confirm'=>'Are you sure you want to delete this item?')),

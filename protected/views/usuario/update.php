@@ -3,13 +3,12 @@
 /* @var $model Usuario */
 
 $this->breadcrumbs=array(
-	'Usuarios'=>array('index'),
+	'Usuarios'=>array('admin'),
 	$model->username=>array('view','id'=>$model->username),
 	'Update',
 );
 
 $this->menu=array(
-	array('label'=>'Listar Usuarios', 'url'=>array('index')),
 	array('label'=>'Crear Usuario', 'url'=>array('create')),
 	array('label'=>'Ver Usuario', 'url'=>array('view', 'id'=>$model->idtbl_usuario)),
 	array('label'=>'Gestionar Usuarios', 'url'=>array('admin')),
