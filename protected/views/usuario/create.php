@@ -4,15 +4,15 @@
 
 $this->breadcrumbs=array(
 	'Usuarios'=>array('index'),
-	'Create',
+	'Crear',
 );
 
 $this->menu=array(
-	array('label'=>'List Usuario', 'url'=>array('index')),
-	array('label'=>'Manage Usuario', 'url'=>array('admin')),
+	array('label'=>'Listar Usuarios', 'url'=>array('index')),
+	array('label'=>'Gestionar Usuarios', 'url'=>array('admin')),
 );
 ?>
 
-<h1>Create Usuario</h1>
+<h1>Crear Usuario</h1>
 
 <?php echo $this->renderPartial('_form', array('model'=>$model)); ?>

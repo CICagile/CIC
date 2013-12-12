@@ -4,12 +4,12 @@
 
 $this->breadcrumbs=array(
 	'Usuarios'=>array('index'),
-	'Manage',
+	'Gestionar',
 );
 
 $this->menu=array(
-	array('label'=>'List Usuario', 'url'=>array('index')),
-	array('label'=>'Create Usuario', 'url'=>array('create')),
+	array('label'=>'Listar Usuarios', 'url'=>array('index')),
+	array('label'=>'Crear Usuario', 'url'=>array('create')),
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -45,9 +45,7 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
 	'columns'=>array(
-		'idtbl_usuario',
 		'username',
-		'password',
 		'email',
 		'idtbl_rolusuario',
 		array(

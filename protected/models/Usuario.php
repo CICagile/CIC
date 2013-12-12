@@ -71,9 +71,9 @@ class Usuario extends CActiveRecord
 	{
 		return array(
 			'idtbl_usuario' => 'Idtbl Usuario',
-			'username' => 'Username',
-			'password' => 'Password',
-			'email' => 'Email',
+			'username' => 'Nombre de Usuario',
+			'password' => 'Contraseña',
+			'email' => 'Correo Electrónico',
 			'idtbl_rolusuario' => 'Idtbl Rolusuario',
 		);
 	}
@@ -91,7 +91,6 @@ class Usuario extends CActiveRecord
 
 		$criteria->compare('idtbl_usuario',$this->idtbl_usuario);
 		$criteria->compare('username',$this->username,true);
-		$criteria->compare('password',$this->password,true);
 		$criteria->compare('email',$this->email,true);
 		$criteria->compare('idtbl_rolusuario',$this->idtbl_rolusuario);
 
