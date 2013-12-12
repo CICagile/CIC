@@ -14,7 +14,6 @@ $this->menu=array(
 	array('label'=>'Gestionar Usuario', 'url'=>array('admin')),
 );
 ?>
-
 <h1>Detalles del usuario <?php echo $model->username; ?></h1>
 
 <?php $this->widget('zii.widgets.CDetailView', array(
@@ -24,4 +23,4 @@ $this->menu=array(
 		'email',
 		'idtbl_rolusuario',
 	),
-)); ?>
+));?>

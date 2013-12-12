@@ -51,8 +51,10 @@ class UsuarioController extends Controller
 	 */
 	public function actionView($id)
 	{
+            $model = $this->loadModel($id);
+            $model->idtbl_rolusuario = $model->Rolusuario->rol;
 		$this->render('view',array(
-			'model'=>$this->loadModel($id),
+			'model'=>$model,
 		));
 	}
 
@@ -120,14 +122,10 @@ class UsuarioController extends Controller
 	}
 
 	/**
-	 * Lists all models.
+	 * Not used
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('Usuario');
-		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
-		));
 	}
 
 	/**
@@ -139,6 +137,7 @@ class UsuarioController extends Controller
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['Usuario']))
 			$model->attributes=$_GET['Usuario'];
+                        //$model->idtbl_rolusuario = $model->Rolusuario->rol;
 
 		$this->render('admin',array(
 			'model'=>$model,

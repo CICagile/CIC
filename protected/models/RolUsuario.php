@@ -1,25 +1,21 @@
 <?php
 
 /**
- * This is the model class for table "tbl_usuario".
+ * This is the model class for table "tbl_rolusuario".
  *
- * The followings are the available columns in table 'tbl_usuario':
- * @property integer $idtbl_usuario
- * @property string $username
- * @property string $password
- * @property string $email
+ * The followings are the available columns in table 'tbl_rolusuario':
  * @property integer $idtbl_rolusuario
+ * @property string $rol
  *
  * The followings are the available model relations:
- * @property Rolusuario $idtblRolusuario
+ * @property Usuario[] $usuarios
  */
-class Usuario extends CActiveRecord
+class RolUsuario extends CActiveRecord
 {
-    
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
-	 * @return Usuario the static model class
+	 * @return RolUsuario the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
@@ -31,7 +27,7 @@ class Usuario extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'tbl_usuario';
+		return 'tbl_rolusuario';
 	}
 
 	/**
@@ -42,14 +38,11 @@ class Usuario extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('username, password, idtbl_rolusuario', 'required'),
-			array('idtbl_rolusuario', 'numerical', 'integerOnly'=>true),
-			array('username', 'length', 'max'=>100),
-			array('password', 'length', 'max'=>64),
-			array('email', 'length', 'max'=>150),
+			array('rol', 'required'),
+			array('rol', 'length', 'max'=>150),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('idtbl_usuario, username, password, email, idtbl_rolusuario', 'safe', 'on'=>'search'),
+			array('idtbl_rolusuario, rol', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -61,7 +54,7 @@ class Usuario extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'Rolusuario' => array(self::HAS_ONE, 'RolUsuario', 'idtbl_rolusuario'),
+			'usuarios' => array(self::HAS_MANY, 'Usuario', 'idtbl_rolusuario'),
 		);
 	}
 
@@ -71,11 +64,8 @@ class Usuario extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'idtbl_usuario' => 'Idtbl Usuario',
-			'username' => 'Nombre de Usuario',
-			'password' => 'Contraseña',
-			'email' => 'Correo Electrónico',
-			'idtbl_rolusuario' => 'Rol de Usuario',
+			'idtbl_rolusuario' => 'Idtbl Rolusuario',
+			'rol' => 'Rol',
 		);
 	}
 
@@ -90,10 +80,8 @@ class Usuario extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('idtbl_usuario',$this->idtbl_usuario);
-		$criteria->compare('username',$this->username,true);
-		$criteria->compare('email',$this->email,true);
 		$criteria->compare('idtbl_rolusuario',$this->idtbl_rolusuario);
+		$criteria->compare('rol',$this->rol,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
