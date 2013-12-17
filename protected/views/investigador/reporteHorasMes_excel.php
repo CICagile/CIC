@@ -1,6 +1,7 @@
 <?php
+header("Content-Type: application/vnd.ms-excel");
+header("content-disposition: attachment;filename=Reporte_Investigadores_".date('d_m_Y').".xls");
 /*Miestra el gridview donde se muestran las horas de un investigador filtrado por mes-año*/
-if ($data_provider != null) {
     $this->widget('zii.widgets.grid.CGridView', array(
         'id' => 'investigador-grid-historial',
         'dataProvider' => $data_provider,
@@ -13,11 +14,4 @@ if ($data_provider != null) {
         ),
     ));
   
-}else{
-   echo '<br/>No se encontraron resultados';
-    if(strlen($fecha_mes) > 3)
-        echo ' para el mes que inicia el día ' . $fecha_mes;
-}
-
-
 ?>
