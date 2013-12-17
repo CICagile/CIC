@@ -7,7 +7,7 @@
  */
 class UserIdentity extends CUserIdentity {
 
-    private $_id;
+    
 
     /**
      * Authenticates a user.
@@ -24,7 +24,8 @@ class UserIdentity extends CUserIdentity {
             $this->errorCode = self::ERROR_NONE;
             // Store the role in a session:
             //$this->setState('role', $user->role);
-            $this->_id = $user->idtbl_usuario;
+            $this->_id = $user->username;
+            $this->username = $user->Rolusuario->rol;
         }
         return !$this->errorCode;
     }
@@ -32,5 +33,6 @@ class UserIdentity extends CUserIdentity {
     public function getId() {
         return $this->_id;
     }
-
+    
+    private $_id;
 }
