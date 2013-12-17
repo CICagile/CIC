@@ -35,7 +35,8 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'idtbl_rolusuario'); ?>
-		<?php echo $form->textField($model,'idtbl_rolusuario'); ?>
+                <?php echo $form->dropDownList($model, 'idtbl_rolusuario',
+                                CHtml::listData(RolUsuario::model()->findAll(), 'idtbl_rolusuario', 'rol'), array('empty'=>'Elija un rol')); ?>
 		<?php echo $form->error($model,'idtbl_rolusuario'); ?>
 	</div>
 

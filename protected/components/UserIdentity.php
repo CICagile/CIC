@@ -25,7 +25,8 @@ class UserIdentity extends CUserIdentity {
             // Store the role in a session:
             //$this->setState('role', $user->role);
             $this->_id = $user->username;
-            $this->username = $user->Rolusuario->rol;
+            $user_info = $user->obtenerInformacionUsuario($user->idtbl_usuario);
+            $this->username = $user_info["rol"];
         }
         return !$this->errorCode;
     }

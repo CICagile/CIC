@@ -52,7 +52,7 @@ class UsuarioController extends Controller
 	public function actionView($id)
 	{
             $model = $this->loadModel($id);
-            $model->idtbl_rolusuario = $model->Rolusuario->rol;
+            
 		$this->render('view',array(
 			'model'=>$model,
 		));
@@ -65,7 +65,6 @@ class UsuarioController extends Controller
 	public function actionCreate()
 	{
 		$model=new Usuario;
-
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
@@ -152,8 +151,11 @@ class UsuarioController extends Controller
 	public function loadModel($id)
 	{
 		$model=Usuario::model()->findByPk($id);
+                $info_usuario = $model->obtenerInformacionUsuario($id);
+                $model->idtbl_rolusuario = $info_usuario["rol"];
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
+                
 		return $model;
 	}
 

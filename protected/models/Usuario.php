@@ -99,4 +99,17 @@ class Usuario extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+        
+        
+        public function obtenerInformacionUsuario($pIdUsuario){
+            $call = 'CALL getUserInfo(:pIdUsuario)';
+            $conexion = Yii::app()->db;
+            $command = $conexion->createCommand($call);
+            $command->bindParam(':pIdUsuario', $pIdUsuario, PDO::PARAM_INT);
+            $result = $command->queryRow();
+            if (empty($result))
+                return null;
+            else
+                return $result;
+        }
 }
