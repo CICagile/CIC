@@ -114,7 +114,7 @@ $this->menu=array(
 </div>
 <div class="form">
     <?php $form = $this->beginWidget('CActiveForm', array(
-        'id' => 'editar-horas',
+        'id' => 'editar-periodos',
     )); ?>
     <fieldset>
         <legend><h2>Cambiar Período de Asistencia</h2></legend>
