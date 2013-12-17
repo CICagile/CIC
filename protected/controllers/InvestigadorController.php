@@ -34,7 +34,7 @@ class InvestigadorController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user 
-				'actions'=>array('create','index','codigoautocomplete','reportarHoras','actualizarReporteHorasMes','horasmes_excel'),
+				'actions'=>array('create','index','codigoautocomplete','reportarHoras','actualizarReporteHorasMes'/*,'horasmes_excel'*/),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user
@@ -171,12 +171,18 @@ class InvestigadorController extends Controller
 		));
 	}
         
-          public function actionreportehorasmes_excel($id)
+      /*   public function actionreportehorasmes_excel($id)
 	{
                 $model = new Investigador;
                 $atributos = $model->reportehorasmes_excel($id);
+        $model = $this->loadModel($id);
+        $resultado = Investigador::model()->obtenerHorasinvestigador($id,null); //se pasa un null para mostrar el historial completo
+        $this->render('HorasMes_Excel', array(
+            'model' => $model,
+            'data_provider' => $data_provider
+        ));
       
-	}
+	}*/
         
         public function actionHorasMes_Excel($id){
         $model = $this->loadModel($id);

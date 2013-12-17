@@ -24,11 +24,11 @@ header("content-disposition: attachment;filename=Reporte_Investigadores_".date('
                 <?php
                 ?>
                 <tr>
-                <th> <?php echo $data_provider["Código del Proyecto"]; ?> </th>
-                 <th> <?php echo $data_provider["Horas"]; ?> </th>
-                  <th> <?php echo $data_provider["Inicio"]; ?> </th>
-                   <th> <?php echo $data_provider["Fin"]; ?> </th>
-                    <th> <?php echo $data_provider["Tipos de Hora"]; ?> </th>
+                <th> <?php echo $resultado["Código del Proyecto"]; ?> </th>
+                 <th> <?php echo $resultado["Horas"]; ?> </th>
+                  <th> <?php echo $resultado["Inicio"]; ?> </th>
+                   <th> <?php echo $resultado["Fin"]; ?> </th>
+                    <th> <?php echo $resultado["Tipos de Hora"]; ?> </th>
                 </tr>
             </tbody>
         </table>
