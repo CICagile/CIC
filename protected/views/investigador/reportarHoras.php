@@ -5,7 +5,6 @@
 
 
 <?php
-//print_r($data_provider);
 
 $this->breadcrumbs = array(
     'Investigador' => array('admin'),
@@ -14,6 +13,7 @@ $this->breadcrumbs = array(
 
 $this->menu = array(
     array('label' => 'Ver Investigadores', 'url' => array('admin')),
+   /* array('label' => 'Exportar a excel', 'url' => array('HorasMes_excel')),*/
 );
 ?>
 
