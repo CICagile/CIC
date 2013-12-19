@@ -32,7 +32,7 @@ class ProyectosController extends Controller {
                 'users' => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
-                'actions' => array('admin', 'delete'),
+                'actions' => array('admin', 'delete', 'editarinvestigacion'),
                 'users' => array('admin'),
             ),
             array('deny', // deny all users
@@ -745,16 +745,25 @@ class ProyectosController extends Controller {
                     throw new CHttpException(500, 'Ha ocurrido un error interno, vuelva a intentarlo.');
             }
         }//fin si hizo click en el boton Agregar
-
-        $this->render('agregarinvestigador', array(
+        
+                $this->render('agregarinvestigador', array(
             'model' => $model,
             'investigador' => $investigador,
             'periodo' => $periodo,
             'horas' => array_values($datos_horas),
         ));
+    }//fin agregar investigador
+    
+    public function actionEditarInvestigacion($id, $cedula){
+        $model = $this->loadModel($id);
+        $atributos = Investigador::model()->buscarInvestigadorporCedula($cedula);
+        $investigador = new Investigador;
+        $investigador->attributes = $atributos;
+        $this->render('editarinvestigacion',array(
+            'model' => $model,
+            'investigador' => $investigador,
+        ));
     }
-
-//fin agregar investigador
 
 // <editor-fold defaultstate="collapsed" desc="Autocomplete">
     public function actionAsistenteAutoComplete() {
