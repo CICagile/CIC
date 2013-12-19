@@ -186,11 +186,12 @@ class InvestigadorController extends Controller
         
         public function actionHorasMes_Excel($id){
         $model = $this->loadModel($id);
-        $data_provider = Investigador::model()->obtenerHorasinvestigador($id,null); //se pasa un null para mostrar el historial completo
-        $this->render('HorasMes_Excel', array(
+        /*$datos = Investigador::model()->obtenerHorasinvestigador($id,null); //se pasa un null para mostrar el historial completo
+       /* $this->render('HorasMes_Excel', array(
             'model' => $model,
             'data_provider' => $data_provider
         ));
+        return $datos;*/
         }
         
         public function loadModel($id)

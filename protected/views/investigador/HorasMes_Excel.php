@@ -1,6 +1,8 @@
 <?php
 header("Content-Type: application/vnd.ms-excel");
 header("content-disposition: attachment;filename=Reporte_Investigadores_".date('d_m_Y').".xls");
+$investi = new Investigador();
+$registros= $investi->obtenerHorasInvestigador($id, null);
 ?>
 
 <html>
@@ -24,11 +26,11 @@ header("content-disposition: attachment;filename=Reporte_Investigadores_".date('
                 <?php
                 ?>
                 <tr>
-                <th> <?php echo $resultado["Código del Proyecto"]; ?> </th>
-                 <th> <?php echo $resultado["Horas"]; ?> </th>
-                  <th> <?php echo $resultado["Inicio"]; ?> </th>
-                   <th> <?php echo $resultado["Fin"]; ?> </th>
-                    <th> <?php echo $resultado["Tipos de Hora"]; ?> </th>
+                <th> <?php echo $registros["Código del Proyecto"]; ?> </th>
+                 <th> <?php echo $registros["Horas"]; ?> </th>
+                  <th> <?php echo $registros["Inicio"]; ?> </th>
+                   <th> <?php echo $registros["Fin"]; ?> </th>
+                    <th> <?php echo $registros["Tipos de Hora"]; ?> </th>
                 </tr>
             </tbody>
         </table>
