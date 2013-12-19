@@ -17,4 +17,9 @@ $this->menu=array(
 
 <h1>Actualizar Usuario <?php echo $model->username; ?></h1>
 
-<?php echo $this->renderPartial('_form', array('model'=>$model)); ?>
+<?php 
+//ponemos el password en null, para que no se muestre el hash en el campo de texto
+$model->password = null;
+echo $this->renderPartial('_form', array('model'=>$model)); 
+
+?>

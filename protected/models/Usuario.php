@@ -101,8 +101,13 @@ class Usuario extends CActiveRecord
 	}
         
         
+        /**
+         * Obtiene la información de la tabla usuario en la base de datos, además del rol del usuario
+         * @param type $pIdUsuario
+         * @return null si no se encuentra el usuario o un arreglo con los valores mencionados
+         */
         public function obtenerInformacionUsuario($pIdUsuario){
-            $call = 'CALL getUserInfo(:pIdUsuario)';
+            $call = 'CALL obtenerInformacionUsuario(:pIdUsuario)';
             $conexion = Yii::app()->db;
             $command = $conexion->createCommand($call);
             $command->bindParam(':pIdUsuario', $pIdUsuario, PDO::PARAM_INT);
