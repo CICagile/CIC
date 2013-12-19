@@ -6,9 +6,6 @@
  * data can identity the user.
  */
 class UserIdentity extends CUserIdentity {
-
-    
-
     /**
      * Authenticates a user.
      * @return boolean whether authentication succeeds.
