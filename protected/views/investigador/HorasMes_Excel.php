@@ -1,8 +1,6 @@
 <?php
 header("Content-Type: application/vnd.ms-excel");
 header("content-disposition: attachment;filename=Reporte_Investigadores_".date('d_m_Y').".xls");
-$investi = new Investigador();
-$registros= $investi->obtenerHorasInvestigador($id, null);
 ?>
 
 <html>
