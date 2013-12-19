@@ -21,7 +21,9 @@ class UserIdentity extends CUserIdentity {
             $this->errorCode = self::ERROR_NONE;
             // Store the role in a session:
             //$this->setState('role', $user->role);
-            $this->_id = $user->username;
+            $this->_id = $user->idtbl_usuario;
+            //cambia el nombre del usuario que ha ingresado
+            $this->setState('name', $user->username);
             $user_info = $user->obtenerInformacionUsuario($user->idtbl_usuario);
             $this->username = $user_info["rol"];
         }
@@ -32,5 +34,6 @@ class UserIdentity extends CUserIdentity {
         return $this->_id;
     }
     
+    //id en la base de datos del usuario
     private $_id;
 }
