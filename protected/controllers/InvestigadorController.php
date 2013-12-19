@@ -39,7 +39,7 @@ class InvestigadorController extends Controller
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
 				'actions'=>array('admin'),
-				'users'=>array('admin'),
+				'users'=>array('Administrador'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),

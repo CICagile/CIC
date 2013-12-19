@@ -1,6 +1,6 @@
 <?php
 
-class TipoProyectoController extends Controller
+class UsuarioController extends Controller
 {
 	/**
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
@@ -26,9 +26,13 @@ class TipoProyectoController extends Controller
 	 */
 	public function accessRules()
 	{
-		return array(		
+		return array(
+			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('index','view'),
+				'users'=>array('*'),
+			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('admin','create','update'),
+				'actions'=>array('create','update'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -42,21 +46,34 @@ class TipoProyectoController extends Controller
 	}
 
 	/**
+	 * Displays a particular model.
+	 * @param integer $id the ID of the model to be displayed
+	 */
+	public function actionView($id)
+	{
+            $model = $this->loadModel($id);
+            
+		$this->render('view',array(
+			'model'=>$model,
+		));
+	}
+
+	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
 	public function actionCreate()
 	{
-		$model=new TipoProyecto;
-
+		$model=new Usuario;
 		// Uncomment the following line if AJAX validation is needed
-		$this->performAjaxValidation($model);
+		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['TipoProyecto']))
+		if(isset($_POST['Usuario']))
 		{
-			$model->attributes=$_POST['TipoProyecto'];
+			$model->attributes=$_POST['Usuario'];
+                        $model->password = hash('sha256', $model->password);
 			if($model->save())
-				$this->redirect('../TipoProyecto/admin');
+				$this->redirect(array('view','id'=>$model->idtbl_usuario));
 		}
 
 		$this->render('create',array(
@@ -74,13 +91,14 @@ class TipoProyectoController extends Controller
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
-		$this->performAjaxValidation($model);
+		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['TipoProyecto']))
+		if(isset($_POST['Usuario']))
 		{
-			$model->attributes=$_POST['TipoProyecto'];
+			$model->attributes=$_POST['Usuario'];
+                        $model->password = hash('sha256', $model->password);
 			if($model->save())
-				$this->redirect('../admin');
+				$this->redirect(array('view','id'=>$model->idtbl_usuario));
 		}
 
 		$this->render('update',array(
@@ -103,14 +121,22 @@ class TipoProyectoController extends Controller
 	}
 
 	/**
+	 * Not used
+	 */
+	public function actionIndex()
+	{
+	}
+
+	/**
 	 * Manages all models.
 	 */
 	public function actionAdmin()
 	{
-		$model=new TipoProyecto('search');
+		$model=new Usuario('search');
 		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['TipoProyecto']))
-			$model->attributes=$_GET['TipoProyecto'];
+		if(isset($_GET['Usuario']))
+			$model->attributes=$_GET['Usuario'];
+                        //$model->idtbl_rolusuario = $model->Rolusuario->rol;
 
 		$this->render('admin',array(
 			'model'=>$model,
@@ -124,9 +150,12 @@ class TipoProyectoController extends Controller
 	 */
 	public function loadModel($id)
 	{
-		$model=TipoProyecto::model()->findByPk($id);
+		$model=Usuario::model()->findByPk($id);
+                $info_usuario = $model->obtenerInformacionUsuario($id);
+                $model->idtbl_rolusuario = $info_usuario["rol"];
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
+                
 		return $model;
 	}
 
@@ -136,7 +165,7 @@ class TipoProyectoController extends Controller
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='tipo-proyecto-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='usuario-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
