@@ -13,5 +13,6 @@
     <li><?php echo CHtml::link('Tipos de Proyectos',array('tipoproyecto/admin')) ?></li><br>
     <li><?php echo CHtml::link('Sector Beneficiado',array('sectorbeneficiado/admin')) ?></li><br>
     <li><?php echo CHtml::link('Convenio',array('convenio/admin')) ?></li><br>
-    <li><?php echo CHtml::link('Roles Asistente',array('rolasistente/admin')) ?></li>
+    <li><?php echo CHtml::link('Roles Asistente',array('rolasistente/admin')) ?></li><br>
+    <li><?php echo CHtml::link('Banco',array('banco/admin')) ?></li>
 </ul>

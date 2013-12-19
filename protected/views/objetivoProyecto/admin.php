@@ -25,7 +25,7 @@ $this->menu=array(
 		array(
 			'class'=>'CButtonColumn',
                         'template'=>'{update}', 
-                        'updateButtonLabel' => 'Modificar el nombre de la opción.',
+                        'updateButtonLabel' => 'Modificar el nombre del banco.',
 		),
 	),
 )); ?>
